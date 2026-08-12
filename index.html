@@ -12,6 +12,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
+        /* Font Times New Roman Utama untuk Seluruh Dokumen Cetak */
+        .doc-font {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.3;
+        }
+
         /* Mengunci Dokumen Pas Ukuran A4 */
         .a4-container {
             width: 210mm;
@@ -21,12 +28,7 @@
             padding: 12mm 15mm;
         }
 
-        /* Font Times New Roman Khusus Area Tanda Tangan */
-        .ttd-font {
-            font-family: 'Times New Roman', Times, serif;
-        }
-
-        /* Border Tabel Tegas & Rapi Sesuai Standar Cetak */
+        /* Border Tabel Tegas & Rapi Sesuai Standar Cetak Manual */
         .table-border, .table-border th, .table-border td {
             border: 1.5px solid #000000 !important;
             border-collapse: collapse;
@@ -65,7 +67,7 @@
                 <h1 class="text-xl font-bold">E-LKH Puskesmas 2026</h1>
             </div>
             <span class="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Posisi TTD Sejajar Presisi
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Times New Roman 12pt Presisi
             </span>
         </div>
     </header>
@@ -165,15 +167,15 @@
             <hr class="my-3">
 
             <!-- Upload TTD & Stempel -->
-            <h3 class="text-sm font-bold text-slate-700">Pengesahan (Optional Opsional Upload)</h3>
+            <h3 class="text-sm font-bold text-slate-700">Pengesahan (Upload Gambar TTD / Stempel)</h3>
             <div class="space-y-2 text-xs">
                 <div>
-                    <label class="block text-slate-600 mb-1 font-medium">Gambar Stempel/TTD Pejabat (Kiri)</label>
-                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDPimpinan', 'headerPejabatText', 'ttdPimpinanImg')" class="w-full text-slate-500 text-xs">
+                    <label class="block text-slate-600 mb-1 font-medium">Upload TTD/Stempel Pejabat (Kiri)</label>
+                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDPimpinan', 'ttdPimpinanImg')" class="w-full text-slate-500 text-xs">
                 </div>
                 <div>
-                    <label class="block text-slate-600 mb-1 font-medium">Gambar TTD Pegawai (Kanan)</label>
-                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDUser', null, 'ttdUserImg')" class="w-full text-slate-500 text-xs">
+                    <label class="block text-slate-600 mb-1 font-medium">Upload TTD Pegawai (Kanan)</label>
+                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDUser', 'ttdUserImg')" class="w-full text-slate-500 text-xs">
                 </div>
             </div>
 
@@ -193,33 +195,33 @@
 
         <!-- PRATINJAU DOKUMEN (PANEL KANAN) -->
         <div class="lg:col-span-7 flex justify-center items-start">
-            <div id="dokumenCetak" class="a4-container shadow-xl border border-slate-300 text-black font-sans uppercase leading-tight">
+            <div id="dokumenCetak" class="a4-container doc-font shadow-xl border border-slate-300 text-black uppercase">
                 
-                <!-- 1. JUDUL HEADER -->
-                <div class="text-center font-bold space-y-1 mb-6 text-sm">
-                    <p class="text-base font-extrabold tracking-wide">LEMBAR KERJA HARIAN</p>
-                    <p class="text-base font-extrabold tracking-wide">PUSKESMAS LOA IPUH</p>
-                    <p class="text-base font-extrabold tracking-wide">RUANG PENDAFTARAN TAHUN 2026</p>
+                <!-- 1. JUDUL HEADER (Agak Besar Dikit dari 12pt) -->
+                <div class="text-center font-bold space-y-0.5 mb-6 text-[14pt]">
+                    <p class="font-extrabold tracking-wide">LEMBAR KERJA HARIAN</p>
+                    <p class="font-extrabold tracking-wide">PUSKESMAS LOA IPUH</p>
+                    <p class="font-extrabold tracking-wide">RUANG PENDAFTARAN TAHUN 2026</p>
                 </div>
 
-                <!-- 2. DATA DIRI -->
-                <div class="mb-5 font-bold space-y-1.5 text-xs">
-                    <div class="flex"><span class="w-24">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
-                    <div class="flex"><span class="w-24">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
-                    <div class="flex"><span class="w-24">BULAN</span><span>: <span id="lblBulan">AGUSTUS</span></span></div>
+                <!-- 2. DATA DIRI (Rata 12pt) -->
+                <div class="mb-5 font-bold space-y-1 text-[12pt]">
+                    <div class="flex"><span class="w-28">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
+                    <div class="flex"><span class="w-28">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
+                    <div class="flex"><span class="w-28">BULAN</span><span>: <span id="lblBulan">AGUSTUS</span></span></div>
                 </div>
 
-                <!-- 3. TABEL UTAMA -->
-                <div class="w-full mb-6">
-                    <table class="w-full table-border text-center text-[11px]">
+                <!-- 3. TABEL UTAMA (Font 11pt - 12pt Rapi) -->
+                <div class="w-full mb-8">
+                    <table class="w-full table-border text-center text-[11pt]">
                         <thead>
                             <tr class="font-bold">
                                 <th class="p-2 w-16 align-middle" rowspan="2">HARI</th>
                                 <th class="p-2 w-16 align-middle" rowspan="2">TANGGAL</th>
-                                <th class="p-2 tracking-widest" colspan="3">KEGIATAN</th>
+                                <th class="p-2 tracking-wider" colspan="3">KEGIATAN</th>
                                 <th class="p-2 w-28 align-middle" rowspan="2">KETERANGAN</th>
                             </tr>
-                            <tr class="font-bold text-[10px]">
+                            <tr class="font-bold text-[10pt]">
                                 <th class="p-2 w-1/3 align-middle">MENGAMBIL RM PASIEN RAK / BOK</th>
                                 <th class="p-2 w-1/3 align-middle">CARI DATA PASIEN DI SIMPUS</th>
                                 <th class="p-2 w-1/3 align-middle">SUSUN RM PASIEN RAK / BOK</th>
@@ -231,47 +233,43 @@
                     </table>
                 </div>
 
-                <!-- 4. BLOK TANDA TANGAN (SEJAJAR PRESISI 100%) -->
-                <div class="w-full pt-4 ttd-font normal-case">
-                    <div class="grid grid-cols-2 text-center text-sm">
+                <!-- 4. BLOK TANDA TANGAN (PRESISI, SEJAJAR & FONT 12PT) -->
+                <div class="w-full pt-2 normal-case text-[12pt]">
+                    <div class="grid grid-cols-2 text-center">
                         
                         <!-- KIRI: Pejabat Penilai Kinerja -->
-                        <div class="flex flex-col items-center justify-between h-52">
-                            <!-- Sub-Header Kiri -->
-                            <div id="headerPejabatText">
+                        <div class="flex flex-col items-center justify-between h-44">
+                            <div>
                                 <p class="leading-tight">Mengetahui</p>
                                 <p class="leading-tight">Pejabat Penilai Kinerja</p>
                             </div>
                             
-                            <!-- Area Kosong / Gambar TTD Stempel (Tinggi dikunci h-24) -->
-                            <div class="h-24 w-full flex items-center justify-center my-auto relative">
-                                <img id="imgTTDPimpinan" class="max-h-28 object-contain hidden" alt="Stempel Pejabat">
+                            <!-- Area TTD Dikecilkan Pas dengan Nama (max-h-12) -->
+                            <div class="h-14 w-full flex items-center justify-center my-auto">
+                                <img id="imgTTDPimpinan" class="max-h-12 object-contain hidden" alt="TTD Pejabat">
                             </div>
 
-                            <!-- Footer Nama & NIP Pejabat Kiri -->
                             <div>
-                                <p class="underline font-bold text-sm tracking-wide" id="lblNamaPejabat">Joi Devi , SKM</p>
-                                <p class="text-xs text-slate-900 mt-0.5">NIP . <span id="lblNipPejabat">19730803 1998032009</span></p>
+                                <p class="underline font-bold text-[12pt] tracking-wide" id="lblNamaPejabat">Joi Devi , SKM</p>
+                                <p class="text-[11pt] text-slate-900 mt-0.5">NIP . <span id="lblNipPejabat">19730803 1998032009</span></p>
                             </div>
                         </div>
 
                         <!-- KANAN: Penanggung Jawab / Pegawai -->
-                        <div class="flex flex-col items-center justify-between h-52">
-                            <!-- Sub-Header Kanan -->
+                        <div class="flex flex-col items-center justify-between h-44">
                             <div>
                                 <p class="leading-tight"><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">31 Agustus 2026</span></p>
                                 <p class="leading-tight">Penanggung Jawab</p>
                             </div>
                             
-                            <!-- Area Kosong / Gambar TTD Pegawai (Tinggi dikunci h-24) -->
-                            <div class="h-24 w-full flex items-center justify-center my-auto relative">
-                                <img id="imgTTDUser" class="max-h-20 object-contain hidden" alt="TTD Pegawai">
+                            <!-- Area TTD Dikecilkan Pas dengan Nama (max-h-12) -->
+                            <div class="h-14 w-full flex items-center justify-center my-auto">
+                                <img id="imgTTDUser" class="max-h-12 object-contain hidden" alt="TTD Pegawai">
                             </div>
                             
-                            <!-- Footer Nama & NIP Pegawai Kanan -->
                             <div>
-                                <p class="underline font-bold text-sm tracking-wide" id="lblNamaTtd">Sriyani</p>
-                                <p class="text-xs text-slate-900 mt-0.5">NIP . <span id="lblNipTtd">197506102007012033</span></p>
+                                <p class="underline font-bold text-[12pt] tracking-wide" id="lblNamaTtd">Sriyani</p>
+                                <p class="text-[11pt] text-slate-900 mt-0.5">NIP . <span id="lblNipTtd">197506102007012033</span></p>
                             </div>
                         </div>
 
@@ -311,7 +309,6 @@
                 const img = document.getElementById('imgTTDPimpinan');
                 img.src = localStorage.getItem('lkh_ttdPimpinanImg');
                 img.classList.remove('hidden');
-                document.getElementById('headerPejabatText').classList.add('invisible');
             }
             if(localStorage.getItem('lkh_ttdUserImg')) {
                 const img = document.getElementById('imgTTDUser');
@@ -348,14 +345,14 @@
             document.getElementById('lblNamaPejabat').innerText = namaPejabat;
             document.getElementById('lblNipPejabat').innerText = nipPejabat;
 
-            // Hitung Tanggal Akhir Bulan 2026
+            // Tanggal Akhir Bulan Tahun 2026
             let tglAkhir = "31";
             if(["APRIL", "JUNI", "SEPTEMBER", "NOVEMBER"].includes(bulanUpper)) tglAkhir = "30";
             if(bulanUpper === "FEBRUARI") tglAkhir = "28";
 
             document.getElementById('lblTglCetak').innerText = `${tglAkhir} ${bulanCapital} 2026`;
 
-            // Simpan ke LocalStorage
+            // Simpan Data
             localStorage.setItem('lkh_nama', rawNama);
             localStorage.setItem('lkh_nip', nip);
             localStorage.setItem('lkh_bulan', bulanUpper);
@@ -385,7 +382,7 @@
 
                 let colKeterangan = '';
                 if (index === 0) {
-                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-sm align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
+                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-[12pt] align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
                 }
 
                 tr.innerHTML = `
@@ -446,17 +443,12 @@
             alert(`Kalkulasi Selesai! Total Akumulasi: ${totalRM.toLocaleString('id-ID')} RM`);
         }
 
-        function previewImg(event, elementId, hideElementId, storageKey) {
+        function previewImg(event, elementId, storageKey) {
             const reader = new FileReader();
             reader.onload = function() {
                 const output = document.getElementById(elementId);
                 output.src = reader.result;
                 output.classList.remove('hidden');
-
-                if(hideElementId) {
-                    document.getElementById(hideElementId).classList.add('invisible');
-                }
-
                 localStorage.setItem(`lkh_${storageKey}`, reader.result);
             };
             if(event.target.files[0]) {
@@ -470,7 +462,6 @@
                 listData = [];
                 totalRM = 0;
                 document.getElementById('imgTTDPimpinan').classList.add('hidden');
-                document.getElementById('headerPejabatText').classList.remove('invisible');
                 document.getElementById('imgTTDUser').classList.add('hidden');
                 renderTabel();
                 simpanHeaderData();
