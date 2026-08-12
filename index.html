@@ -12,25 +12,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* Font Times New Roman Utama untuk Seluruh Dokumen Cetak */
+        /* Font Times New Roman Utama - Ukuran Ringkas (11pt Base) */
         .doc-font {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 12pt;
-            line-height: 1.3;
+            font-size: 11pt;
+            line-height: 1.2;
         }
 
-        /* Mengunci Dokumen Pas Ukuran A4 */
+        /* Container Cetak A4 Presisi */
         .a4-container {
             width: 210mm;
             box-sizing: border-box;
             background: #ffffff;
             margin: 0 auto;
-            padding: 12mm 15mm;
+            padding: 8mm 12mm; /* Margin dalam lebih ringkas */
         }
 
-        /* Border Tabel Tegas & Rapi Sesuai Standar Cetak Manual */
+        /* Border Tabel Tegas & Compact */
         .table-border, .table-border th, .table-border td {
-            border: 1.5px solid #000000 !important;
+            border: 1.2px solid #000000 !important;
             border-collapse: collapse;
         }
 
@@ -52,7 +52,7 @@
                 box-shadow: none !important;
                 border: none !important;
                 width: 100% !important;
-                padding: 10mm 15mm !important;
+                padding: 8mm 12mm !important;
             }
         }
     </style>
@@ -64,10 +64,10 @@
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <i data-lucide="file-text" class="w-6 h-6"></i>
-                <h1 class="text-xl font-bold">E-LKH Puskesmas 2026</h1>
+                <h1 class="text-xl font-bold">E-LKH Puskesmas 2026 (Format Compact)</h1>
             </div>
             <span class="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Times New Roman 12pt Presisi
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Optimal 1 Halaman A4
             </span>
         </div>
     </header>
@@ -85,7 +85,7 @@
                 </button>
             </div>
 
-            <!-- Data Pegawai (Kanan) -->
+            <!-- Data Pegawai -->
             <div class="space-y-3">
                 <h3 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Data Penanggung Jawab (Kanan)</h3>
                 <div>
@@ -123,7 +123,7 @@
 
             <hr class="my-3">
 
-            <!-- Data Pejabat Penilai (Kiri) -->
+            <!-- Data Pejabat Penilai -->
             <div class="space-y-3">
                 <h3 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Data Pejabat Penilai (Kiri)</h3>
                 <div>
@@ -138,7 +138,7 @@
 
             <hr class="my-3">
 
-            <!-- Input Baris Kegiatan Harian -->
+            <!-- Input Baris Kegiatan -->
             <h3 class="text-sm font-bold text-slate-700">Tambah Baris Kegiatan</h3>
             <div class="space-y-3 bg-slate-50 p-3 rounded-lg border">
                 <div class="grid grid-cols-2 gap-2">
@@ -197,34 +197,34 @@
         <div class="lg:col-span-7 flex justify-center items-start">
             <div id="dokumenCetak" class="a4-container doc-font shadow-xl border border-slate-300 text-black uppercase">
                 
-                <!-- 1. JUDUL HEADER (Agak Besar Dikit dari 12pt) -->
-                <div class="text-center font-bold space-y-0.5 mb-6 text-[14pt]">
+                <!-- 1. JUDUL HEADER (Proporsional - 13pt) -->
+                <div class="text-center font-bold space-y-0.5 mb-4 text-[13pt]">
                     <p class="font-extrabold tracking-wide">LEMBAR KERJA HARIAN</p>
                     <p class="font-extrabold tracking-wide">PUSKESMAS LOA IPUH</p>
                     <p class="font-extrabold tracking-wide">RUANG PENDAFTARAN TAHUN 2026</p>
                 </div>
 
-                <!-- 2. DATA DIRI (Rata 12pt) -->
-                <div class="mb-5 font-bold space-y-1 text-[12pt]">
-                    <div class="flex"><span class="w-28">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
-                    <div class="flex"><span class="w-28">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
-                    <div class="flex"><span class="w-28">BULAN</span><span>: <span id="lblBulan">AGUSTUS</span></span></div>
+                <!-- 2. DATA DIRI (Compact 11pt) -->
+                <div class="mb-3 font-bold space-y-0.5 text-[11pt]">
+                    <div class="flex"><span class="w-24">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
+                    <div class="flex"><span class="w-24">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
+                    <div class="flex"><span class="w-24">BULAN</span><span>: <span id="lblBulan">AGUSTUS</span></span></div>
                 </div>
 
-                <!-- 3. TABEL UTAMA (Font 11pt - 12pt Rapi) -->
-                <div class="w-full mb-8">
-                    <table class="w-full table-border text-center text-[11pt]">
+                <!-- 3. TABEL UTAMA (Hemat Spasi - 10pt/10.5pt) -->
+                <div class="w-full mb-5">
+                    <table class="w-full table-border text-center text-[10pt]">
                         <thead>
                             <tr class="font-bold">
-                                <th class="p-2 w-16 align-middle" rowspan="2">HARI</th>
-                                <th class="p-2 w-16 align-middle" rowspan="2">TANGGAL</th>
-                                <th class="p-2 tracking-wider" colspan="3">KEGIATAN</th>
-                                <th class="p-2 w-28 align-middle" rowspan="2">KETERANGAN</th>
+                                <th class="p-1 w-14 align-middle" rowspan="2">HARI</th>
+                                <th class="p-1 w-14 align-middle" rowspan="2">TANGGAL</th>
+                                <th class="p-1 tracking-wider" colspan="3">KEGIATAN</th>
+                                <th class="p-1 w-24 align-middle" rowspan="2">KETERANGAN</th>
                             </tr>
-                            <tr class="font-bold text-[10pt]">
-                                <th class="p-2 w-1/3 align-middle">MENGAMBIL RM PASIEN RAK / BOK</th>
-                                <th class="p-2 w-1/3 align-middle">CARI DATA PASIEN DI SIMPUS</th>
-                                <th class="p-2 w-1/3 align-middle">SUSUN RM PASIEN RAK / BOK</th>
+                            <tr class="font-bold text-[9.5pt]">
+                                <th class="p-1 w-1/3 align-middle">MENGAMBIL RM PASIEN RAK / BOK</th>
+                                <th class="p-1 w-1/3 align-middle">CARI DATA PASIEN DI SIMPUS</th>
+                                <th class="p-1 w-1/3 align-middle">SUSUN RM PASIEN RAK / BOK</th>
                             </tr>
                         </thead>
                         <tbody id="bodyTabel">
@@ -233,43 +233,43 @@
                     </table>
                 </div>
 
-                <!-- 4. BLOK TANDA TANGAN (PRESISI, SEJAJAR & FONT 12PT) -->
-                <div class="w-full pt-2 normal-case text-[12pt]">
+                <!-- 4. BLOK TANDA TANGAN (COMPACT & PAS) -->
+                <div class="w-full pt-1 normal-case text-[11pt]">
                     <div class="grid grid-cols-2 text-center">
                         
                         <!-- KIRI: Pejabat Penilai Kinerja -->
-                        <div class="flex flex-col items-center justify-between h-44">
+                        <div class="flex flex-col items-center justify-between h-36">
                             <div>
                                 <p class="leading-tight">Mengetahui</p>
                                 <p class="leading-tight">Pejabat Penilai Kinerja</p>
                             </div>
                             
-                            <!-- Area TTD Dikecilkan Pas dengan Nama (max-h-12) -->
-                            <div class="h-14 w-full flex items-center justify-center my-auto">
-                                <img id="imgTTDPimpinan" class="max-h-12 object-contain hidden" alt="TTD Pejabat">
+                            <!-- Area TTD Ringkas (max-h-10) -->
+                            <div class="h-10 w-full flex items-center justify-center my-auto">
+                                <img id="imgTTDPimpinan" class="max-h-10 object-contain hidden" alt="TTD Pejabat">
                             </div>
 
                             <div>
-                                <p class="underline font-bold text-[12pt] tracking-wide" id="lblNamaPejabat">Joi Devi , SKM</p>
-                                <p class="text-[11pt] text-slate-900 mt-0.5">NIP . <span id="lblNipPejabat">19730803 1998032009</span></p>
+                                <p class="underline font-bold text-[11pt] tracking-wide" id="lblNamaPejabat">Joi Devi , SKM</p>
+                                <p class="text-[10pt] text-slate-900 mt-0.5">NIP . <span id="lblNipPejabat">19730803 1998032009</span></p>
                             </div>
                         </div>
 
                         <!-- KANAN: Penanggung Jawab / Pegawai -->
-                        <div class="flex flex-col items-center justify-between h-44">
+                        <div class="flex flex-col items-center justify-between h-36">
                             <div>
                                 <p class="leading-tight"><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">31 Agustus 2026</span></p>
                                 <p class="leading-tight">Penanggung Jawab</p>
                             </div>
                             
-                            <!-- Area TTD Dikecilkan Pas dengan Nama (max-h-12) -->
-                            <div class="h-14 w-full flex items-center justify-center my-auto">
-                                <img id="imgTTDUser" class="max-h-12 object-contain hidden" alt="TTD Pegawai">
+                            <!-- Area TTD Ringkas (max-h-10) -->
+                            <div class="h-10 w-full flex items-center justify-center my-auto">
+                                <img id="imgTTDUser" class="max-h-10 object-contain hidden" alt="TTD Pegawai">
                             </div>
                             
                             <div>
-                                <p class="underline font-bold text-[12pt] tracking-wide" id="lblNamaTtd">Sriyani</p>
-                                <p class="text-[11pt] text-slate-900 mt-0.5">NIP . <span id="lblNipTtd">197506102007012033</span></p>
+                                <p class="underline font-bold text-[11pt] tracking-wide" id="lblNamaTtd">Sriyani</p>
+                                <p class="text-[10pt] text-slate-900 mt-0.5">NIP . <span id="lblNipTtd">197506102007012033</span></p>
                             </div>
                         </div>
 
@@ -320,7 +320,6 @@
         }
 
         function simpanHeaderData() {
-            // Data Pegawai (Kanan)
             const rawNama = document.getElementById('inputNama').value;
             const namaUpper = rawNama.toUpperCase();
             const namaCapital = capitalizeWords(rawNama);
@@ -338,21 +337,18 @@
             document.getElementById('lblNamaTtd').innerText = namaCapital;
             document.getElementById('lblNipTtd').innerText = nip;
 
-            // Data Pejabat Penilai (Kiri)
             const namaPejabat = document.getElementById('inputNamaPejabat').value;
             const nipPejabat = document.getElementById('inputNIPPejabat').value;
 
             document.getElementById('lblNamaPejabat').innerText = namaPejabat;
             document.getElementById('lblNipPejabat').innerText = nipPejabat;
 
-            // Tanggal Akhir Bulan Tahun 2026
             let tglAkhir = "31";
             if(["APRIL", "JUNI", "SEPTEMBER", "NOVEMBER"].includes(bulanUpper)) tglAkhir = "30";
             if(bulanUpper === "FEBRUARI") tglAkhir = "28";
 
             document.getElementById('lblTglCetak').innerText = `${tglAkhir} ${bulanCapital} 2026`;
 
-            // Simpan Data
             localStorage.setItem('lkh_nama', rawNama);
             localStorage.setItem('lkh_nip', nip);
             localStorage.setItem('lkh_bulan', bulanUpper);
@@ -367,9 +363,9 @@
 
             if (listData.length === 0) {
                 const tr = document.createElement('tr');
-                tr.className = "h-10 text-slate-400 italic";
+                tr.className = "h-8 text-slate-400 italic";
                 tr.innerHTML = `
-                    <td colspan="5" class="p-3 text-center">Belum ada data kegiatan. Silakan tambah data.</td>
+                    <td colspan="5" class="p-2 text-center">Belum ada data kegiatan. Silakan tambah data.</td>
                     <td class="font-bold">-</td>
                 `;
                 tbody.appendChild(tr);
@@ -378,19 +374,19 @@
 
             listData.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                tr.className = "h-7";
+                tr.className = "h-6";
 
                 let colKeterangan = '';
                 if (index === 0) {
-                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-[12pt] align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
+                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-[11pt] align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
                 }
 
                 tr.innerHTML = `
-                    <td class="capitalize p-1.5 align-middle">${item.hari}</td>
-                    <td class="p-1.5 align-middle">${item.tgl}</td>
-                    <td class="p-1.5 align-middle">${item.k1 || '-'}</td>
-                    <td class="p-1.5 align-middle">${item.k2 || '-'}</td>
-                    <td class="p-1.5 align-middle">${item.k3 || '-'}</td>
+                    <td class="capitalize p-1 align-middle">${item.hari}</td>
+                    <td class="p-1 align-middle">${item.tgl}</td>
+                    <td class="p-1 align-middle">${item.k1 || '-'}</td>
+                    <td class="p-1 align-middle">${item.k2 || '-'}</td>
+                    <td class="p-1 align-middle">${item.k3 || '-'}</td>
                     ${colKeterangan}
                 `;
                 tbody.appendChild(tr);
