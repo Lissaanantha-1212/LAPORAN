@@ -12,25 +12,42 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* Mengatur Ukuran Kertas A4 Standar */
-        .a4-card {
+        /* Pengaturan Ukuran Kertas A4 Presisi */
+        .a4-container {
             width: 210mm;
-            min-height: 297mm;
-            padding: 15mm 20mm;
+            /* Kita gunakan height pas, bukan min-height berlebih */
             box-sizing: border-box;
-            background: white;
-            margin: auto;
+            background: #ffffff;
+            margin: 0 auto;
+            padding: 12mm 15mm;
         }
 
         .table-border, .table-border th, .table-border td {
-            border: 1.5px solid black;
+            border: 1.5px solid #000000;
             border-collapse: collapse;
         }
 
+        /* Trik Khusus Agar Saat Di-Cetak/PDF Tidak Pernah Tambah Halaman Kosong */
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
         @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; padding: 0 !important; margin: 0 !important; }
-            .a4-card { box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; }
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .a4-container {
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                padding: 10mm 15mm !important;
+            }
         }
     </style>
 </head>
@@ -44,14 +61,14 @@
                 <h1 class="text-xl font-bold">E-LKH Puskesmas 2026</h1>
             </div>
             <span class="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Production Ready
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Presisi 1 Halaman A4
             </span>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto mt-6 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- FORM INPUT DATA (KIRI) -->
+        <!-- FORM INPUT DATA (PANEL KIRI) -->
         <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow-md border border-slate-200 no-print space-y-4">
             <div class="flex justify-between items-center border-b pb-2">
                 <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -83,8 +100,8 @@
                             <option value="MEI">MEI</option>
                             <option value="JUNI">JUNI</option>
                             <option value="JULI">JULI</option>
-                            <option value="AGUSTUS">AGUSTUS</option>
-                            <option value="SEPTEMBER" selected>SEPTEMBER</option>
+                            <option value="AGUSTUS" selected>AGUSTUS</option>
+                            <option value="SEPTEMBER">SEPTEMBER</option>
                             <option value="OKTOBER">OKTOBER</option>
                             <option value="NOVEMBER">NOVEMBER</option>
                             <option value="DESEMBER">DESEMBER</option>
@@ -146,7 +163,7 @@
                     <i data-lucide="calculator" class="w-4 h-4"></i> Hitung & Rekap Total
                 </button>
                 <button onclick="downloadPDF()" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
-                    <i data-lucide="download" class="w-4 h-4"></i> Unduh PDF
+                    <i data-lucide="download" class="w-4 h-4"></i> Unduh PDF (1 Hal)
                 </button>
                 <button onclick="downloadWord()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
                     <i data-lucide="file-type-2" class="w-4 h-4"></i> Export Word
@@ -154,72 +171,72 @@
             </div>
         </div>
 
-        <!-- PRATINJAU DOKUMEN (KANAN) -->
+        <!-- PRATINJAU DOKUMEN (PANEL KANAN) -->
         <div class="lg:col-span-7 flex justify-center items-start">
-            <div id="dokumenCetak" class="a4-card print-area shadow-xl border border-slate-300 text-black font-sans uppercase leading-tight">
+            <div id="dokumenCetak" class="a4-container shadow-xl border border-slate-300 text-black font-sans uppercase leading-tight">
                 
                 <!-- 1. JUDUL HEADER -->
-                <div class="text-center font-bold space-y-1 mb-6 text-sm">
+                <div class="text-center font-bold space-y-1 mb-5 text-sm">
                     <p class="text-base font-extrabold tracking-wide">LEMBAR KERJA HARIAN</p>
                     <p class="text-base font-extrabold tracking-wide">PUSKESMAS LOA IPUH</p>
                     <p class="text-base font-extrabold tracking-wide">RUANG PENDAFTARAN TAHUN 2026</p>
                 </div>
 
                 <!-- 2. DATA DIRI -->
-                <div class="mb-4 font-bold space-y-1.5 text-xs">
+                <div class="mb-4 font-bold space-y-1 text-xs">
                     <div class="flex"><span class="w-24">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
                     <div class="flex"><span class="w-24">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
-                    <div class="flex"><span class="w-24">BULAN</span><span>: <span id="lblBulan">SEPTEMBER</span></span></div>
+                    <div class="flex"><span class="w-24">BULAN</span><span>: <span id="lblBulan">AGUSTUS</span></span></div>
                 </div>
 
                 <!-- 3. TABEL UTAMA -->
-                <div class="w-full mb-8">
+                <div class="w-full mb-6">
                     <table class="w-full table-border text-center text-[11px]">
                         <thead>
                             <tr class="bg-slate-50 font-bold">
-                                <th class="p-2 w-16" rowspan="2">HARI</th>
-                                <th class="p-2 w-16" rowspan="2">TANGGAL</th>
-                                <th class="p-2" colspan="3">KEGIATAN</th>
-                                <th class="p-2 w-28" rowspan="2">KETERANGAN</th>
+                                <th class="p-1.5 w-14" rowspan="2">HARI</th>
+                                <th class="p-1.5 w-14" rowspan="2">TANGGAL</th>
+                                <th class="p-1.5" colspan="3">KEGIATAN</th>
+                                <th class="p-1.5 w-28" rowspan="2">KETERANGAN</th>
                             </tr>
                             <tr class="bg-slate-50 font-bold text-[10px]">
-                                <th class="p-1.5 w-1/3">MENGAMBIL RM PASIEN RAK / BOK</th>
-                                <th class="p-1.5 w-1/3">CARI DATA PASIEN DI SIMPUS</th>
-                                <th class="p-1.5 w-1/3">SUSUN RM PASIEN RAK / BOK</th>
+                                <th class="p-1 w-1/3">MENGAMBIL RM PASIEN RAK / BOK</th>
+                                <th class="p-1 w-1/3">CARI DATA PASIEN DI SIMPUS</th>
+                                <th class="p-1 w-1/3">SUSUN RM PASIEN RAK / BOK</th>
                             </tr>
                         </thead>
                         <tbody id="bodyTabel">
-                            <!-- Data baris dinamis di-render di sini -->
+                            <!-- Data baris akan muncul di sini secara dinamis -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- 4. BLOK TANDA TANGAN -->
+                <!-- 4. BLOK TANDA TANGAN (Langsung Mengikuti Tabel Kebawah) -->
                 <div class="w-full pt-2">
                     <div class="flex justify-between items-start text-center font-bold text-xs">
                         
                         <!-- KIRI: Pejabat Penilai Kinerja -->
-                        <div class="w-1/2 flex flex-col items-center justify-start min-h-[110px]">
+                        <div class="w-1/2 flex flex-col items-center justify-start min-h-[100px]">
                             <div id="boxPimpinanDefault" class="text-center space-y-0.5">
                                 <p>Mengetahui</p>
-                                <p class="mb-10">Pejabat Penilai Kinerja</p>
+                                <p class="mb-8">Pejabat Penilai Kinerja</p>
                                 <p class="underline font-extrabold">Joi Devi , SKM</p>
                                 <p class="font-normal text-[10px]">NIP . 19730803 1998032009</p>
                             </div>
-                            <img id="imgTTDPimpinan" class="max-h-28 object-contain hidden" alt="Pengesahan Pejabat Penilai">
+                            <img id="imgTTDPimpinan" class="max-h-24 object-contain hidden" alt="Pengesahan Pejabat Penilai">
                         </div>
 
                         <!-- KANAN: Penanggung Jawab / Pegawai -->
-                        <div class="w-1/2 flex flex-col items-center justify-start min-h-[110px]">
-                            <p><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">30 September 2026</span></p>
-                            <p class="mb-2">Penanggung Jawab</p>
+                        <div class="w-1/2 flex flex-col items-center justify-start min-h-[100px]">
+                            <p><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">31 Agustus 2026</span></p>
+                            <p class="mb-1">Penanggung Jawab</p>
                             
-                            <div class="h-12 flex items-center justify-center my-1">
-                                <img id="imgTTDUser" class="max-h-12 object-contain hidden" alt="TTD Pegawai">
+                            <div class="h-10 flex items-center justify-center my-1">
+                                <img id="imgTTDUser" class="max-h-10 object-contain hidden" alt="TTD Pegawai">
                             </div>
                             
-                            <p class="underline font-extrabold" id="lblNamaTtd">SRI YANI</p>
-                            <p class="font-normal text-[10px]">NIP.<span id="lblNipTtd">197506102007012033</span></p>
+                            <p class="underline font-extrabold" id="lblNamaTtd">SRIYANI</p>
+                            <p class="font-normal text-[10px]">NIP. <span id="lblNipTtd">197506102007012033</span></p>
                         </div>
 
                     </div>
@@ -233,8 +250,12 @@
     <script>
         lucide.createIcons();
 
-        let listData = JSON.parse(localStorage.getItem('lkh_listData')) || [];
-        let totalRM = parseInt(localStorage.getItem('lkh_totalRM')) || 0;
+        let listData = JSON.parse(localStorage.getItem('lkh_listData')) || [
+            { hari: 'Senin', tgl: '3', k1: 67, k2: 78, k3: 87 },
+            { hari: 'Selasa', tgl: '4', k1: 35, k2: 25, k3: 98 },
+            { hari: 'Kamis', tgl: '13', k1: 92, k2: 51, k3: 13 }
+        ];
+        let totalRM = parseInt(localStorage.getItem('lkh_totalRM')) || 546;
 
         function loadSavedHeader() {
             if(localStorage.getItem('lkh_nama')) document.getElementById('inputNama').value = localStorage.getItem('lkh_nama');
@@ -290,7 +311,7 @@
                 const tr = document.createElement('tr');
                 tr.className = "h-10 text-slate-400 italic";
                 tr.innerHTML = `
-                    <td colspan="5" class="p-3 text-center">Belum ada data kegiatan. Silakan tambah data di menu sebelah kiri.</td>
+                    <td colspan="5" class="p-3 text-center">Belum ada data kegiatan. Silakan tambah data.</td>
                     <td class="font-bold">-</td>
                 `;
                 tbody.appendChild(tr);
@@ -299,11 +320,11 @@
 
             listData.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                tr.className = "h-7";
+                tr.className = "h-6";
 
                 let colKeterangan = '';
                 if (index === 0) {
-                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-sm align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
+                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-xs align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
                 }
 
                 tr.innerHTML = `
@@ -395,15 +416,18 @@
             }
         }
 
+        // FUNGSI UNDUH PDF DIJAMIN PAS 1 HALAMAN A4
         function downloadPDF() {
             const element = document.getElementById('dokumenCetak');
             
+            // Konfigurasi ketat agar mengunci di 1 halaman
             const opt = {
-                margin:       [10, 10, 10, 10],
+                margin:       0,
                 filename:     `LKH_${document.getElementById('lblNama').innerText}_${document.getElementById('lblBulan').innerText}_2026.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
+                image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: 'avoid-all' }
             };
 
             html2pdf().set(opt).from(element).save();
