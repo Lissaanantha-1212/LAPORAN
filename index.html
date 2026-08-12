@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Lembar Kerja Harian 2026</title>
+    <title>E-LKH Puskesmas Loa Ipuh 2026</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- html2pdf.js untuk cetak PDF presisi -->
+    <!-- html2pdf.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         @media print {
@@ -27,47 +25,56 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-12">
 
-    <!-- NAVBAR / HEADER APP -->
+    <!-- NAVBAR HEADER -->
     <header class="bg-indigo-700 text-white p-4 shadow-lg no-print">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <i data-lucide="file-text" class="w-6 h-6"></i>
                 <h1 class="text-xl font-bold">E-LKH Puskesmas 2026</h1>
             </div>
-            <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full font-medium">Versi Responsive & Cloud</span>
+            <div class="flex items-center gap-2">
+                <span class="text-xs bg-emerald-500 text-white px-2.5 py-1 rounded-full font-medium flex items-center gap-1">
+                    <i data-lucide="check-circle" class="w-3 h-3"></i> Auto-Save On
+                </span>
+            </div>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto mt-6 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- FORM INPUT DATA (KIRI / ATAS DI HP) -->
+        <!-- FORM INPUT DATA (KIRI) -->
         <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow-md border border-slate-200 no-print space-y-4">
-            <h2 class="text-lg font-bold text-slate-700 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i> Form Input Data
-            </h2>
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i> Form Input Data
+                </h2>
+                <button onclick="resetData()" class="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1 font-medium">
+                    <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reset Semua Data
+                </button>
+            </div>
 
             <!-- Informasi Pegawai -->
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Pegawai</label>
-                    <input type="text" id="inputNama" value="SRIYANI" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                    <input type="text" id="inputNama" value="SRIYANI" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">NIP</label>
-                    <input type="text" id="inputNIP" value="197506102007012033" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                    <input type="text" id="inputNIP" value="197506102007012033" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Bulan</label>
-                        <select id="inputBulan" onchange="updateHeader()" class="w-full p-2 border rounded-lg text-sm bg-white">
+                        <select id="inputBulan" onchange="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm bg-white">
                             <option value="JANUARI">JANUARI</option>
                             <option value="FEBRUARI">FEBRUARI</option>
-                            <option value="MARET" selected>MARET</option>
+                            <option value="MARET">MARET</option>
                             <option value="APRIL">APRIL</option>
                             <option value="MEI">MEI</option>
                             <option value="JUNI">JUNI</option>
                             <option value="JULI">JULI</option>
-                            <option value="AGUSTUS">AGUSTUS</option>
+                            <option value="AGUSTUS" selected>AGUSTUS</option>
                             <option value="SEPTEMBER">SEPTEMBER</option>
                             <option value="OKTOBER">OKTOBER</option>
                             <option value="NOVEMBER">NOVEMBER</option>
@@ -76,7 +83,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Lokasi Cetak</label>
-                        <input type="text" id="inputLokasi" value="Tenggarong" class="w-full p-2 border rounded-lg text-sm">
+                        <input type="text" id="inputLokasi" value="Tenggarong" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm">
                     </div>
                 </div>
             </div>
@@ -89,7 +96,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs text-slate-500 mb-1">Pilih Tanggal</label>
-                        <input type="date" id="entryTanggal" value="2026-03-02" class="w-full p-2 border rounded text-sm">
+                        <input type="date" id="entryTanggal" class="w-full p-2 border rounded text-sm">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-500 mb-1">Jenis Kegiatan</label>
@@ -115,16 +122,16 @@
             <h3 class="text-sm font-bold text-slate-700">Pengesahan (TTD & Stempel)</h3>
             <div class="space-y-2 text-xs">
                 <div>
-                    <label class="block text-slate-600 mb-1">TTD Pejabat Penilai (Kiri)</label>
-                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDPimpinan')" class="w-full text-slate-500 text-xs">
+                    <label class="block text-slate-600 mb-1 font-medium">Gambar Utuh Pejabat Penilai (Kiri)</label>
+                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDPimpinan', 'boxPimpinanDefault', 'ttdPimpinanImg')" class="w-full text-slate-500 text-xs">
                 </div>
                 <div>
-                    <label class="block text-slate-600 mb-1">TTD Penanggung Jawab (Kanan)</label>
-                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDUser')" class="w-full text-slate-500 text-xs">
+                    <label class="block text-slate-600 mb-1 font-medium">TTD Pegawai Mentah (Kanan)</label>
+                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDUser', null, 'ttdUserImg')" class="w-full text-slate-500 text-xs">
                 </div>
             </div>
 
-            <!-- Tombol Aksi Akhir -->
+            <!-- Tombol Aksi -->
             <div class="pt-2 grid grid-cols-2 gap-2">
                 <button onclick="kalkulasiTotal()" class="col-span-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 shadow">
                     <i data-lucide="calculator" class="w-4 h-4"></i> Hitung & Rekap Total
@@ -138,12 +145,12 @@
             </div>
         </div>
 
-        <!-- PRATINJAU LEMBAR KERJA HARIAN (KANAN / HASIL DOKUMEN) -->
+        <!-- PRATINJAU DOKUMEN (KANAN) -->
         <div class="lg:col-span-7 flex justify-center">
             <div id="dokumenCetak" class="print-area bg-white p-8 shadow-xl border border-slate-300 w-full max-w-[21cm] min-h-[29.7cm] text-black font-sans text-xs uppercase leading-tight flex flex-col justify-between">
                 
                 <div>
-                    <!-- JUDUL & HEADER DOKUMEN -->
+                    <!-- JUDUL & HEADER -->
                     <div class="text-center font-bold space-y-1 mb-6 text-sm">
                         <p class="text-base">LEMBAR KERJA HARIAN</p>
                         <p class="text-base">PUSKESMAS LOA IPUH</p>
@@ -154,7 +161,7 @@
                     <div class="mb-4 font-bold space-y-1.5 text-xs">
                         <div class="flex"><span class="w-24">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
                         <div class="flex"><span class="w-24">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
-                        <div class="flex"><span class="w-24">BULAN</span><span>: <span id="lblBulan">MARET</span></span></div>
+                        <div class="flex"><span class="w-24">BULAN</span><span>: <span id="lblBulan">AGUSTUS</span></span></div>
                     </div>
 
                     <!-- TABEL UTAMA -->
@@ -173,35 +180,39 @@
                             </tr>
                         </thead>
                         <tbody id="bodyTabel">
-                            <!-- Data baris dinamis akan masuk ke sini via JS -->
+                            <!-- Data baris dinamis akan di-render di sini -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- TANDA TANGAN & PENGESAHAN (BAWAH) -->
+                <!-- TANDA TANGAN & PENGESAHAN -->
                 <div class="mt-8">
-                    <div class="flex justify-between items-start text-center font-bold text-xs">
-                        <!-- Kiri: Pejabat Penilai -->
-                        <div class="w-1/2 flex flex-col items-center">
-                            <p>Mengetahui</p>
-                            <p class="mb-2">Pejabat Penilai Kinerja</p>
-                            <div class="h-16 flex items-center justify-center my-1 relative">
-                                <img id="imgTTDPimpinan" class="max-h-16 object-contain hidden" alt="TTD Pimpinan">
+                    <div class="flex justify-between items-end text-center font-bold text-xs">
+                        
+                        <!-- KIRI: Pejabat Penilai Kinerja (Gambar Utuh atau Text Default) -->
+                        <div class="w-1/2 flex flex-col items-center justify-end min-h-[120px]">
+                            <div id="boxPimpinanDefault" class="text-center space-y-1">
+                                <p>Mengetahui</p>
+                                <p class="mb-10">Pejabat Penilai Kinerja</p>
+                                <p class="underline font-extrabold">Joi Devi , SKM</p>
+                                <p class="font-normal text-[10px]">NIP . 19730803 1998032009</p>
                             </div>
-                            <p class="underline font-extrabold" id="namaPimpinan">Joi Devi , SKM</p>
-                            <p class="font-normal text-[10px]">NIP . 19730803 1998032009</p>
+                            <img id="imgTTDPimpinan" class="max-h-36 object-contain hidden" alt="Pengesahan Pejabat Penilai">
                         </div>
 
-                        <!-- Kanan: Penanggung Jawab -->
-                        <div class="w-1/2 flex flex-col items-center">
-                            <p><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">31 Maret 2026</span></p>
+                        <!-- KANAN: Penanggung Jawab / Pegawai -->
+                        <div class="w-1/2 flex flex-col items-center justify-end min-h-[120px]">
+                            <p><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">31 Agustus 2026</span></p>
                             <p class="mb-2">Penanggung Jawab</p>
+                            
                             <div class="h-16 flex items-center justify-center my-1">
-                                <img id="imgTTDUser" class="max-h-16 object-contain hidden" alt="TTD User">
+                                <img id="imgTTDUser" class="max-h-14 object-contain hidden" alt="TTD Pegawai">
                             </div>
+                            
                             <p class="underline font-extrabold" id="lblNamaTtd">SRI YANI</p>
                             <p class="font-normal text-[10px]">NIP.<span id="lblNipTtd">197506102007012033</span></p>
                         </div>
+
                     </div>
                 </div>
 
@@ -211,49 +222,88 @@
     </main>
 
     <script>
-        // Inisialisasi Ikon
         lucide.createIcons();
 
-        // Array Penyimpanan Data Harian
-        let listData = [
-            { hari: 'Senin', tgl: '2', k1: 98, k2: 10, k3: 41 },
-            { hari: 'Selasa', tgl: '3', k1: 79, k2: 14, k3: 34 },
-            { hari: 'Rabu', tgl: '4', k1: 85, k2: '-', k3: 13 },
-            { hari: 'Kamis', tgl: '5', k1: 84, k2: 2, k3: 28 },
-            { hari: 'Jumat', tgl: '6', k1: 73, k2: 3, k3: 17 }
-        ];
+        // Inisialisasi Data dari LocalStorage (jika ada)
+        let listData = JSON.parse(localStorage.getItem('lkh_listData')) || [];
+        let totalRM = parseInt(localStorage.getItem('lkh_totalRM')) || 0;
 
-        let totalRM = 0;
+        // Muat Data Header Terapan
+        function loadSavedHeader() {
+            if(localStorage.getItem('lkh_nama')) document.getElementById('inputNama').value = localStorage.getItem('lkh_nama');
+            if(localStorage.getItem('lkh_nip')) document.getElementById('inputNIP').value = localStorage.getItem('lkh_nip');
+            if(localStorage.getItem('lkh_bulan')) document.getElementById('inputBulan').value = localStorage.getItem('lkh_bulan');
+            if(localStorage.getItem('lkh_lokasi')) document.getElementById('inputLokasi').value = localStorage.getItem('lkh_lokasi');
 
-        // Sync Form Input ke Tampilan Dokumen
-        document.getElementById('inputNama').addEventListener('input', (e) => {
-            document.getElementById('lblNama').innerText = e.target.value.toUpperCase();
-            document.getElementById('lblNamaTtd').innerText = e.target.value.toUpperCase();
-        });
-        document.getElementById('inputNIP').addEventListener('input', (e) => {
-            document.getElementById('lblNIP').innerText = e.target.value;
-            document.getElementById('lblNipTtd').innerText = e.target.value;
-        });
+            // Restore Gambar TTD jika tersimpan
+            if(localStorage.getItem('lkh_ttdPimpinanImg')) {
+                const img = document.getElementById('imgTTDPimpinan');
+                img.src = localStorage.getItem('lkh_ttdPimpinanImg');
+                img.classList.remove('hidden');
+                document.getElementById('boxPimpinanDefault').classList.add('hidden');
+            }
+            if(localStorage.getItem('lkh_ttdUserImg')) {
+                const img = document.getElementById('imgTTDUser');
+                img.src = localStorage.getItem('lkh_ttdUserImg');
+                img.classList.remove('hidden');
+            }
 
-        function updateHeader() {
-            const bulan = document.getElementById('inputBulan').value;
-            document.getElementById('lblBulan').innerText = bulan;
-            document.getElementById('lblTglCetak').innerText = `31 ${bulan.charAt(0) + bulan.slice(1).toLowerCase()} 2026`;
+            simpanHeaderData();
         }
 
-        // Render Tabel
+        // Simpan Data Header & Update Tampilan Realtime
+        function simpanHeaderData() {
+            const nama = document.getElementById('inputNama').value.toUpperCase();
+            const nip = document.getElementById('inputNIP').value;
+            const bulan = document.getElementById('inputBulan').value;
+            const lokasi = document.getElementById('inputLokasi').value;
+
+            document.getElementById('lblNama').innerText = nama;
+            document.getElementById('lblNamaTtd').innerText = nama;
+            document.getElementById('lblNIP').innerText = nip;
+            document.getElementById('lblNipTtd').innerText = nip;
+            document.getElementById('lblBulan').innerText = bulan;
+            document.getElementById('lblLokasi').innerText = lokasi;
+
+            // Penentuan tanggal akhir bulan 2026 secara otomatis
+            let tglAkhir = "31";
+            if(["APRIL", "JUNI", "SEPTEMBER", "NOVEMBER"].includes(bulan)) tglAkhir = "30";
+            if(bulan === "FEBRUARI") tglAkhir = "28";
+
+            document.getElementById('lblTglCetak').innerText = `${tglAkhir} ${bulan.charAt(0) + bulan.slice(1).toLowerCase()} 2026`;
+
+            // Auto-Save ke Browser
+            localStorage.setItem('lkh_nama', nama);
+            localStorage.setItem('lkh_nip', nip);
+            localStorage.setItem('lkh_bulan', bulan);
+            localStorage.setItem('lkh_lokasi', lokasi);
+        }
+
+        // Render Tabel Utama (Termasuk logika Kosong Saat Awal)
         function renderTabel() {
             const tbody = document.getElementById('bodyTabel');
             tbody.innerHTML = '';
 
+            // JIKA BELUM ADA DATA SAMA SEKALI -> Kosongkan Tabel / Tampilkan Baris Kosong Elegan
+            if (listData.length === 0) {
+                const tr = document.createElement('tr');
+                tr.className = "h-12 text-slate-400 italic";
+                tr.innerHTML = `
+                    <td colspan="5" class="p-4 text-center">Belum ada data kegiatan yang diinput. Gunakan form di sebelah kiri untuk menambah data.</td>
+                    <td class="font-bold">-</td>
+                `;
+                tbody.appendChild(tr);
+                return;
+            }
+
+            // JIKA ADA DATA
             listData.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                tr.className = "h-6";
+                tr.className = "h-7";
 
-                // Jika baris pertama, tambahkan rowspan untuk Keterangan
                 let colKeterangan = '';
                 if (index === 0) {
-                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length || 1}" class="font-bold text-sm align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
+                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-sm align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
                 }
 
                 tr.innerHTML = `
@@ -266,21 +316,25 @@
                 `;
                 tbody.appendChild(tr);
             });
+
+            // Auto-Save List Kegiatan & Total
+            localStorage.setItem('lkh_listData', JSON.stringify(listData));
+            localStorage.setItem('lkh_totalRM', totalRM);
         }
 
         // Tambah Baris Baru
         function tambahBaris() {
             const dateVal = document.getElementById('entryTanggal').value;
             const jenis = document.getElementById('entryKegiatan').value;
-            const jumlah = parseInt(document.getElementById('entryJumlah').value) || '-';
+            const jumlahInput = document.getElementById('entryJumlah').value;
+            const jumlah = jumlahInput !== '' ? parseInt(jumlahInput) : '-';
 
-            if(!dateVal) return alert('Pilih tanggal terlebih dahulu!');
+            if(!dateVal) return alert('Silakan pilih tanggal terlebih dahulu!');
 
             const d = new Date(dateVal);
             const namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][d.getDay()];
             const tgl = d.getDate().toString();
 
-            // Cari apakah tanggal sudah ada
             let ada = listData.find(x => x.tgl === tgl);
             if(ada) {
                 if(jenis === '1') ada.k1 = jumlah;
@@ -296,13 +350,13 @@
                 });
             }
 
-            // Urutkan berdasarkan tanggal
+            // Urutkan otomatis berdasarkan tanggal (1 - 31)
             listData.sort((a, b) => parseInt(a.tgl) - parseInt(b.tgl));
             renderTabel();
             document.getElementById('entryJumlah').value = '';
         }
 
-        // Kalkulasi Total
+        // Kalkulasi Total Akumulasi
         function kalkulasiTotal() {
             totalRM = 0;
             listData.forEach(item => {
@@ -314,15 +368,38 @@
             alert(`Kalkulasi Selesai! Total Akumulasi: ${totalRM.toLocaleString('id-ID')} RM`);
         }
 
-        // Preview Image TTD
-        function previewImg(event, elementId) {
+        // Function Preview & Save Image TTD
+        function previewImg(event, elementId, hideElementId, storageKey) {
             const reader = new FileReader();
             reader.onload = function() {
                 const output = document.getElementById(elementId);
                 output.src = reader.result;
                 output.classList.remove('hidden');
+
+                if(hideElementId) {
+                    document.getElementById(hideElementId).classList.add('hidden');
+                }
+
+                // Simpan gambar (Base64) ke LocalStorage
+                localStorage.setItem(`lkh_${storageKey}`, reader.result);
             };
-            reader.readAsDataURL(event.target.files[0]);
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        // Reset Semua Data (Untuk memulai bulan baru)
+        function resetData() {
+            if(confirm("Apakah Anda yakin ingin menghapus semua data inputan dan memulai dari awal?")) {
+                localStorage.clear();
+                listData = [];
+                totalRM = 0;
+                document.getElementById('imgTTDPimpinan').classList.add('hidden');
+                document.getElementById('boxPimpinanDefault').classList.remove('hidden');
+                document.getElementById('imgTTDUser').classList.add('hidden');
+                renderTabel();
+                simpanHeaderData();
+            }
         }
 
         // Download PDF Direct
@@ -330,7 +407,7 @@
             const element = document.getElementById('dokumenCetak');
             const opt = {
                 margin:       0.3,
-                filename:     `LKH_${document.getElementById('lblNama').innerText}_2026.pdf`,
+                filename:     `LKH_${document.getElementById('lblNama').innerText}_${document.getElementById('lblBulan').innerText}_2026.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
@@ -338,7 +415,7 @@
             html2pdf().set(opt).from(element).save();
         }
 
-        // Export Dummy Word (.docx)
+        // Export Word (.doc)
         function downloadWord() {
             const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export Word</title></head><body>";
             const footer = "</body></html>";
@@ -348,13 +425,13 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `LKH_${document.getElementById('lblNama').innerText}_2026.doc`;
+            a.download = `LKH_${document.getElementById('lblNama').innerText}_${document.getElementById('lblBulan').innerText}_2026.doc`;
             a.click();
         }
 
-        // Render awal
+        // Inisialisasi awal saat halaman dibuka
+        loadSavedHeader();
         renderTabel();
-        updateHeader();
     </script>
 </body>
 </html>
