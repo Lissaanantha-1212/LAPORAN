@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Lembar Kerja Harian 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2pdf.js untuk cetak PDF presisi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            .print-area { padding: 0 !important; margin: 0 !important; shadow: none !important; }
+            body { background: white !important; }
+        }
+        .table-border, .table-border th, .table-border td {
+            border: 1.5px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-12">
+
+    <!-- NAVBAR / HEADER APP -->
+    <header class="bg-indigo-700 text-white p-4 shadow-lg no-print">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i data-lucide="file-text" class="w-6 h-6"></i>
+                <h1 class="text-xl font-bold">E-LKH Puskesmas 2026</h1>
+            </div>
+            <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full font-medium">Versi Responsive & Cloud</span>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto mt-6 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- FORM INPUT DATA (KIRI / ATAS DI HP) -->
+        <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow-md border border-slate-200 no-print space-y-4">
+            <h2 class="text-lg font-bold text-slate-700 border-b pb-2 flex items-center gap-2">
+                <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i> Form Input Data
+            </h2>
+
+            <!-- Informasi Pegawai -->
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Pegawai</label>
+                    <input type="text" id="inputNama" value="SRIYANI" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">NIP</label>
+                    <input type="text" id="inputNIP" value="197506102007012033" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Bulan</label>
+                        <select id="inputBulan" onchange="updateHeader()" class="w-full p-2 border rounded-lg text-sm bg-white">
+                            <option value="JANUARI">JANUARI</option>
+                            <option value="FEBRUARI">FEBRUARI</option>
+                            <option value="MARET" selected>MARET</option>
+                            <option value="APRIL">APRIL</option>
+                            <option value="MEI">MEI</option>
+                            <option value="JUNI">JUNI</option>
+                            <option value="JULI">JULI</option>
+                            <option value="AGUSTUS">AGUSTUS</option>
+                            <option value="SEPTEMBER">SEPTEMBER</option>
+                            <option value="OKTOBER">OKTOBER</option>
+                            <option value="NOVEMBER">NOVEMBER</option>
+                            <option value="DESEMBER">DESEMBER</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Lokasi Cetak</label>
+                        <input type="text" id="inputLokasi" value="Tenggarong" class="w-full p-2 border rounded-lg text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Input Baris Kegiatan Harian -->
+            <h3 class="text-sm font-bold text-slate-700">Tambah Baris Kegiatan</h3>
+            <div class="space-y-3 bg-slate-50 p-3 rounded-lg border">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-1">Pilih Tanggal</label>
+                        <input type="date" id="entryTanggal" value="2026-03-02" class="w-full p-2 border rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-1">Jenis Kegiatan</label>
+                        <select id="entryKegiatan" class="w-full p-2 border rounded text-sm bg-white">
+                            <option value="1">1. MENGAMBIL RM PASIEN</option>
+                            <option value="2">2. CARI DATA DI SIMPUS</option>
+                            <option value="3">3. SUSUN RM PASIEN</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Jumlah Pasien/Berkas</label>
+                    <input type="number" id="entryJumlah" placeholder="Masukkan angka (misal: 98)" class="w-full p-2 border rounded text-sm">
+                </div>
+                <button onclick="tambahBaris()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambahkan ke Tabel
+                </button>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Upload TTD & Stempel -->
+            <h3 class="text-sm font-bold text-slate-700">Pengesahan (TTD & Stempel)</h3>
+            <div class="space-y-2 text-xs">
+                <div>
+                    <label class="block text-slate-600 mb-1">TTD Pejabat Penilai (Kiri)</label>
+                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDPimpinan')" class="w-full text-slate-500 text-xs">
+                </div>
+                <div>
+                    <label class="block text-slate-600 mb-1">TTD Penanggung Jawab (Kanan)</label>
+                    <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDUser')" class="w-full text-slate-500 text-xs">
+                </div>
+            </div>
+
+            <!-- Tombol Aksi Akhir -->
+            <div class="pt-2 grid grid-cols-2 gap-2">
+                <button onclick="kalkulasiTotal()" class="col-span-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 shadow">
+                    <i data-lucide="calculator" class="w-4 h-4"></i> Hitung & Rekap Total
+                </button>
+                <button onclick="downloadPDF()" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+                    <i data-lucide="download" class="w-4 h-4"></i> Unduh PDF
+                </button>
+                <button onclick="downloadWord()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+                    <i data-lucide="file-type-2" class="w-4 h-4"></i> Export Word
+                </button>
+            </div>
+        </div>
+
+        <!-- PRATINJAU LEMBAR KERJA HARIAN (KANAN / HASIL DOKUMEN) -->
+        <div class="lg:col-span-7 flex justify-center">
+            <div id="dokumenCetak" class="print-area bg-white p-8 shadow-xl border border-slate-300 w-full max-w-[21cm] min-h-[29.7cm] text-black font-sans text-xs uppercase leading-tight flex flex-col justify-between">
+                
+                <div>
+                    <!-- JUDUL & HEADER DOKUMEN -->
+                    <div class="text-center font-bold space-y-1 mb-6 text-sm">
+                        <p class="text-base">LEMBAR KERJA HARIAN</p>
+                        <p class="text-base">PUSKESMAS LOA IPUH</p>
+                        <p class="text-base">RUANG PENDAFTARAN TAHUN 2026</p>
+                    </div>
+
+                    <!-- DATA DIRI -->
+                    <div class="mb-4 font-bold space-y-1.5 text-xs">
+                        <div class="flex"><span class="w-24">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
+                        <div class="flex"><span class="w-24">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
+                        <div class="flex"><span class="w-24">BULAN</span><span>: <span id="lblBulan">MARET</span></span></div>
+                    </div>
+
+                    <!-- TABEL UTAMA -->
+                    <table class="w-full table-border text-center text-[11px]">
+                        <thead>
+                            <tr class="bg-slate-50 font-bold">
+                                <th class="p-2 w-16" rowspan="2">HARI</th>
+                                <th class="p-2 w-16" rowspan="2">TANGGAL</th>
+                                <th class="p-2" colspan="3">KEGIATAN</th>
+                                <th class="p-2 w-28" rowspan="2">KETERANGAN</th>
+                            </tr>
+                            <tr class="bg-slate-50 font-bold text-[10px]">
+                                <th class="p-1 w-1/3">MENGAMBIL RM PASIEN RAK / BOK</th>
+                                <th class="p-1 w-1/3">CARI DATA PASIEN DI SIMPUS</th>
+                                <th class="p-1 w-1/3">SUSUN RM PASIEN RAK / BOK</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyTabel">
+                            <!-- Data baris dinamis akan masuk ke sini via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TANDA TANGAN & PENGESAHAN (BAWAH) -->
+                <div class="mt-8">
+                    <div class="flex justify-between items-start text-center font-bold text-xs">
+                        <!-- Kiri: Pejabat Penilai -->
+                        <div class="w-1/2 flex flex-col items-center">
+                            <p>Mengetahui</p>
+                            <p class="mb-2">Pejabat Penilai Kinerja</p>
+                            <div class="h-16 flex items-center justify-center my-1 relative">
+                                <img id="imgTTDPimpinan" class="max-h-16 object-contain hidden" alt="TTD Pimpinan">
+                            </div>
+                            <p class="underline font-extrabold" id="namaPimpinan">Joi Devi , SKM</p>
+                            <p class="font-normal text-[10px]">NIP . 19730803 1998032009</p>
+                        </div>
+
+                        <!-- Kanan: Penanggung Jawab -->
+                        <div class="w-1/2 flex flex-col items-center">
+                            <p><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">31 Maret 2026</span></p>
+                            <p class="mb-2">Penanggung Jawab</p>
+                            <div class="h-16 flex items-center justify-center my-1">
+                                <img id="imgTTDUser" class="max-h-16 object-contain hidden" alt="TTD User">
+                            </div>
+                            <p class="underline font-extrabold" id="lblNamaTtd">SRI YANI</p>
+                            <p class="font-normal text-[10px]">NIP.<span id="lblNipTtd">197506102007012033</span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Inisialisasi Ikon
+        lucide.createIcons();
+
+        // Array Penyimpanan Data Harian
+        let listData = [
+            { hari: 'Senin', tgl: '2', k1: 98, k2: 10, k3: 41 },
+            { hari: 'Selasa', tgl: '3', k1: 79, k2: 14, k3: 34 },
+            { hari: 'Rabu', tgl: '4', k1: 85, k2: '-', k3: 13 },
+            { hari: 'Kamis', tgl: '5', k1: 84, k2: 2, k3: 28 },
+            { hari: 'Jumat', tgl: '6', k1: 73, k2: 3, k3: 17 }
+        ];
+
+        let totalRM = 0;
+
+        // Sync Form Input ke Tampilan Dokumen
+        document.getElementById('inputNama').addEventListener('input', (e) => {
+            document.getElementById('lblNama').innerText = e.target.value.toUpperCase();
+            document.getElementById('lblNamaTtd').innerText = e.target.value.toUpperCase();
+        });
+        document.getElementById('inputNIP').addEventListener('input', (e) => {
+            document.getElementById('lblNIP').innerText = e.target.value;
+            document.getElementById('lblNipTtd').innerText = e.target.value;
+        });
+
+        function updateHeader() {
+            const bulan = document.getElementById('inputBulan').value;
+            document.getElementById('lblBulan').innerText = bulan;
+            document.getElementById('lblTglCetak').innerText = `31 ${bulan.charAt(0) + bulan.slice(1).toLowerCase()} 2026`;
+        }
+
+        // Render Tabel
+        function renderTabel() {
+            const tbody = document.getElementById('bodyTabel');
+            tbody.innerHTML = '';
+
+            listData.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "h-6";
+
+                // Jika baris pertama, tambahkan rowspan untuk Keterangan
+                let colKeterangan = '';
+                if (index === 0) {
+                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length || 1}" class="font-bold text-sm align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="capitalize">${item.hari}</td>
+                    <td>${item.tgl}</td>
+                    <td>${item.k1 || '-'}</td>
+                    <td>${item.k2 || '-'}</td>
+                    <td>${item.k3 || '-'}</td>
+                    ${colKeterangan}
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Tambah Baris Baru
+        function tambahBaris() {
+            const dateVal = document.getElementById('entryTanggal').value;
+            const jenis = document.getElementById('entryKegiatan').value;
+            const jumlah = parseInt(document.getElementById('entryJumlah').value) || '-';
+
+            if(!dateVal) return alert('Pilih tanggal terlebih dahulu!');
+
+            const d = new Date(dateVal);
+            const namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][d.getDay()];
+            const tgl = d.getDate().toString();
+
+            // Cari apakah tanggal sudah ada
+            let ada = listData.find(x => x.tgl === tgl);
+            if(ada) {
+                if(jenis === '1') ada.k1 = jumlah;
+                if(jenis === '2') ada.k2 = jumlah;
+                if(jenis === '3') ada.k3 = jumlah;
+            } else {
+                listData.push({
+                    hari: namaHari,
+                    tgl: tgl,
+                    k1: jenis === '1' ? jumlah : '-',
+                    k2: jenis === '2' ? jumlah : '-',
+                    k3: jenis === '3' ? jumlah : '-'
+                });
+            }
+
+            // Urutkan berdasarkan tanggal
+            listData.sort((a, b) => parseInt(a.tgl) - parseInt(b.tgl));
+            renderTabel();
+            document.getElementById('entryJumlah').value = '';
+        }
+
+        // Kalkulasi Total
+        function kalkulasiTotal() {
+            totalRM = 0;
+            listData.forEach(item => {
+                if(typeof item.k1 === 'number') totalRM += item.k1;
+                if(typeof item.k2 === 'number') totalRM += item.k2;
+                if(typeof item.k3 === 'number') totalRM += item.k3;
+            });
+            renderTabel();
+            alert(`Kalkulasi Selesai! Total Akumulasi: ${totalRM.toLocaleString('id-ID')} RM`);
+        }
+
+        // Preview Image TTD
+        function previewImg(event, elementId) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById(elementId);
+                output.src = reader.result;
+                output.classList.remove('hidden');
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Download PDF Direct
+        function downloadPDF() {
+            const element = document.getElementById('dokumenCetak');
+            const opt = {
+                margin:       0.3,
+                filename:     `LKH_${document.getElementById('lblNama').innerText}_2026.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Export Dummy Word (.docx)
+        function downloadWord() {
+            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export Word</title></head><body>";
+            const footer = "</body></html>";
+            const html = header + document.getElementById('dokumenCetak').innerHTML + footer;
+
+            const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LKH_${document.getElementById('lblNama').innerText}_2026.doc`;
+            a.click();
+        }
+
+        // Render awal
+        renderTabel();
+        updateHeader();
+    </script>
+</body>
+</html>
