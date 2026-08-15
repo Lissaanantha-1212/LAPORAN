@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lembar Kerja Harian - Puskesmas Loa Ipuh</title>
   
-  <!-- Library Html2Pdf untuk Direct Export PDF -->
+  <!-- Library Html2Pdf -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     * { box-sizing: border-box; }
     body { background-color: #f1f5f9; margin: 15px; color: #1e293b; font-family: 'Segoe UI', Arial, sans-serif; }
     
-    /* Layout Utama Dashboard UI */
+    /* Dashboard Layout */
     .container { display: flex; gap: 20px; align-items: flex-start; flex-direction: row; }
     .form-section { flex: 1; width: 100%; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .preview-container { flex: 1.25; width: 100%; }
@@ -52,40 +52,41 @@
     .btn-arc-dl { background: #10b981; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
     .btn-arc-del { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
-    /* PERBAIKAN TOTAL: KUNCI CANVAS LEBAR A4 PIXEL DENGAN MARGIN INTERNAL AMAN */
+    /* ========================================================
+       PERBAIKAN KUNCI PDF PAS DI TENGAH (SESUAI GAMBAR 2)
+       ======================================================== */
     #pdfArea {
-      width: 794px !important; /* Pas persis dengan resolusi lebar kertas A4 standar */
-      min-height: 1123px;
-      padding: 30px 45px !important; /* Margin dalam yang luas (kiri & kanan terjamin tidak terpotong) */
+      width: 700px !important; /* Dikecilkan sedikit agar margin kanan-kiri longgar */
+      padding: 20px 30px !important;
       background: #ffffff;
-      margin: 0 auto !important;
+      margin: 0 auto !important; /* Memaksa rata tengah */
       box-sizing: border-box !important;
       color: #000;
-      font-family: 'Times New Roman', Times, serif;
+      font-family: Arial, sans-serif;
     }
 
-    .doc-header { text-align: center; font-weight: bold; margin-bottom: 15px; line-height: 1.25; color: #000; }
-    .doc-header div { font-size: 14pt; text-transform: uppercase; }
+    .doc-header { text-align: center; font-weight: bold; margin-bottom: 20px; line-height: 1.3; color: #000; }
+    .doc-header div { font-size: 13pt; text-transform: uppercase; }
     
-    .doc-info { margin-bottom: 12px; font-weight: bold; font-size: 11pt; color: #000; }
+    .doc-info { margin-bottom: 15px; font-weight: bold; font-size: 10pt; color: #000; }
     .doc-info table { border-collapse: collapse; width: auto; margin-left: 0; }
-    .doc-info td { padding: 2px 5px; vertical-align: top; text-align: left; }
+    .doc-info td { padding: 3px 5px; vertical-align: top; text-align: left; }
 
-    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 9pt; color: #000; }
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 8.5pt; color: #000; }
     table.preview-table th, table.preview-table td { 
       border: 1px solid #000; 
       padding: 3px 4px; 
       text-align: center; 
       line-height: 1.2;
     }
-    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 9pt; padding: 6px 2px; }
+    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 8.5pt; padding: 5px 2px; }
 
     .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 0px 3px; font-size: 9px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
 
-    .ttd-container { display: flex; justify-content: space-between; margin-top: 15px; font-size: 10pt; text-align: center; color: #000; line-height: 1.25; page-break-inside: avoid; }
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 20px; font-size: 9.5pt; text-align: center; color: #000; line-height: 1.3; page-break-inside: avoid; }
     .ttd-box { width: 45%; }
-    .ttd-space { height: 40px; display: flex; align-items: center; justify-content: center; margin: 4px 0; }
-    .ttd-img { max-height: 40px; max-width: 120px; object-fit: contain; }
+    .ttd-space { height: 45px; display: flex; align-items: center; justify-content: center; margin: 4px 0; }
+    .ttd-img { max-height: 45px; max-width: 140px; object-fit: contain; }
     .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 2px; }
     .ttd-box p { margin: 2px 0; }
 
@@ -226,7 +227,7 @@
         📌 Menampilkan: <span id="lblBulanAktif" style="color: #60a5fa;">MARET</span>
       </span>
       <button type="button" class="btn-primary" onclick="unduhPDFDirect()">
-        📥 Unduh File PDF (Pas 1 Halaman)
+        📥 Unduh File PDF
       </button>
     </div>
 
@@ -250,16 +251,16 @@
         <table class="preview-table">
           <thead>
             <tr>
-              <th rowspan="2" style="width: 12%;">HARI</th>
+              <th rowspan="2" style="width: 10%;">HARI</th>
               <th rowspan="2" style="width: 10%;">TANGGAL</th>
               <th colspan="3">KEGIATAN</th>
-              <th rowspan="2" style="width: 23%;">KETERANGAN</th>
+              <th rowspan="2" style="width: 20%;">KETERANGAN</th>
               <th rowspan="2" class="no-print" style="width: 4%;"></th>
             </tr>
             <tr>
-              <th style="width: 17%;">MENGAMBIL RM PASIEN RAK / BOK</th>
-              <th style="width: 17%;">CARI DATA PASIEN DI SIMPUS</th>
-              <th style="width: 17%;">SUSUN RM PASIEN RAK / BOK</th>
+              <th style="width: 18%;">MENGAMBIL RM PASIEN RAK / BOK</th>
+              <th style="width: 18%;">CARI DATA PASIEN DI SIMPUS</th>
+              <th style="width: 18%;">SUSUN RM PASIEN RAK / BOK</th>
             </tr>
           </thead>
           <tbody id="tableBody">
@@ -507,15 +508,15 @@
     const totalBaris = listKegiatan.length;
     let dynamicPadding = '3px 4px';
     if (totalBaris <= 20) {
-      dynamicPadding = '6px 4px';
+      dynamicPadding = '5px 4px';
     } else if (totalBaris <= 25) {
-      dynamicPadding = '4.5px 4px';
+      dynamicPadding = '3.5px 4px';
     }
 
     listKegiatan.forEach((item, index) => {
       const tr = document.createElement('tr');
       let rowHtml = `<td style="padding:${dynamicPadding};">${item.hari}</td><td style="padding:${dynamicPadding};">${item.tgl}</td><td style="padding:${dynamicPadding};">${item.k1 > 0 ? item.k1 : '-'}</td><td style="padding:${dynamicPadding};">${item.k2 > 0 ? item.k2 : '-'}</td><td style="padding:${dynamicPadding};">${item.k3 > 0 ? item.k3 : '-'}</td>`;
-      if (index === 0) { rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 10pt;">${totalFormatted}</td>`; }
+      if (index === 0) { rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 9.5pt;">${totalFormatted}</td>`; }
       rowHtml += `<td class="no-print"><button class="btn-del-row" onclick="hapusBaris(${index})">✕</button></td>`;
       tr.innerHTML = rowHtml;
       tbody.appendChild(tr);
@@ -560,7 +561,9 @@
     simpanOtomatis();
   }
 
-  /* EKSPOR PDF PRESISI TANPA GESER/TERPOTONG */
+  /* ========================================================
+     FUNGSI CETAK PDF DENGAN MARGIN INDEPENDEN (PAS DI TENGAH)
+     ======================================================== */
   function unduhPDFDirect() {
     const element = document.getElementById('pdfArea');
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
@@ -569,20 +572,18 @@
     const noPrintElems = element.querySelectorAll('.no-print');
     noPrintElems.forEach(el => el.style.display = 'none');
 
+    // Pengaturan margin [Atas, Kiri, Bawah, Kanan] dalam mm
     const options = {
-      margin:       0, // Zero margin jsPDF karena padding internal 45px sudah diset di #pdfArea
+      margin:       [10, 15, 10, 15], // Margin kiri & kanan 15mm membuat posisi pasti di tengah!
       filename:     `Lembar_Kerja_Harian_${namaUser}_${bulanUser}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { 
         scale: 2, 
         useCORS: true, 
-        logging: false,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: 794 // Kunci lebar window renderer persis ukuran canvas
+        logging: false
       },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+      pagebreak:    { mode: ['avoid-all'] }
     };
 
     html2pdf().set(options).from(element).save().then(() => {
