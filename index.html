@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lembar Kerja Harian - Puskesmas Loa Ipuh</title>
   
-  <!-- Library Html2Pdf untuk Direct Export PDF tanpa dialog Print -->
+  <!-- Library Html2Pdf untuk Direct Export PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -52,43 +52,46 @@
     .btn-arc-dl { background: #10b981; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
     /* =========================================================
-       🔥 FORMAT CETAK A4 (PRESISI DENGAN TIMES NEW ROMAN)
+       🔥 FORMAT CETAK A4 PRESISI (KUNCI PAS 1 HALAMAN)
        ========================================================= */
     #pdfArea {
       width: 210mm;
       height: 297mm;
-      padding: 12mm 15mm 12mm 15mm;
+      max-height: 297mm;
+      padding: 8mm 12mm;
       background: #ffffff;
       margin: 0 auto;
       box-sizing: border-box;
       color: #000;
       font-family: 'Times New Roman', Times, serif;
+      overflow: hidden;
+      page-break-inside: avoid;
     }
 
-    .doc-header { text-align: center; font-weight: bold; margin-bottom: 12px; line-height: 1.25; color: #000; }
+    .doc-header { text-align: center; font-weight: bold; margin-bottom: 8px; line-height: 1.2; color: #000; }
     .doc-header div { font-size: 11pt; text-transform: uppercase; }
     
-    .doc-info { margin-bottom: 8px; font-weight: bold; font-size: 9.5pt; color: #000; }
-    .doc-info table { border-collapse: collapse; }
-    .doc-info td { padding: 1px 3px; }
+    .doc-info { margin-bottom: 6px; font-weight: bold; font-size: 9.5pt; color: #000; }
+    .doc-info table { border-collapse: collapse; width: auto; }
+    .doc-info td { padding: 1px 4px; vertical-align: top; text-align: left; }
 
-    /* Ukuran Tabel Dibuat Padat Agar Sampai Tanggal 31 + TTD Muat Pas 1 Halaman A4 */
-    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 8.5pt; color: #000; }
+    /* Ukuran Tabel Sangat Ringkas Supaya Tanggal 31 + TTD Muat Pas Tanpa Buat Halaman Baru */
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 8pt; color: #000; }
     table.preview-table th, table.preview-table td { 
       border: 1px solid #000; 
-      padding: 1.5px 3px; 
+      padding: 1px 2px; 
       text-align: center; 
-      line-height: 1.1;
+      line-height: 1.05;
     }
-    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 8pt; }
+    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 7.5pt; }
 
-    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 1px 3px; font-size: 8px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
+    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 0px 2px; font-size: 8px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
 
     /* Area Tanda Tangan */
-    .ttd-container { display: flex; justify-content: space-between; margin-top: 15px; font-size: 9pt; text-align: center; color: #000; line-height: 1.15; }
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 10px; font-size: 8.5pt; text-align: center; color: #000; line-height: 1.1; }
     .ttd-box { width: 44%; }
-    .ttd-space { height: 45px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
-    .ttd-img { max-height: 42px; max-width: 120px; object-fit: contain; }
+    .ttd-space { height: 35px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
+    .ttd-img { max-height: 35px; max-width: 110px; object-fit: contain; }
     .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 1px; }
     .ttd-box p { margin: 1px 0; }
 
@@ -224,7 +227,7 @@
         📌 Menampilkan: <span id="lblBulanAktif" style="color: #60a5fa;">MARET</span>
       </span>
       <button type="button" class="btn-primary" onclick="unduhPDFDirect()">
-        📥 Unduh File PDF (Langsung Save)
+        📥 Unduh File PDF (Pas 1 Halaman)
       </button>
     </div>
 
@@ -239,7 +242,7 @@
 
         <div class="doc-info">
           <table>
-            <tr><td>NAMA</td><td>:</td><td id="prevNama">SRIYANI</td></tr>
+            <tr><td style="width: 70px;">NAMA</td><td style="width: 10px;">:</td><td id="prevNama">SRIYANI</td></tr>
             <tr><td>NIP</td><td>:</td><td id="prevNip">197506102007012033</td></tr>
             <tr><td>BULAN</td><td>:</td><td id="prevBulan">MARET</td></tr>
           </table>
@@ -530,14 +533,14 @@
   }
 
   /* =========================================================
-     🔥 FUNGSI DIRECT DOWNLOAD FILE PDF (100% TANPA POPUP PRINT)
+     🔥 FUNGSI DIRECT DOWNLOAD FILE PDF (1 HARI PER 1 HALAMAN)
      ========================================================= */
   function unduhPDFDirect() {
     const element = document.getElementById('pdfArea');
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
     const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
 
-    // Sembunyikan kolom tombol aksi hapus
+    // Sembunyikan kolom tombol aksi hapus saat ekspor
     const noPrintElems = element.querySelectorAll('.no-print');
     noPrintElems.forEach(el => el.style.display = 'none');
 
@@ -554,7 +557,7 @@
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Langsung Download File PDF
+    // Eksekusi Download File PDF
     html2pdf().set(options).from(element).save().then(() => {
       noPrintElems.forEach(el => el.style.display = '');
     });
