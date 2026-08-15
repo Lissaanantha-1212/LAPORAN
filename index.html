@@ -50,10 +50,9 @@
     .archive-table td { padding: 8px; border-top: 1px solid #e2e8f0; }
     .btn-arc-open { background: #3b82f6; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
     .btn-arc-dl { background: #10b981; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
+    .btn-arc-del { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
-    /* =========================================================
-       🔥 FORMAT CETAK A4 PRESISI (KUNCI PAS 1 HALAMAN)
-       ========================================================= */
+    /* FORMAT CETAK A4 PRESISI (1 HALAMAN) */
     #pdfArea {
       width: 210mm;
       height: 297mm;
@@ -75,7 +74,6 @@
     .doc-info table { border-collapse: collapse; width: auto; }
     .doc-info td { padding: 1px 4px; vertical-align: top; text-align: left; }
 
-    /* Ukuran Tabel Sangat Ringkas Supaya Tanggal 31 + TTD Muat Pas Tanpa Buat Halaman Baru */
     table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 8pt; color: #000; }
     table.preview-table th, table.preview-table td { 
       border: 1px solid #000; 
@@ -87,7 +85,6 @@
 
     .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 0px 2px; font-size: 8px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
 
-    /* Area Tanda Tangan */
     .ttd-container { display: flex; justify-content: space-between; margin-top: 10px; font-size: 8.5pt; text-align: center; color: #000; line-height: 1.1; }
     .ttd-box { width: 44%; }
     .ttd-space { height: 35px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
@@ -95,7 +92,6 @@
     .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 1px; }
     .ttd-box p { margin: 1px 0; }
 
-    /* Responsive Mobile UI */
     @media screen and (max-width: 768px) {
       body { margin: 10px; }
       .container { flex-direction: column; gap: 15px; }
@@ -114,7 +110,8 @@
   <div class="form-section">
     <div class="btn-header">
       <h2>✏️ Form Input Data</h2>
-      <button type="button" class="btn-clear" onclick="resetSemuaData()">💥 Kosongkan Form</button>
+      <!-- REVISI: Murni Bersihkan Isian Input Tanpa Menghapus Laporan Tersimpan -->
+      <button type="button" class="btn-clear" onclick="resetFormInputSaja()">🧼 Bersihkan Isian Form</button>
     </div>
 
     <div class="card">
@@ -204,16 +201,22 @@
       </div>
     </div>
 
-    <!-- Input Baris Kegiatan -->
+    <!-- REVISI: Input Baris Kegiatan dengan Datepicker Tanggal Auto Hari -->
     <div class="card">
       <span class="card-title">📅 INPUT KEGIATAN HARIAN</span>
       <div class="form-row">
-        <div class="form-group"><label>Hari</label><input type="text" id="inHari" placeholder="Senin"></div>
-        <div class="form-group"><label>Tanggal</label><input type="text" id="inTgl" placeholder="2"></div>
+        <div class="form-group">
+          <label>Pilih Tanggal</label>
+          <input type="date" id="inDatepicker" onchange="autoSetHari()">
+        </div>
+        <div class="form-group">
+          <label>Hari (Otomatis)</label>
+          <input type="text" id="inHari" placeholder="Otomatis terisi..." readonly style="background: #f1f5f9;">
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>Mengambil RM</label><input type="number" id="inKeg1" placeholder="0"></div>
-        <div class="form-group"><label>Cari Data SIMPUS</label><input type="number" id="inKeg2" placeholder="0"></div>
+        <div class="form-group"><label>Cari SIMPUS</label><input type="number" id="inKeg2" placeholder="0"></div>
         <div class="form-group"><label>Susun RM</label><input type="number" id="inKeg3" placeholder="0"></div>
       </div>
       <button type="button" class="btn-add" onclick="tambahBarisManual()">➕ Tambah ke Tabel</button>
@@ -297,8 +300,8 @@
 <script>
   let listKegiatan = [];
   const daftarBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+  const namaHariIndo = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
-  // Data Bawaan Default untuk contoh pertama (Maret)
   const defaultMaret = [
     { hari: 'Senin', tgl: '2', k1: 98, k2: 10, k3: 41 },
     { hari: 'Selasa', tgl: '3', k1: 79, k2: 14, k3: 34 },
@@ -321,6 +324,15 @@
     { hari: 'Senin', tgl: '30', k1: 0, k2: 0, k3: 0 },
     { hari: 'Selasa', tgl: '31', k1: 98, k2: 6, k3: 42 }
   ];
+
+  // Otomatis Deteksi Nama Hari dari Tanggal Yang Dipilih
+  function autoSetHari() {
+    const val = document.getElementById('inDatepicker').value;
+    if (val) {
+      const d = new Date(val);
+      document.getElementById('inHari').value = namaHariIndo[d.getDay()];
+    }
+  }
 
   function muatDataPenyimpanan() {
     const bulan = document.getElementById('bulanLaporan').value;
@@ -386,7 +398,7 @@
   function simpanLaporanBulanIni() {
     simpanOtomatis();
     const bulan = document.getElementById('bulanLaporan').value;
-    alert(`✅ Laporan Bulan ${bulan} Berhasil Disimpan Ke Arsip!`);
+    alert(`✅ Laporan Bulan ${bulan} Berhasil Disimpan Ke Arsip Permanent!`);
   }
 
   function renderDaftarArsip() {
@@ -411,6 +423,7 @@
             <td style="text-align: center;">
               <button class="btn-arc-open" onclick="bukaLaporanBulan('${b}')">👁️ Buka</button>
               <button class="btn-arc-dl" onclick="unduhPDFBulanLangsung('${b}')">📥 PDF</button>
+              <button class="btn-arc-del" onclick="hapusArsipBulan('${b}')" title="Hapus Permanen">🗑️</button>
             </td>
           `;
           tbody.appendChild(tr);
@@ -434,6 +447,17 @@
     setTimeout(() => { unduhPDFDirect(); }, 300);
   }
 
+  function hapusArsipBulan(b) {
+    if (confirm(`Apakah Anda yakin ingin MENGHAPUS PERMANEN laporan bulan ${b}?`)) {
+      localStorage.removeItem(`pendaftaran_list_${b}`);
+      if (document.getElementById('bulanLaporan').value === b) {
+        listKegiatan = [];
+        renderData();
+      }
+      renderDaftarArsip();
+    }
+  }
+
   function uploadTTD(event, imgElementId, storageKey) {
     const file = event.target.files[0];
     if (file) {
@@ -450,20 +474,23 @@
   }
 
   function tambahBarisManual() {
+    const valDate = document.getElementById('inDatepicker').value;
     const hari = document.getElementById('inHari').value;
-    const tgl = document.getElementById('inTgl').value;
     const k1 = parseInt(document.getElementById('inKeg1').value) || 0;
     const k2 = parseInt(document.getElementById('inKeg2').value) || 0;
     const k3 = parseInt(document.getElementById('inKeg3').value) || 0;
 
-    if (!hari || !tgl) { alert('Hari dan Tanggal wajib diisi!'); return; }
+    if (!valDate) { alert('Silakan pilih tanggal terlebih dahulu!'); return; }
 
-    listKegiatan.push({ hari, tgl, k1, k2, k3 });
+    const tglAngka = new Date(valDate).getDate();
+
+    listKegiatan.push({ hari, tgl: tglAngka.toString(), k1, k2, k3 });
     simpanOtomatis();
     renderData();
 
+    // Reset Form Input
+    document.getElementById('inDatepicker').value = '';
     document.getElementById('inHari').value = '';
-    document.getElementById('inTgl').value = '';
     document.getElementById('inKeg1').value = '';
     document.getElementById('inKeg2').value = '';
     document.getElementById('inKeg3').value = '';
@@ -501,14 +528,14 @@
     renderData();
   }
 
-  function resetSemuaData() {
-    const bulan = document.getElementById('bulanLaporan').value;
-    if (confirm(`Kosongkan data untuk bulan ${bulan}?`)) {
-      listKegiatan = [];
-      localStorage.removeItem(`pendaftaran_list_${bulan}`);
-      renderData();
-      renderDaftarArsip();
-    }
+  // REVISI: Fungsi ini murni hanya membersihkan isian form ketiak tanpa menghapus laporan di Arsip
+  function resetFormInputSaja() {
+    document.getElementById('inDatepicker').value = '';
+    document.getElementById('inHari').value = '';
+    document.getElementById('inKeg1').value = '';
+    document.getElementById('inKeg2').value = '';
+    document.getElementById('inKeg3').value = '';
+    alert("✨ Form isian harian berhasil dibersihkan! Laporan yang tersimpan di arsip tetap aman.");
   }
 
   function updateHeaderPreview() {
@@ -532,15 +559,11 @@
     simpanOtomatis();
   }
 
-  /* =========================================================
-     🔥 FUNGSI DIRECT DOWNLOAD FILE PDF (1 HARI PER 1 HALAMAN)
-     ========================================================= */
   function unduhPDFDirect() {
     const element = document.getElementById('pdfArea');
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
     const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
 
-    // Sembunyikan kolom tombol aksi hapus saat ekspor
     const noPrintElems = element.querySelectorAll('.no-print');
     noPrintElems.forEach(el => el.style.display = 'none');
 
@@ -557,13 +580,11 @@
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Eksekusi Download File PDF
     html2pdf().set(options).from(element).save().then(() => {
       noPrintElems.forEach(el => el.style.display = '');
     });
   }
 
-  // Muat data saat halaman dibuka
   muatDataPenyimpanan();
 </script>
 
