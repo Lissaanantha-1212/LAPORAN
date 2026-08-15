@@ -94,12 +94,12 @@
           <select id="bulanLaporan" onchange="updateHeaderPreview()">
             <option value="JANUARI">JANUARI</option>
             <option value="FEBRUARI">FEBRUARI</option>
-            <option value="MARET">MARET</option>
+            <option value="MARET" selected>MARET</option>
             <option value="APRIL">APRIL</option>
             <option value="MEI">MEI</option>
             <option value="JUNI">JUNI</option>
             <option value="JULI">JULI</option>
-            <option value="AGUSTUS" selected>AGUSTUS</option>
+            <option value="AGUSTUS">AGUSTUS</option>
             <option value="SEPTEMBER">SEPTEMBER</option>
             <option value="OKTOBER">OKTOBER</option>
             <option value="NOVEMBER">NOVEMBER</option>
@@ -180,7 +180,7 @@
         <table>
           <tr><td>NAMA</td><td>:</td><td id="prevNama">SRIYANI</td></tr>
           <tr><td>NIP</td><td>:</td><td id="prevNip">197506102007012033</td></tr>
-          <tr><td>BULAN</td><td>:</td><td id="prevBulan">AGUSTUS</td></tr>
+          <tr><td>BULAN</td><td>:</td><td id="prevBulan">MARET</td></tr>
         </table>
       </div>
 
@@ -213,7 +213,7 @@
         </div>
 
         <div class="ttd-box">
-          <p><span id="prevLokasi">Tenggarong</span>, 31 <span id="prevBulanTtd">AGUSTUS</span> 2026<br>Penanggung Jawab</p>
+          <p><span id="prevLokasi">Tenggarong</span>, 31 <span id="prevBulanTtd">MARET</span> 2026<br>Penanggung Jawab</p>
           <div class="ttd-space"></div>
           <p class="ttd-name" id="prevPegawaiTtd">SRIYANI</p>
           <p>NIP . <span id="prevNipTtd">197506102007012033</span></p>
@@ -243,18 +243,17 @@
     const v1 = parseInt(document.getElementById('keg1').value) || 0;
     const v2 = parseInt(document.getElementById('keg2').value) || 0;
     const v3 = parseInt(document.getElementById('keg3').value) || 0;
-    
-    const totalBerkas = v1 + v2 + v3;
-    const ketOtomatis = totalBerkas > 0 ? `${totalBerkas} Berkas` : '-';
 
     listKegiatan.push({
       id: Date.now(),
       hari: namaHari,
       tanggal: tglAngka,
+      raw1: v1,
+      raw2: v2,
+      raw3: v3,
       keg1: v1 > 0 ? v1 : '-',
       keg2: v2 > 0 ? v2 : '-',
-      keg3: v3 > 0 ? v3 : '-',
-      keterangan: ketOtomatis
+      keg3: v3 > 0 ? v3 : '-'
     });
 
     renderData();
@@ -272,27 +271,52 @@
     manageList.innerHTML = '';
 
     if (listKegiatan.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 15px; color: #94a3b8;">Belum ada data inputan.</td></tr>`;
+      tbody.innerHTML = `
+        <tr>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td style="font-weight: bold; font-size: 13px;">-</td>
+        </tr>`;
       manageList.innerHTML = `<span style="font-size: 12px; color: #94a3b8;">Belum ada baris yang bisa dihapus.</span>`;
       return;
     }
 
+    // Hitung Grand Total Akumulasi dari Seluruh Inputan
+    let grandTotal = 0;
+    listKegiatan.forEach(item => {
+      grandTotal += (item.raw1 + item.raw2 + item.raw3);
+    });
+
+    const totalFormatted = grandTotal > 0 ? `${grandTotal.toLocaleString('id-ID')} RM` : '-';
+
     listKegiatan.forEach((item, index) => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `
+      
+      let rowHtml = `
         <td>${item.hari}</td>
         <td>${item.tanggal}</td>
         <td>${item.keg1}</td>
         <td>${item.keg2}</td>
         <td>${item.keg3}</td>
-        <td>${item.keterangan}</td>
       `;
+
+      // Hanya baris pertama yang memuat TD KETERANGAN dengan rowspan sebanyak total baris
+      if (index === 0) {
+        rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 13px;">${totalFormatted}</td>`;
+      }
+
+      tr.innerHTML = rowHtml;
       tbody.appendChild(tr);
 
+      // Panel Hapus
+      const totalBarisIni = item.raw1 + item.raw2 + item.raw3;
       const manageItem = document.createElement('div');
       manageItem.className = 'manage-item';
       manageItem.innerHTML = `
-        <span><b>Baris ${index + 1}:</b> ${item.hari}, Tgl ${item.tanggal} (${item.keterangan})</span>
+        <span><b>Baris ${index + 1}:</b> ${item.hari}, Tgl ${item.tanggal} (${totalBarisIni} Berkas)</span>
         <button class="btn-delete" onclick="hapusBaris(${index})">❌ Hapus</button>
       `;
       manageList.appendChild(manageItem);
