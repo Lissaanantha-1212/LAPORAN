@@ -71,12 +71,10 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     
-    /* Tombol Hapus Muncul Saat Kursor Mengarah ke Baris */
     table.preview-table tbody tr:hover .row-del-btn {
       display: inline-block;
     }
 
-    /* Penulisan CSS Sesuai Standar (Tidak Bikin Error di VS Code) */
     .html2pdf__page-break .row-del-btn {
       display: none !important;
     }
@@ -87,9 +85,21 @@
       }
     }
 
-    .ttd-container { display: flex; justify-content: space-between; margin-top: 40px; font-size: 12px; text-align: center; color: #000; }
+    /* Ukuran dan Tata Letak Tanda Tangan */
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 30px; font-size: 12px; text-align: center; color: #000; }
     .ttd-box { width: 45%; }
-    .ttd-space { height: 55px; }
+    .ttd-space { 
+      height: 55px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      margin: 5px 0;
+    }
+    .ttd-img { 
+      max-height: 50px; 
+      max-width: 140px; 
+      object-fit: contain; 
+    }
     .ttd-name { font-weight: bold; text-decoration: underline; }
   </style>
 </head>
@@ -116,6 +126,13 @@
         <div class="form-group">
           <label>NIP Pegawai</label>
           <input type="text" id="nipPegawai" value="197506102007012033" oninput="updateHeaderPreview()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>TTD Pegawai (PNG Transparan)</label>
+          <input type="file" id="fileTtdPegawai" accept="image/*" onchange="uploadTTD(event, 'imgTtdPegawai', 'pendaftaran_ttdPegawai')">
         </div>
       </div>
 
@@ -151,6 +168,13 @@
         <div class="form-group">
           <label>NIP Pejabat Penilai</label>
           <input type="text" id="nipPenilai" value="19730803 1998032009" oninput="updateHeaderPreview()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>TTD Penilai (PNG Transparan)</label>
+          <input type="file" id="fileTtdPenilai" accept="image/*" onchange="uploadTTD(event, 'imgTtdPenilai', 'pendaftaran_ttdPenilai')">
         </div>
       </div>
     </div>
@@ -230,14 +254,18 @@
       <div class="ttd-container">
         <div class="ttd-box">
           <p>Mengetahui<br>Pejabat Penilai Kinerja</p>
-          <div class="ttd-space"></div>
+          <div class="ttd-space">
+            <img id="imgTtdPenilai" class="ttd-img" src="" alt="" style="display: none;">
+          </div>
           <p class="ttd-name" id="prevPenilai">Joi Devi , SKM</p>
           <p>NIP . <span id="prevNipPenilai">19730803 1998032009</span></p>
         </div>
 
         <div class="ttd-box">
           <p><span id="prevLokasi">Tenggarong</span>, 31 <span id="prevBulanTtd">MARET</span> 2026<br>Penanggung Jawab</p>
-          <div class="ttd-space"></div>
+          <div class="ttd-space">
+            <img id="imgTtdPegawai" class="ttd-img" src="" alt="" style="display: none;">
+          </div>
           <p class="ttd-name" id="prevPegawaiTtd">SRIYANI</p>
           <p>NIP . <span id="prevNipTtd">197506102007012033</span></p>
         </div>
@@ -267,6 +295,21 @@
       document.getElementById('namaPenilai').value = h.penilai || 'Joi Devi , SKM';
       document.getElementById('nipPenilai').value = h.nipPenilai || '19730803 1998032009';
     }
+
+    // Load Foto TTD Tersimpan
+    const ttdPegawaiSaved = localStorage.getItem('pendaftaran_ttdPegawai');
+    if (ttdPegawaiSaved) {
+      const img = document.getElementById('imgTtdPegawai');
+      img.src = ttdPegawaiSaved;
+      img.style.display = 'block';
+    }
+
+    const ttdPenilaiSaved = localStorage.getItem('pendaftaran_ttdPenilai');
+    if (ttdPenilaiSaved) {
+      const img = document.getElementById('imgTtdPenilai');
+      img.src = ttdPenilaiSaved;
+      img.style.display = 'block';
+    }
   }
 
   // --- MENYIMPAN DATA OTOMATIS KE BROWSER ---
@@ -282,6 +325,24 @@
       nipPenilai: document.getElementById('nipPenilai').value
     };
     localStorage.setItem('pendaftaran_headerData', JSON.stringify(headerData));
+  }
+
+  // --- HANDLER UPLOAD & SAVE TTD ---
+  function uploadTTD(event, imgElementId, storageKey) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Image = e.target.result;
+        const img = document.getElementById(imgElementId);
+        img.src = base64Image;
+        img.style.display = 'block';
+        
+        // Simpan gambar ke LocalStorage
+        localStorage.setItem(storageKey, base64Image);
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   function tambahKeTabel() {
@@ -339,7 +400,6 @@
       return;
     }
 
-    // Hitung Grand Total Akumulasi
     let grandTotal = 0;
     listKegiatan.forEach(item => {
       grandTotal += (item.raw1 + item.raw2 + item.raw3);
@@ -416,7 +476,6 @@
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
     const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
 
-    // Sembunyikan semua tombol hapus sementara sebelum di-PDF-kan
     const delBtns = element.querySelectorAll('.row-del-btn');
     delBtns.forEach(btn => btn.style.display = 'none');
 
@@ -429,12 +488,10 @@
     };
 
     html2pdf().set(options).from(element).save().then(() => {
-      // Munculkan kembali tombol hapus setelah PDF selesai dibuat
       delBtns.forEach(btn => btn.style.display = '');
     });
   }
 
-  // Jalankan pemuatan data otomatis saat web pertama kali dibuka
   muatDataPenyimpanan();
   renderData();
 </script>
