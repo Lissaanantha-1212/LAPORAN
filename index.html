@@ -53,9 +53,9 @@
        LEMBAR A4 DENGAN MARGIN PRESISI KANAN-KIRI LOKAL
        ========================================================= */
     #pdfArea {
-      width: 210mm !important; /* Standar Lebar A4 */
-      min-height: 297mm !important; /* Standar Tinggi A4 */
-      padding: 15mm 18mm !important; /* Margin Atas/Bawah 15mm, Kiri/Kanan 18mm */
+      width: 210mm !important;
+      min-height: 297mm !important;
+      padding: 15mm 18mm !important;
       background: #ffffff;
       margin: 0 auto !important;
       box-sizing: border-box !important;
@@ -89,16 +89,12 @@
     .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 2px; }
     .ttd-box p { margin: 2px 0; }
 
-    /* =========================================================
-       TAMPILAN KHUSUS MODUL HP (SENIOR FRIENDLY)
-       ========================================================= */
+    /* Mode Mobile / HP */
     @media screen and (max-width: 768px) {
       body { padding: 10px; }
       .mobile-tabs { display: flex; }
-      
       .container { flex-direction: column; gap: 15px; }
       
-      /* Mode Tab Toggle di HP */
       .form-section { display: block; }
       .preview-container { display: none; }
       
@@ -110,16 +106,13 @@
       
       .preview-section { padding: 10px 5px; overflow-x: auto; justify-content: flex-start; }
       
-      /* Skala Tampilan PDF di HP agar Pas dan Tidak Perlu Scroll Horizontal */
       #pdfArea {
         transform-origin: top left;
-        zoom: 0.43; /* Menyesuaikan lebar PDF ke layar HP */
+        zoom: 0.43;
       }
     }
 
-    /* =========================================================
-       ATURAN PRINT PDF BROWSER (SAMA SEKALI TIDAK DIUBAH)
-       ========================================================= */
+    /* Print Rule Browser */
     @media print {
       @page {
         size: A4 portrait;
@@ -153,7 +146,6 @@
 </head>
 <body>
 
-<!-- TAB NAVIGASI HP (Senior Friendly) -->
 <div class="mobile-tabs">
   <button type="button" class="tab-btn active" id="tabFormBtn" onclick="bukaTab('form')">✏️ 1. Isi Form Data</button>
   <button type="button" class="tab-btn" id="tabPreviewBtn" onclick="bukaTab('preview')">👁️ 2. Lihat & Cetak PDF</button>
@@ -161,11 +153,10 @@
 
 <div class="container">
   
-  <!-- PANEL INPUT DATA -->
   <div class="form-section" id="formSection">
     <div class="btn-header">
       <h2>✏️ Form Input Data</h2>
-      <button type="button" class="btn-clear" onclick="resetFormInputSaja()">🧼 Bersihkan Form</button>
+      <button type="button" class="btn-clear" onclick="resetFormInputSaja()">🧼 Bersihkan Form Input</button>
     </div>
 
     <div class="card">
@@ -192,10 +183,10 @@
       <div class="form-row">
         <div class="form-group">
           <label>Bulan Laporan</label>
-          <select id="bulanLaporan" onchange="pindahBulanLaporan()">
+          <select id="bulanLaporan" onchange="pindahBulanLaporan(true)">
             <option value="JANUARI">JANUARI</option>
             <option value="FEBRUARI">FEBRUARI</option>
-            <option value="MARET" selected>MARET</option>
+            <option value="MARET">MARET</option>
             <option value="APRIL">APRIL</option>
             <option value="MEI">MEI</option>
             <option value="JUNI">JUNI</option>
@@ -209,7 +200,7 @@
         </div>
         <div class="form-group">
           <label>Lokasi & Tgl Cetak</label>
-          <input type="text" id="lokasiCetak" value="Tenggarong, 31 Maret 2026" oninput="updateHeaderPreview()">
+          <input type="text" id="lokasiCetak" value="" oninput="updateHeaderPreview()">
         </div>
       </div>
 
@@ -232,7 +223,6 @@
       </div>
     </div>
 
-    <!-- Panel Arsip -->
     <div class="card" style="background: #f0fdf4; border-color: #bbf7d0;">
       <span class="card-title" style="color: #15803d;">💾 SIMPAN & ARSIP LAPORAN</span>
       <button type="button" class="btn-save-archive" onclick="simpanLaporanBulanIni()">
@@ -253,7 +243,6 @@
       </div>
     </div>
 
-    <!-- Input Baris -->
     <div class="card">
       <span class="card-title">📅 INPUT KEGIATAN HARIAN</span>
       <div class="form-row">
@@ -267,19 +256,18 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Mengambil RM</label><input type="number" id="inKeg1" placeholder="0"></div>
-        <div class="form-group"><label>Cari SIMPUS</label><input type="number" id="inKeg2" placeholder="0"></div>
-        <div class="form-group"><label>Susun RM</label><input type="number" id="inKeg3" placeholder="0"></div>
+        <div class="form-group"><label>Mengambil RM</label><input type="number" id="inKeg1" placeholder="Isi angka..."></div>
+        <div class="form-group"><label>Cari SIMPUS</label><input type="number" id="inKeg2" placeholder="Isi angka..."></div>
+        <div class="form-group"><label>Susun RM</label><input type="number" id="inKeg3" placeholder="Isi angka..."></div>
       </div>
-      <button type="button" class="btn-add" onclick="tambahBarisManual()">➕ Tambah ke Tabel</button>
+      <button type="button" class="btn-add" onclick="tambahBarisManual()">➕ Simpan / Update Tanggal Ini</button>
     </div>
   </div>
 
-  <!-- PANEL PREVIEW DOKUMEN -->
   <div class="preview-container" id="previewSection">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
       <span style="font-size: 14px; font-weight: bold; color: #ffffff;">
-        📌 Menampilkan: <span id="lblBulanAktif" style="color: #60a5fa;">MARET</span>
+        📌 Menampilkan: <span id="lblBulanAktif" style="color: #60a5fa;">-</span>
       </span>
       <button type="button" class="btn-primary" onclick="cetakSempurnaPDF()">
         🖨️ Simpan PDF (Pas 1 Halaman)
@@ -298,7 +286,7 @@
           <table>
             <tr><td style="width: 70px;">NAMA</td><td style="width: 10px;">:</td><td id="prevNama">SRIYANI</td></tr>
             <tr><td>NIP</td><td>:</td><td id="prevNip">197506102007012033</td></tr>
-            <tr><td>BULAN</td><td>:</td><td id="prevBulan">MARET</td></tr>
+            <tr><td>BULAN</td><td>:</td><td id="prevBulan">-</td></tr>
           </table>
         </div>
 
@@ -331,7 +319,7 @@
           </div>
 
           <div class="ttd-box">
-            <p><span id="prevLokasi">Tenggarong, 31 Maret 2026</span><br>Penanggung Jawab</p>
+            <p><span id="prevLokasi">-</span><br>Penanggung Jawab</p>
             <div class="ttd-space">
               <img id="imgTtdPegawai" class="ttd-img" src="" alt="" style="display: none;">
             </div>
@@ -373,7 +361,6 @@
     { hari: 'Selasa', tgl: '31', k1: 98, k2: 6, k3: 42 }
   ];
 
-  /* Fungsi Tab khusus HP */
   function bukaTab(tab) {
     const fSec = document.getElementById('formSection');
     const pSec = document.getElementById('previewSection');
@@ -393,6 +380,14 @@
     }
   }
 
+  function hitungTanggalTerakhir(namaBulan) {
+    const idx = daftarBulan.indexOf(namaBulan.toUpperCase());
+    if (idx === -1) return 31;
+    // Tahun 2026
+    const d = new Date(2026, idx + 1, 0);
+    return d.getDate();
+  }
+
   function autoSetHari() {
     const val = document.getElementById('inDatepicker').value;
     if (val) {
@@ -402,26 +397,27 @@
   }
 
   function muatDataPenyimpanan() {
-    const bulan = document.getElementById('bulanLaporan').value;
-    document.getElementById('lblBulanAktif').innerText = bulan;
-
-    const dataKegiatanSaved = localStorage.getItem(`pendaftaran_list_${bulan}`);
-    if (dataKegiatanSaved) {
-      listKegiatan = JSON.parse(dataKegiatanSaved);
-    } else {
-      listKegiatan = (bulan === "MARET") ? [...defaultMaret] : [];
+    // 1. Cek Bulan Terakhir yang pernah dipilih user
+    let bulanSaved = localStorage.getItem('pendaftaran_bulanTerakhir');
+    if (!bulanSaved) {
+      bulanSaved = "AGUSTUS"; // Default jika belum pernah diset
     }
+    document.getElementById('bulanLaporan').value = bulanSaved;
 
+    // 2. Load data per bulan
+    pindahBulanLaporan(false);
+
+    // 3. Load Header Data Umum
     const dataHeaderSaved = localStorage.getItem('pendaftaran_headerData');
     if (dataHeaderSaved) {
       const h = JSON.parse(dataHeaderSaved);
       document.getElementById('namaPegawai').value = h.nama || 'SRIYANI';
       document.getElementById('nipPegawai').value = h.nip || '197506102007012033';
-      document.getElementById('lokasiCetak').value = h.lokasi || 'Tenggarong, 31 Maret 2026';
       document.getElementById('namaPenilai').value = h.penilai || 'Joi Devi , SKM';
       document.getElementById('nipPenilai').value = h.nipPenilai || '19730803 1998032009';
     }
 
+    // 4. Load TTD
     const ttdPegawaiSaved = localStorage.getItem('pendaftaran_ttdPegawai');
     if (ttdPegawaiSaved) {
       const img = document.getElementById('imgTtdPegawai');
@@ -436,11 +432,33 @@
       img.style.display = 'block';
     }
 
-    renderData();
     renderDaftarArsip();
   }
 
-  function pindahBulanLaporan() { muatDataPenyimpanan(); }
+  function pindahBulanLaporan(isManualSelect = true) {
+    const bulan = document.getElementById('bulanLaporan').value;
+    document.getElementById('lblBulanAktif').innerText = bulan;
+
+    // Simpan bulan aktif sebagai bulan terakhir
+    localStorage.setItem('pendaftaran_bulanTerakhir', bulan);
+
+    // Set Otomatis Tanggal Cetak Akhir Bulan
+    const tglAkhir = hitungTanggalTerakhir(bulan);
+    // Format Huruf Depan Kapital (misal: "Agustus")
+    const bulanFormat = bulan.charAt(0) + bulan.slice(1).toLowerCase();
+    document.getElementById('lokasiCetak').value = `Tenggarong, ${tglAkhir} ${bulanFormat} 2026`;
+
+    // Load list data kegiatan bulan tersebut
+    const dataKegiatanSaved = localStorage.getItem(`pendaftaran_list_${bulan}`);
+    if (dataKegiatanSaved) {
+      listKegiatan = JSON.parse(dataKegiatanSaved);
+    } else {
+      listKegiatan = (bulan === "MARET") ? [...defaultMaret] : [];
+    }
+
+    renderData();
+    if(isManualSelect) renderDaftarArsip();
+  }
 
   function simpanOtomatis() {
     const bulan = document.getElementById('bulanLaporan').value;
@@ -449,7 +467,6 @@
     const headerData = {
       nama: document.getElementById('namaPegawai').value,
       nip: document.getElementById('nipPegawai').value,
-      lokasi: document.getElementById('lokasiCetak').value,
       penilai: document.getElementById('namaPenilai').value,
       nipPenilai: document.getElementById('nipPenilai').value
     };
@@ -460,7 +477,7 @@
 
   function simpanLaporanBulanIni() {
     simpanOtomatis();
-    alert(`✅ Laporan Berhasil Disimpan!`);
+    alert(`✅ Laporan Bulan ${document.getElementById('bulanLaporan').value} Berhasil Disimpan!`);
   }
 
   function renderDaftarArsip() {
@@ -495,14 +512,14 @@
 
   function bukaLaporanBulan(b) {
     document.getElementById('bulanLaporan').value = b;
-    muatDataPenyimpanan();
+    pindahBulanLaporan(true);
     if(window.innerWidth <= 768) {
       bukaTab('preview');
     }
   }
 
   function hapusArsipBulan(b) {
-    if (confirm(`Hapus laporan ${b}?`)) {
+    if (confirm(`Hapus laporan bulan ${b}?`)) {
       localStorage.removeItem(`pendaftaran_list_${b}`);
       if (document.getElementById('bulanLaporan').value === b) {
         listKegiatan = [];
@@ -527,22 +544,42 @@
     }
   }
 
+  /* FITUR CERDAS: TAMBAH & TIMPA DATA TANPA MERUSAK FIELD LAIN */
   function tambahBarisManual() {
     const valDate = document.getElementById('inDatepicker').value;
     const hari = document.getElementById('inHari').value;
-    const k1 = parseInt(document.getElementById('inKeg1').value) || 0;
-    const k2 = parseInt(document.getElementById('inKeg2').value) || 0;
-    const k3 = parseInt(document.getElementById('inKeg3').value) || 0;
+    
+    const input1 = document.getElementById('inKeg1').value;
+    const input2 = document.getElementById('inKeg2').value;
+    const input3 = document.getElementById('inKeg3').value;
 
-    if (!valDate) { alert('Silakan pilih tanggal!'); return; }
-    const tglAngka = new Date(valDate).getDate();
+    if (!valDate) { alert('Silakan pilih tanggal terlebih dahulu!'); return; }
+    const tglAngka = new Date(valDate).getDate().toString();
 
-    listKegiatan.push({ hari, tgl: tglAngka.toString(), k1, k2, k3 });
+    // Cek apakah tanggal ini sudah ada di daftar
+    const idxAda = listKegiatan.findIndex(item => item.tgl === tglAngka);
+
+    if (idxAda !== -1) {
+      // PERBAIKAN TIMPA DATA: Jika diisi, timpa nilainya. Jika kosong, pertahankan nilai lama!
+      if (input1 !== "") listKegiatan[idxAda].k1 = parseInt(input1) || 0;
+      if (input2 !== "") listKegiatan[idxAda].k2 = parseInt(input2) || 0;
+      if (input3 !== "") listKegiatan[idxAda].k3 = parseInt(input3) || 0;
+      listKegiatan[idxAda].hari = hari; // update nama hari jika perlu
+    } else {
+      // Jika tanggal baru, tambahkan baris baru
+      const k1 = input1 !== "" ? (parseInt(input1) || 0) : 0;
+      const k2 = input2 !== "" ? (parseInt(input2) || 0) : 0;
+      const k3 = input3 !== "" ? (parseInt(input3) || 0) : 0;
+      listKegiatan.push({ hari, tgl: tglAngka, k1, k2, k3 });
+
+      // Urutkan berdasarkan tanggal kecil ke besar
+      listKegiatan.sort((a, b) => parseInt(a.tgl) - parseInt(b.tgl));
+    }
+
     simpanOtomatis();
     renderData();
 
-    document.getElementById('inDatepicker').value = '';
-    document.getElementById('inHari').value = '';
+    // Bersihkan form input angka setelah simpan
     document.getElementById('inKeg1').value = '';
     document.getElementById('inKeg2').value = '';
     document.getElementById('inKeg3').value = '';
@@ -623,6 +660,7 @@
     window.print();
   }
 
+  // Inisialisasi awal saat web dibuka
   muatDataPenyimpanan();
 </script>
 
