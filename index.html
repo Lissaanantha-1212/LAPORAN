@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lembar Kerja Harian - Puskesmas Loa Ipuh</title>
+  
+  <!-- Library Html2Pdf untuk Direct Export PDF Otomatis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -49,82 +52,51 @@
     .btn-arc-dl { background: #10b981; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
     /* =========================================================
-       DESAIN DOKUMEN CETAK A4 PRESISI
+       DESAIN AREA PDF (PRESISI A4 AGAR TIDAK TERPOTONG)
        ========================================================= */
     #pdfArea {
       width: 100%;
-      background: #fff;
+      max-width: 750px;
+      margin: 0 auto;
       padding: 10px;
+      box-sizing: border-box;
+      background: #fff;
     }
 
-    .doc-header { text-align: center; font-weight: bold; margin-bottom: 12px; line-height: 1.25; color: #000; }
+    .doc-header { text-align: center; font-weight: bold; margin-bottom: 10px; line-height: 1.2; color: #000; }
     .doc-header div { font-size: 11pt; }
     
-    .doc-info { margin-bottom: 10px; font-weight: bold; font-size: 9pt; color: #000; }
+    .doc-info { margin-bottom: 8px; font-weight: bold; font-size: 8.5pt; color: #000; }
     .doc-info table { border-collapse: collapse; }
-    .doc-info td { padding: 1px 4px; }
+    .doc-info td { padding: 1px 3px; }
 
-    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 8pt; color: #000; }
+    /* Ukuran tabel diatur ringkas presisi agar 31 hari muat pas 1 halaman */
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 7.5pt; color: #000; }
     table.preview-table th, table.preview-table td { 
       border: 1px solid #000; 
-      padding: 2.5px 2px; 
+      padding: 1.5px 2px; 
       text-align: center; 
       line-height: 1.1;
     }
-    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 8pt; }
+    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 7.5pt; }
 
     .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 2px 4px; font-size: 9px; font-weight: 600; cursor: pointer; }
 
     /* Tanda Tangan */
-    .ttd-container { display: flex; justify-content: space-between; margin-top: 15px; font-size: 9pt; text-align: center; color: #000; line-height: 1.2; page-break-inside: avoid; }
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 10px; font-size: 8.5pt; text-align: center; color: #000; line-height: 1.1; page-break-inside: avoid; }
     .ttd-box { width: 45%; }
-    .ttd-space { height: 45px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
-    .ttd-img { max-height: 42px; max-width: 120px; object-fit: contain; }
-    .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 2px; }
+    .ttd-space { height: 35px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
+    .ttd-img { max-height: 34px; max-width: 110px; object-fit: contain; }
+    .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 1px; }
     .ttd-box p { margin: 1px 0; }
 
-    /* Media Query HP */
+    /* Responsive Mobile */
     @media screen and (max-width: 768px) {
       body { margin: 10px; }
       .container { flex-direction: column; gap: 15px; }
       .form-row { flex-direction: column; gap: 0; }
       .btn-header { flex-direction: column; align-items: flex-start; }
       .btn-clear { width: 100%; text-align: center; margin-top: 5px; }
-    }
-
-    /* =========================================================
-       🔥 CSS KHUSUS PENCETAKAN PDF A4 (PERFEKTIF & PROPORSIONAL)
-       ========================================================= */
-    @media print {
-      @page {
-        size: A4 portrait;
-        margin: 12mm 15mm 12mm 15mm; /* Margin Kertas A4 Pas */
-      }
-      body {
-        background: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      .form-section, .btn-header, .btn-primary, .no-print, .archive-list, .card, div.preview-container > div:first-child {
-        display: none !important;
-      }
-      .container, .preview-container, .preview-section, #pdfArea {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
-      table.preview-table {
-        font-size: 8.5pt !important;
-      }
-      table.preview-table th, table.preview-table td {
-        padding: 2px 2px !important;
-      }
-      .ttd-container {
-        margin-top: 20px !important;
-      }
     }
   </style>
 </head>
@@ -261,7 +233,7 @@
         📌 Menampilkan: <span id="lblBulanAktif" style="color: #2563eb;">JULI</span>
       </span>
       <button type="button" class="btn-primary" onclick="unduhPDF()">
-        🖨️ Cetak / Simpan PDF
+        📥 Unduh PDF Otomatis
       </button>
     </div>
 
@@ -285,7 +257,7 @@
         <table class="preview-table">
           <thead>
             <tr>
-              <th rowspan="2" style="width: 12%;">HARI</th>
+              <th rowspan="2" style="width: 10%;">HARI</th>
               <th rowspan="2" style="width: 8%;">TANGGAL</th>
               <th colspan="3">KEGIATAN</th>
               <th rowspan="2" style="width: 20%;">KETERANGAN</th>
@@ -412,7 +384,7 @@
             <td><span style="color: #16a34a; font-weight: 600;">Terisi (${arr.length})</span></td>
             <td style="text-align: center;">
               <button class="btn-arc-open" onclick="bukaLaporanBulan('${b}')">👁️ Lihat</button>
-              <button class="btn-arc-dl" onclick="unduhPDFBulanLangsung('${b}')">🖨️ PDF</button>
+              <button class="btn-arc-dl" onclick="unduhPDFBulanLangsung('${b}')">📥 PDF</button>
             </td>
           `;
           tbody.appendChild(tr);
@@ -544,9 +516,32 @@
     simpanOtomatis();
   }
 
-  /* FITUR CETAK / SIMPAN KE PDF PRESISI */
+  /* =========================================================
+     FUNGSI DIRECT DOWNLOAD PDF (TANPA WINDOW.PRINT)
+     ========================================================= */
   function unduhPDF() {
-    window.print(); // Memanggil dialog cetak resmi sistem/browser (Pasti pas A4 & Tidak Terpotong)
+    const element = document.getElementById('pdfArea');
+    const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
+    const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
+
+    // Sembunyikan kolom aksi (tombol hapus) saat proses convert PDF
+    const noPrintElems = element.querySelectorAll('.no-print');
+    noPrintElems.forEach(el => el.style.display = 'none');
+
+    const options = {
+      margin:       [8, 8, 8, 8], 
+      filename:     `Lembar_Kerja_Harian_${namaUser}_${bulanUser}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'avoid-all' } // Memastikan 1 lembar utuh tanpa terpotong
+    };
+
+    // Panggil fungsi .save() dari html2pdf.js untuk mengunduh otomatis file PDF
+    html2pdf().set(options).from(element).save().then(() => {
+      // Kembalikan tampilan tombol hapus di preview web
+      noPrintElems.forEach(el => el.style.display = '');
+    });
   }
 
   muatDataPenyimpanan();
