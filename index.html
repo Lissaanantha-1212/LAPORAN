@@ -30,20 +30,14 @@
     .form-row .form-group { flex: 1; }
     
     .btn-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .btn-clear { background: none; border: none; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 4px; }
-    .btn-clear:hover { text-decoration: underline; }
+    .btn-clear { background: #fef2f2; border: 1px solid #fca5a5; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 12px; padding: 6px 10px; border-radius: 5px; }
+    .btn-clear:hover { background: #fee2e2; }
     
     .btn-primary { background: #1d4ed8; color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 2px 4px rgba(37,99,235,0.2); }
     .btn-primary:hover { background: #1e40af; }
     
     .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 10px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
     .btn-add:hover { background: #1d4ed8; }
-    
-    /* Panel Kelola Data */
-    .manage-list { margin-top: 10px; }
-    .manage-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 5px; margin-bottom: 6px; font-size: 12px; }
-    .btn-delete { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
-    .btn-delete:hover { background: #fca5a5; }
 
     /* Dokumen Cetak / Preview */
     .doc-header { text-align: center; font-weight: bold; margin-bottom: 25px; line-height: 1.4; color: #000; }
@@ -53,8 +47,45 @@
     .doc-info td { padding: 2px 5px; }
 
     table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 11px; color: #000; }
-    table.preview-table th, table.preview-table td { border: 1px solid #000; padding: 6px 4px; text-align: center; }
+    table.preview-table th, table.preview-table td { border: 1px solid #000; padding: 6px 4px; text-align: center; position: relative; }
     table.preview-table th { font-weight: bold; text-transform: uppercase; }
+
+    /* Tombol Hapus Langsung di Dalam Tabel Preview */
+    .row-del-btn {
+      display: none;
+      position: absolute;
+      left: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      font-size: 9px;
+      line-height: 16px;
+      cursor: pointer;
+      text-align: center;
+      padding: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    /* Tombol Hapus Muncul Saat Kursor Mengarah ke Baris */
+    table.preview-table tbody tr:hover .row-del-btn {
+      display: inline-block;
+    }
+
+    /* Penulisan CSS Sesuai Standar (Tidak Bikin Error di VS Code) */
+    .html2pdf__page-break .row-del-btn {
+      display: none !important;
+    }
+
+    @media print {
+      .row-del-btn { 
+        display: none !important; 
+      }
+    }
 
     .ttd-container { display: flex; justify-content: space-between; margin-top: 40px; font-size: 12px; text-align: center; color: #000; }
     .ttd-box { width: 45%; }
@@ -70,7 +101,7 @@
   <div class="form-section">
     <div class="btn-header">
       <h2>✏️ Form Input Data</h2>
-      <button type="button" class="btn-clear" onclick="clearFormInput()">🔄 Clear Form</button>
+      <button type="button" class="btn-clear" onclick="resetSemuaData()">💥 Reset Laporan Baru</button>
     </div>
 
     <!-- Data Pegawai & Penilai -->
@@ -150,14 +181,6 @@
 
       <button type="button" class="btn-add" onclick="tambahKeTabel()">➕ Tambah ke Tabel</button>
     </div>
-
-    <!-- Panel Hapus / Kelola Baris -->
-    <div class="card">
-      <span class="card-title">🗑️ KELOLA BARIS TABEL (HAPUS DATA)</span>
-      <div class="manage-list" id="manageList">
-        <!-- List item baris dengan tombol hapus muncul di sini -->
-      </div>
-    </div>
   </div>
 
   <!-- ================= PANEL PREVIEW DOKUMEN ================= -->
@@ -227,6 +250,40 @@
 <script>
   let listKegiatan = [];
 
+  // --- MENGAMBIL DATA TERSIMPAN DARI BROWSER ---
+  function muatDataPenyimpanan() {
+    const dataKegiatanSaved = localStorage.getItem('pendaftaran_listKegiatan');
+    if (dataKegiatanSaved) {
+      listKegiatan = JSON.parse(dataKegiatanSaved);
+    }
+
+    const dataHeaderSaved = localStorage.getItem('pendaftaran_headerData');
+    if (dataHeaderSaved) {
+      const h = JSON.parse(dataHeaderSaved);
+      document.getElementById('namaPegawai').value = h.nama || 'SRIYANI';
+      document.getElementById('nipPegawai').value = h.nip || '197506102007012033';
+      document.getElementById('bulanLaporan').value = h.bulan || 'MARET';
+      document.getElementById('lokasiCetak').value = h.lokasi || 'Tenggarong';
+      document.getElementById('namaPenilai').value = h.penilai || 'Joi Devi , SKM';
+      document.getElementById('nipPenilai').value = h.nipPenilai || '19730803 1998032009';
+    }
+  }
+
+  // --- MENYIMPAN DATA OTOMATIS KE BROWSER ---
+  function simpanOtomatis() {
+    localStorage.setItem('pendaftaran_listKegiatan', JSON.stringify(listKegiatan));
+    
+    const headerData = {
+      nama: document.getElementById('namaPegawai').value,
+      nip: document.getElementById('nipPegawai').value,
+      bulan: document.getElementById('bulanLaporan').value,
+      lokasi: document.getElementById('lokasiCetak').value,
+      penilai: document.getElementById('namaPenilai').value,
+      nipPenilai: document.getElementById('nipPenilai').value
+    };
+    localStorage.setItem('pendaftaran_headerData', JSON.stringify(headerData));
+  }
+
   function tambahKeTabel() {
     const tglValue = document.getElementById('tglInput').value;
     
@@ -256,6 +313,7 @@
       keg3: v3 > 0 ? v3 : '-'
     });
 
+    simpanOtomatis();
     renderData();
 
     document.getElementById('keg1').value = '';
@@ -265,10 +323,7 @@
 
   function renderData() {
     const tbody = document.getElementById('tableBody');
-    const manageList = document.getElementById('manageList');
-    
     tbody.innerHTML = '';
-    manageList.innerHTML = '';
 
     if (listKegiatan.length === 0) {
       tbody.innerHTML = `
@@ -280,11 +335,11 @@
           <td>-</td>
           <td style="font-weight: bold; font-size: 13px;">-</td>
         </tr>`;
-      manageList.innerHTML = `<span style="font-size: 12px; color: #94a3b8;">Belum ada baris yang bisa dihapus.</span>`;
+      updateHeaderPreview();
       return;
     }
 
-    // Hitung Grand Total Akumulasi dari Seluruh Inputan
+    // Hitung Grand Total Akumulasi
     let grandTotal = 0;
     listKegiatan.forEach(item => {
       grandTotal += (item.raw1 + item.raw2 + item.raw3);
@@ -296,43 +351,41 @@
       const tr = document.createElement('tr');
       
       let rowHtml = `
-        <td>${item.hari}</td>
+        <td>
+          <button class="row-del-btn" onclick="hapusBaris(${index})" title="Hapus Baris Ini">✖</button>
+          ${item.hari}
+        </td>
         <td>${item.tanggal}</td>
         <td>${item.keg1}</td>
         <td>${item.keg2}</td>
         <td>${item.keg3}</td>
       `;
 
-      // Hanya baris pertama yang memuat TD KETERANGAN dengan rowspan sebanyak total baris
       if (index === 0) {
         rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 13px;">${totalFormatted}</td>`;
       }
 
       tr.innerHTML = rowHtml;
       tbody.appendChild(tr);
-
-      // Panel Hapus
-      const totalBarisIni = item.raw1 + item.raw2 + item.raw3;
-      const manageItem = document.createElement('div');
-      manageItem.className = 'manage-item';
-      manageItem.innerHTML = `
-        <span><b>Baris ${index + 1}:</b> ${item.hari}, Tgl ${item.tanggal} (${totalBarisIni} Berkas)</span>
-        <button class="btn-delete" onclick="hapusBaris(${index})">❌ Hapus</button>
-      `;
-      manageList.appendChild(manageItem);
     });
+
+    updateHeaderPreview();
   }
 
   function hapusBaris(index) {
-    listKegiatan.splice(index, 1);
-    renderData();
+    if (confirm("Hapus baris ini?")) {
+      listKegiatan.splice(index, 1);
+      simpanOtomatis();
+      renderData();
+    }
   }
 
-  function clearFormInput() {
-    document.getElementById('tglInput').value = '';
-    document.getElementById('keg1').value = '';
-    document.getElementById('keg2').value = '';
-    document.getElementById('keg3').value = '';
+  function resetSemuaData() {
+    if (confirm("Apakah Anda yakin ingin menghapus SELURUH isi tabel untuk mulai laporan bulan baru?")) {
+      listKegiatan = [];
+      localStorage.removeItem('pendaftaran_listKegiatan');
+      renderData();
+    }
   }
 
   function updateHeaderPreview() {
@@ -354,12 +407,18 @@
     document.getElementById('prevBulanTtd').innerText = bulan;
     document.getElementById('prevPegawaiTtd').innerText = nama;
     document.getElementById('prevNipTtd').innerText = nip;
+
+    simpanOtomatis();
   }
 
   function unduhPDF() {
     const element = document.getElementById('pdfArea');
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
     const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
+
+    // Sembunyikan semua tombol hapus sementara sebelum di-PDF-kan
+    const delBtns = element.querySelectorAll('.row-del-btn');
+    delBtns.forEach(btn => btn.style.display = 'none');
 
     const options = {
       margin:       [10, 10, 10, 10],
@@ -369,9 +428,14 @@
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(options).from(element).save();
+    html2pdf().set(options).from(element).save().then(() => {
+      // Munculkan kembali tombol hapus setelah PDF selesai dibuat
+      delBtns.forEach(btn => btn.style.display = '');
+    });
   }
 
+  // Jalankan pemuatan data otomatis saat web pertama kali dibuka
+  muatDataPenyimpanan();
   renderData();
 </script>
 
