@@ -2,47 +2,52 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Lembar Kerja Harian - Puskesmas Loa Ipuh</title>
 
   <style>
     * { box-sizing: border-box; }
-    body { background-color: #f1f5f9; margin: 15px; color: #1e293b; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background-color: #f1f5f9; margin: 0; padding: 15px; color: #1e293b; font-family: 'Segoe UI', Arial, sans-serif; }
     
+    /* Navigation Tab untuk HP (Senior Friendly) */
+    .mobile-tabs { display: none; margin-bottom: 15px; gap: 8px; }
+    .tab-btn { flex: 1; padding: 14px 10px; border: none; background: #cbd5e1; color: #334155; font-weight: bold; font-size: 15px; border-radius: 8px; cursor: pointer; text-align: center; }
+    .tab-btn.active { background: #1d4ed8; color: #ffffff; box-shadow: 0 4px 6px -1px rgba(29, 78, 216, 0.3); }
+
     /* Layout Utama Dashboard UI */
     .container { display: flex; gap: 20px; align-items: flex-start; flex-direction: row; }
-    .form-section { flex: 1; width: 100%; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .form-section { flex: 1; width: 100%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .preview-container { flex: 1.25; width: 100%; }
-    .preview-section { background: #525659; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto; display: flex; justify-content: center; }
+    .preview-section { background: #525659; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto; display: flex; justify-content: center; }
     
     h2, h3 { margin-top: 0; color: #0f172a; font-size: 18px; }
-    .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-    .card-title { font-weight: 700; font-size: 13px; color: #4338ca; margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+    .card-title { font-weight: 700; font-size: 14px; color: #4338ca; margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
-    .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; outline: none; }
-    
-    .form-row { display: flex; gap: 10px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #334155; }
+    .form-group input, .form-group select { width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #ffffff; }
+    .form-group input:focus, .form-group select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(191, 219, 254, 0.8); }
+
+    .form-row { display: flex; gap: 12px; }
     .form-row .form-group { flex: 1; }
     
     .btn-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
-    .btn-clear { background: #fef2f2; border: 1px solid #fca5a5; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 12px; padding: 8px 12px; border-radius: 5px; }
+    .btn-clear { background: #fef2f2; border: 1.5px solid #fca5a5; color: #ef4444; font-weight: 700; cursor: pointer; font-size: 13px; padding: 10px 14px; border-radius: 8px; }
     
-    .btn-primary { background: #1d4ed8; color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 2px 4px rgba(37,99,235,0.2); }
+    .btn-primary { background: #1d4ed8; color: #ffffff; border: none; padding: 14px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(29, 78, 216, 0.3); width: 100%; }
     .btn-primary:hover { background: #1e40af; }
 
-    .btn-save-archive { background: #059669; color: #ffffff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; }
-    .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; }
+    .btn-save-archive { background: #059669; color: #ffffff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
+    .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; margin-top: 5px; }
 
     /* Table Arsip Laporan */
-    .archive-list { margin-top: 15px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; overflow-x: auto; }
-    .archive-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 280px; }
-    .archive-table th { background: #e2e8f0; text-align: left; padding: 8px; font-weight: 600; color: #334155; }
-    .archive-table td { padding: 8px; border-top: 1px solid #e2e8f0; }
-    .btn-arc-open { background: #3b82f6; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
-    .btn-arc-dl { background: #10b981; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
-    .btn-arc-del { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
+    .archive-list { margin-top: 15px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto; }
+    .archive-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 280px; }
+    .archive-table th { background: #e2e8f0; text-align: left; padding: 10px; font-weight: 700; color: #334155; }
+    .archive-table td { padding: 10px; border-top: 1px solid #e2e8f0; }
+    .btn-arc-open { background: #3b82f6; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .btn-arc-del { background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-left: 4px; }
 
     /* =========================================================
        LEMBAR A4 DENGAN MARGIN PRESISI KANAN-KIRI LOKAL
@@ -75,7 +80,7 @@
     }
     table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 8.5pt; padding: 5px 2px; }
 
-    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 0px 3px; font-size: 9px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
+    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     .ttd-container { display: flex; justify-content: space-between; margin-top: 15px; font-size: 9.5pt; text-align: center; color: #000; line-height: 1.25; page-break-inside: avoid; }
     .ttd-box { width: 45%; }
@@ -85,19 +90,47 @@
     .ttd-box p { margin: 2px 0; }
 
     /* =========================================================
-       ATURAN KHUSUS PRINT & SAVING PDF BROWSER (DIJAMIN TIDAK TERPOTONG)
+       TAMPILAN KHUSUS MODUL HP (SENIOR FRIENDLY)
+       ========================================================= */
+    @media screen and (max-width: 768px) {
+      body { padding: 10px; }
+      .mobile-tabs { display: flex; }
+      
+      .container { flex-direction: column; gap: 15px; }
+      
+      /* Mode Tab Toggle di HP */
+      .form-section { display: block; }
+      .preview-container { display: none; }
+      
+      .form-section.tab-hidden { display: none; }
+      .preview-container.tab-visible { display: block; }
+
+      .form-row { flex-direction: column; gap: 0; }
+      .btn-header { flex-direction: row; }
+      
+      .preview-section { padding: 10px 5px; overflow-x: auto; justify-content: flex-start; }
+      
+      /* Skala Tampilan PDF di HP agar Pas dan Tidak Perlu Scroll Horizontal */
+      #pdfArea {
+        transform-origin: top left;
+        zoom: 0.43; /* Menyesuaikan lebar PDF ke layar HP */
+      }
+    }
+
+    /* =========================================================
+       ATURAN PRINT PDF BROWSER (SAMA SEKALI TIDAK DIUBAH)
        ========================================================= */
     @media print {
       @page {
         size: A4 portrait;
-        margin: 0mm; /* Dikontrol penuh oleh padding #pdfArea */
+        margin: 0mm;
       }
       body {
         background: #ffffff !important;
         margin: 0 !important;
         padding: 0 !important;
       }
-      .form-section, .btn-header, .preview-container > div:first-child, .no-print {
+      .mobile-tabs, .form-section, .btn-header, .preview-container > div:first-child, .no-print {
         display: none !important;
       }
       .container, .preview-container, .preview-section {
@@ -112,19 +145,27 @@
         width: 100% !important;
         padding: 12mm 15mm !important;
         margin: 0 auto !important;
+        zoom: 1 !important;
+        transform: none !important;
       }
     }
   </style>
 </head>
 <body>
 
+<!-- TAB NAVIGASI HP (Senior Friendly) -->
+<div class="mobile-tabs">
+  <button type="button" class="tab-btn active" id="tabFormBtn" onclick="bukaTab('form')">✏️ 1. Isi Form Data</button>
+  <button type="button" class="tab-btn" id="tabPreviewBtn" onclick="bukaTab('preview')">👁️ 2. Lihat & Cetak PDF</button>
+</div>
+
 <div class="container">
   
   <!-- PANEL INPUT DATA -->
-  <div class="form-section">
+  <div class="form-section" id="formSection">
     <div class="btn-header">
       <h2>✏️ Form Input Data</h2>
-      <button type="button" class="btn-clear" onclick="resetFormInputSaja()">🧼 Bersihkan Isian Form</button>
+      <button type="button" class="btn-clear" onclick="resetFormInputSaja()">🧼 Bersihkan Form</button>
     </div>
 
     <div class="card">
@@ -235,9 +276,9 @@
   </div>
 
   <!-- PANEL PREVIEW DOKUMEN -->
-  <div class="preview-container">
+  <div class="preview-container" id="previewSection">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-      <span style="font-size: 13px; font-weight: bold; color: #ffffff;">
+      <span style="font-size: 14px; font-weight: bold; color: #ffffff;">
         📌 Menampilkan: <span id="lblBulanAktif" style="color: #60a5fa;">MARET</span>
       </span>
       <button type="button" class="btn-primary" onclick="cetakSempurnaPDF()">
@@ -331,6 +372,26 @@
     { hari: 'Senin', tgl: '30', k1: 0, k2: 0, k3: 0 },
     { hari: 'Selasa', tgl: '31', k1: 98, k2: 6, k3: 42 }
   ];
+
+  /* Fungsi Tab khusus HP */
+  function bukaTab(tab) {
+    const fSec = document.getElementById('formSection');
+    const pSec = document.getElementById('previewSection');
+    const btnF = document.getElementById('tabFormBtn');
+    const btnP = document.getElementById('tabPreviewBtn');
+
+    if(tab === 'form') {
+      fSec.classList.remove('tab-hidden');
+      pSec.classList.remove('tab-visible');
+      btnF.classList.add('active');
+      btnP.classList.remove('active');
+    } else {
+      fSec.classList.add('tab-hidden');
+      pSec.classList.add('tab-visible');
+      btnF.classList.remove('active');
+      btnP.classList.add('active');
+    }
+  }
 
   function autoSetHari() {
     const val = document.getElementById('inDatepicker').value;
@@ -435,6 +496,9 @@
   function bukaLaporanBulan(b) {
     document.getElementById('bulanLaporan').value = b;
     muatDataPenyimpanan();
+    if(window.innerWidth <= 768) {
+      bukaTab('preview');
+    }
   }
 
   function hapusArsipBulan(b) {
@@ -498,7 +562,6 @@
     listKegiatan.forEach(item => { grandTotal += (item.k1 + item.k2 + item.k3); });
     const totalFormatted = grandTotal > 0 ? `${grandTotal.toLocaleString('id-ID')} RM` : '-';
 
-    // Auto-spacing presisi berdasarkan baris agar TIDAK MELEBIHI 1 HALAMAN A4
     const totalBaris = listKegiatan.length;
     let dynamicPadding = '2px 2px';
     if (totalBaris <= 15) {
@@ -556,9 +619,6 @@
     simpanOtomatis();
   }
 
-  /* =========================================================
-     PETUNJUK: Klik tombol ini -> Pilih Destination: "Save as PDF"
-     ========================================================= */
   function cetakSempurnaPDF() {
     window.print();
   }
