@@ -12,7 +12,7 @@
     * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f1f5f9; margin: 15px; color: #1e293b; }
     
-    /* Layout Utama Flexible (Support Laptop & HP) */
+    /* Layout Utama Flexible */
     .container { display: flex; gap: 20px; align-items: flex-start; flex-direction: row; }
     .form-section { flex: 1; width: 100%; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .preview-container { flex: 1.2; width: 100%; }
@@ -43,7 +43,7 @@
     .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
     .btn-add:hover { background: #1d4ed8; }
 
-    /* Gaya Tabel Arsip Laporan (Responsive Scroll) */
+    /* Gaya Tabel Arsip Laporan */
     .archive-list { margin-top: 15px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; overflow-x: auto; }
     .archive-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 280px; }
     .archive-table th { background: #e2e8f0; text-align: left; padding: 8px; font-weight: 600; color: #334155; }
@@ -51,27 +51,33 @@
     .btn-arc-open { background: #3b82f6; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
     .btn-arc-dl { background: #10b981; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
-    /* Dokumen Cetak / Preview */
-    .doc-header { text-align: center; font-weight: bold; margin-bottom: 25px; line-height: 1.4; color: #000; }
-    .doc-header div { font-size: 15px; }
-    .doc-info { margin-bottom: 15px; font-weight: bold; font-size: 13px; color: #000; }
+    /* =========================================================
+       REVISI: DOKUMEN CETAK / PREVIEW (DIPADATKAN AGAR 1 HALAMAN)
+       ========================================================= */
+    .doc-header { text-align: center; font-weight: bold; margin-bottom: 12px; line-height: 1.3; color: #000; }
+    .doc-header div { font-size: 13px; } /* Ukuran judul diperkecil */
+    
+    .doc-info { margin-bottom: 8px; font-weight: bold; font-size: 11px; color: #000; } /* Ukuran info diperkecil */
     .doc-info table { border-collapse: collapse; }
-    .doc-info td { padding: 2px 5px; }
+    .doc-info td { padding: 1px 4px; }
 
-    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 11px; color: #000; min-width: 500px; }
-    table.preview-table th, table.preview-table td { border: 1px solid #000; padding: 6px 4px; text-align: center; position: relative; }
+    /* Tabel Utama PDF */
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 9.5px; color: #000; min-width: 500px; }
+    /* Padding cell dikurangi agar baris lebih rapat */
+    table.preview-table th, table.preview-table td { border: 1px solid #000; padding: 3px 2px; text-align: center; position: relative; }
     table.preview-table th { font-weight: bold; text-transform: uppercase; }
 
-    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 4px; padding: 4px 8px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 4px; padding: 3px 6px; font-size: 10px; font-weight: 600; cursor: pointer; }
 
     /* Tanda Tangan */
-    .ttd-container { display: flex; justify-content: space-between; margin-top: 30px; font-size: 12px; text-align: center; color: #000; }
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 15px; font-size: 10.5px; text-align: center; color: #000; line-height: 1.2; }
     .ttd-box { width: 45%; }
-    .ttd-space { height: 55px; display: flex; align-items: center; justify-content: center; margin: 5px 0; }
-    .ttd-img { max-height: 50px; max-width: 140px; object-fit: contain; }
-    .ttd-name { font-weight: bold; text-decoration: underline; }
+    .ttd-space { height: 45px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
+    .ttd-img { max-height: 40px; max-width: 120px; object-fit: contain; }
+    .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 2px;}
+    .ttd-box p { margin: 2px 0; } /* Jarak paragraf TTD dirapatkan */
 
-    /* 📱 MEDIA QUERY UNTUK HP / LAYAR KECIL (Dibawah 768px) */
+    /* MEDIA QUERY UNTUK HP */
     @media screen and (max-width: 768px) {
       body { margin: 10px; }
       .container { flex-direction: column; gap: 15px; }
@@ -79,7 +85,6 @@
       .btn-header { flex-direction: column; align-items: flex-start; }
       .btn-clear { width: 100%; text-align: center; margin-top: 5px; }
       .preview-section { padding: 15px; }
-      .ttd-container { font-size: 10px; }
     }
 
     @media print {
@@ -91,14 +96,13 @@
 
 <div class="container">
   
-  <!-- ================= PANEL INPUT ================= -->
+  <!-- PANEL INPUT -->
   <div class="form-section">
     <div class="btn-header">
       <h2>✏️ Form Input Data</h2>
       <button type="button" class="btn-clear" onclick="resetSemuaData()">💥 Kosongkan Form</button>
     </div>
 
-    <!-- Data Pegawai & Penilai -->
     <div class="card">
       <span class="card-title">DATA PENANGGUNG JAWAB & PENILAI</span>
       
@@ -170,7 +174,6 @@
         💾 Simpan Permanen Laporan Bulan Ini
       </button>
 
-      <!-- DAFTAR LAPORAN TERSIMPAN -->
       <div class="archive-list">
         <table class="archive-table">
           <thead>
@@ -187,7 +190,7 @@
       </div>
     </div>
 
-    <!-- Input Kegiatan Harian -->
+    <!-- Input Kegiatan -->
     <div class="card">
       <span class="card-title">📅 INPUT KEGIATAN HARIAN</span>
       
@@ -215,7 +218,7 @@
     </div>
   </div>
 
-  <!-- ================= PANEL PREVIEW DOKUMEN ================= -->
+  <!-- PANEL PREVIEW DOKUMEN -->
   <div class="preview-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
       <span style="font-size: 13px; font-weight: bold; color: #475569;">
@@ -245,11 +248,11 @@
       <table class="preview-table">
         <thead>
           <tr>
-            <th rowspan="2" style="width: 12%;">HARI</th>
-            <th rowspan="2" style="width: 10%;">TANGGAL</th>
+            <th rowspan="2" style="width: 10%;">HARI</th>
+            <th rowspan="2" style="width: 8%;">TGL</th>
             <th colspan="3">KEGIATAN</th>
             <th rowspan="2" style="width: 22%;">KETERANGAN</th>
-            <th rowspan="2" class="no-print" style="width: 12%;">AKSI</th>
+            <th rowspan="2" class="no-print" style="width: 10%;">AKSI</th>
           </tr>
           <tr>
             <th>MENGAMBIL RM PASIEN RAK / BOK</th>
@@ -258,7 +261,7 @@
           </tr>
         </thead>
         <tbody id="tableBody">
-          <!-- Baris tabel otomatis dirender oleh JavaScript -->
+          <!-- Tabel Tumbuh Disini -->
         </tbody>
       </table>
 
@@ -291,7 +294,6 @@
   let listKegiatan = [];
   const daftarBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
 
-  // --- MENGAMBIL DATA TERSIMPAN BERDASARKAN BULAN ---
   function muatDataPenyimpanan() {
     const bulan = document.getElementById('bulanLaporan').value;
     document.getElementById('lblBulanAktif').innerText = bulan;
@@ -313,7 +315,6 @@
       document.getElementById('nipPenilai').value = h.nipPenilai || '19730803 1998032009';
     }
 
-    // Load Foto TTD Tersimpan
     const ttdPegawaiSaved = localStorage.getItem('pendaftaran_ttdPegawai');
     if (ttdPegawaiSaved) {
       const img = document.getElementById('imgTtdPegawai');
@@ -332,9 +333,7 @@
     renderDaftarArsip();
   }
 
-  function pindahBulanLaporan() {
-    muatDataPenyimpanan();
-  }
+  function pindahBulanLaporan() { muatDataPenyimpanan(); }
 
   function simpanOtomatis() {
     const bulan = document.getElementById('bulanLaporan').value;
@@ -361,7 +360,6 @@
   function renderDaftarArsip() {
     const tbody = document.getElementById('archiveTableBody');
     tbody.innerHTML = '';
-
     let adaData = false;
 
     daftarBulan.forEach(b => {
@@ -397,9 +395,7 @@
   function unduhPDFBulanLangsung(b) {
     document.getElementById('bulanLaporan').value = b;
     muatDataPenyimpanan();
-    setTimeout(() => {
-      unduhPDF();
-    }, 300);
+    setTimeout(() => { unduhPDF(); }, 300);
   }
 
   function uploadTTD(event, imgElementId, storageKey) {
@@ -419,11 +415,7 @@
 
   function tambahKeTabel() {
     const tglValue = document.getElementById('tglInput').value;
-    
-    if (!tglValue) {
-      alert("Harap pilih tanggal terlebih dahulu!");
-      return;
-    }
+    if (!tglValue) { alert("Harap pilih tanggal terlebih dahulu!"); return; }
 
     const dateObj = new Date(tglValue);
     const daftarHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -435,15 +427,9 @@
     const v3 = parseInt(document.getElementById('keg3').value) || 0;
 
     listKegiatan.push({
-      id: Date.now(),
-      hari: namaHari,
-      tanggal: tglAngka,
-      raw1: v1,
-      raw2: v2,
-      raw3: v3,
-      keg1: v1 > 0 ? v1 : '-',
-      keg2: v2 > 0 ? v2 : '-',
-      keg3: v3 > 0 ? v3 : '-'
+      id: Date.now(), hari: namaHari, tanggal: tglAngka,
+      raw1: v1, raw2: v2, raw3: v3,
+      keg1: v1 > 0 ? v1 : '-', keg2: v2 > 0 ? v2 : '-', keg3: v3 > 0 ? v3 : '-'
     });
 
     simpanOtomatis();
@@ -459,48 +445,20 @@
     tbody.innerHTML = '';
 
     if (listKegiatan.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td style="font-weight: bold; font-size: 13px;">-</td>
-          <td class="no-print">-</td>
-        </tr>`;
+      tbody.innerHTML = `<tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td style="font-weight: bold;">-</td><td class="no-print">-</td></tr>`;
       updateHeaderPreview();
       return;
     }
 
     let grandTotal = 0;
-    listKegiatan.forEach(item => {
-      grandTotal += (item.raw1 + item.raw2 + item.raw3);
-    });
-
+    listKegiatan.forEach(item => { grandTotal += (item.raw1 + item.raw2 + item.raw3); });
     const totalFormatted = grandTotal > 0 ? `${grandTotal.toLocaleString('id-ID')} RM` : '-';
 
     listKegiatan.forEach((item, index) => {
       const tr = document.createElement('tr');
-      
-      let rowHtml = `
-        <td>${item.hari}</td>
-        <td>${item.tanggal}</td>
-        <td>${item.keg1}</td>
-        <td>${item.keg2}</td>
-        <td>${item.keg3}</td>
-      `;
-
-      if (index === 0) {
-        rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 13px;">${totalFormatted}</td>`;
-      }
-
-      rowHtml += `
-        <td class="no-print">
-          <button class="btn-del-row" onclick="hapusBaris(${index})" title="Hapus Baris Ini">🗑️ Hapus</button>
-        </td>
-      `;
-
+      let rowHtml = `<td>${item.hari}</td><td>${item.tanggal}</td><td>${item.keg1}</td><td>${item.keg2}</td><td>${item.keg3}</td>`;
+      if (index === 0) { rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold;">${totalFormatted}</td>`; }
+      rowHtml += `<td class="no-print"><button class="btn-del-row" onclick="hapusBaris(${index})">🗑️ Hapus</button></td>`;
       tr.innerHTML = rowHtml;
       tbody.appendChild(tr);
     });
@@ -509,7 +467,7 @@
   }
 
   function hapusBaris(index) {
-    if (confirm("Apakah Anda yakin ingin menghapus baris tanggal ini?")) {
+    if (confirm("Hapus baris tanggal ini?")) {
       listKegiatan.splice(index, 1);
       simpanOtomatis();
       renderData();
@@ -518,7 +476,7 @@
 
   function resetSemuaData() {
     const bulan = document.getElementById('bulanLaporan').value;
-    if (confirm(`Hapus semua baris data untuk bulan ${bulan}?`)) {
+    if (confirm(`Hapus semua baris data untuk bulan ${bulan}? (Data di browser untuk bulan ini akan dihapus permanen)`)) {
       listKegiatan = [];
       localStorage.removeItem(`pendaftaran_list_${bulan}`);
       renderData();
@@ -545,7 +503,6 @@
     document.getElementById('prevBulanTtd').innerText = bulan;
     document.getElementById('prevPegawaiTtd').innerText = nama;
     document.getElementById('prevNipTtd').innerText = nip;
-
     simpanOtomatis();
   }
 
@@ -557,8 +514,9 @@
     const noPrintElems = element.querySelectorAll('.no-print');
     noPrintElems.forEach(el => el.style.display = 'none');
 
+    // REVISI MARGIN: Margin Atas & Bawah dibuat lebih kecil (5mm) agar muat 1 Lembar
     const options = {
-      margin:       [10, 10, 10, 10],
+      margin:       [5, 10, 5, 10], 
       filename:     `Lembar_Kerja_Harian_${namaUser}_${bulanUser}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2 },
