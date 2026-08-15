@@ -4,89 +4,102 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lembar Kerja Harian - Puskesmas Loa Ipuh</title>
+  
+  <!-- Library Html2Pdf untuk Direct Export PDF tanpa dialog Print -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    * { box-sizing: border-box; font-family: "Times New Roman", Times, serif; }
-    body { background-color: #f1f5f9; margin: 15px; color: #000; }
+    * { box-sizing: border-box; }
+    body { background-color: #f1f5f9; margin: 15px; color: #1e293b; font-family: 'Segoe UI', Arial, sans-serif; }
     
-    /* Layout Interface Web */
-    .container { display: flex; gap: 20px; align-items: flex-start; }
-    .form-section { flex: 1; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-family: Arial, sans-serif; }
-    .preview-container { flex: 1.2; }
-    .preview-section { background: #525659; padding: 20px; border-radius: 8px; display: flex; justify-content: center; }
+    /* Layout Utama Dashboard UI */
+    .container { display: flex; gap: 20px; align-items: flex-start; flex-direction: row; }
+    .form-section { flex: 1; width: 100%; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .preview-container { flex: 1.25; width: 100%; }
+    .preview-section { background: #525659; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto; display: flex; justify-content: center; }
     
-    h2, h3 { margin-top: 0; color: #0f172a; font-size: 18px; font-family: Arial, sans-serif; }
+    h2, h3 { margin-top: 0; color: #0f172a; font-size: 18px; }
     .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-    .card-title { font-weight: 700; font-size: 13px; color: #4338ca; margin-bottom: 10px; display: block; text-transform: uppercase; font-family: Arial, sans-serif; }
+    .card-title { font-weight: 700; font-size: 13px; color: #4338ca; margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    .form-group { margin-bottom: 10px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; font-family: Arial, sans-serif; }
-    .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+    .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; outline: none; }
+    .form-group input:focus, .form-group select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(191, 219, 254, 0.8); }
+    
     .form-row { display: flex; gap: 10px; }
     .form-row .form-group { flex: 1; }
     
-    .btn-primary { background: #1d4ed8; color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; font-family: Arial, sans-serif; }
+    .btn-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
+    .btn-clear { background: #fef2f2; border: 1px solid #fca5a5; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 12px; padding: 8px 12px; border-radius: 5px; }
+    .btn-clear:hover { background: #fee2e2; }
+    
+    .btn-primary { background: #1d4ed8; color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 2px 4px rgba(37,99,235,0.2); }
     .btn-primary:hover { background: #1e40af; }
-    .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; font-family: Arial, sans-serif; }
-    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 1px 4px; font-size: 10px; cursor: pointer; font-family: Arial, sans-serif; }
+
+    .btn-save-archive { background: #059669; color: #ffffff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; }
+    .btn-save-archive:hover { background: #047857; }
+    
+    .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; }
+    .btn-add:hover { background: #1d4ed8; }
+
+    /* Table Arsip Laporan */
+    .archive-list { margin-top: 15px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; overflow-x: auto; }
+    .archive-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 280px; }
+    .archive-table th { background: #e2e8f0; text-align: left; padding: 8px; font-weight: 600; color: #334155; }
+    .archive-table td { padding: 8px; border-top: 1px solid #e2e8f0; }
+    .btn-arc-open { background: #3b82f6; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+    .btn-arc-dl { background: #10b981; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
     /* =========================================================
-       FORMAT PRESISI LEMBAR KERJA (A4)
+       🔥 FORMAT CETAK A4 (PRESISI DENGAN TIMES NEW ROMAN)
        ========================================================= */
     #pdfArea {
       width: 210mm;
       height: 297mm;
-      padding: 15mm 20mm 15mm 20mm;
+      padding: 12mm 15mm 12mm 15mm;
       background: #ffffff;
+      margin: 0 auto;
       box-sizing: border-box;
       color: #000;
-      position: relative;
+      font-family: 'Times New Roman', Times, serif;
     }
 
-    .doc-header { text-align: center; font-weight: bold; margin-bottom: 20px; line-height: 1.3; font-size: 13pt; text-transform: uppercase; }
+    .doc-header { text-align: center; font-weight: bold; margin-bottom: 12px; line-height: 1.25; color: #000; }
+    .doc-header div { font-size: 11pt; text-transform: uppercase; }
     
-    .doc-info { margin-bottom: 15px; font-weight: bold; font-size: 10pt; }
+    .doc-info { margin-bottom: 8px; font-weight: bold; font-size: 9.5pt; color: #000; }
     .doc-info table { border-collapse: collapse; }
-    .doc-info td { padding: 2px 4px; }
+    .doc-info td { padding: 1px 3px; }
 
-    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 9.5pt; }
+    /* Ukuran Tabel Dibuat Padat Agar Sampai Tanggal 31 + TTD Muat Pas 1 Halaman A4 */
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 8.5pt; color: #000; }
     table.preview-table th, table.preview-table td { 
       border: 1px solid #000; 
-      padding: 3px 4px; 
+      padding: 1.5px 3px; 
       text-align: center; 
-      line-height: 1.15;
+      line-height: 1.1;
     }
-    table.preview-table th { font-weight: bold; text-transform: uppercase; }
+    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 8pt; }
 
-    /* Area Tanda Tangan Presisi */
-    .ttd-container { display: flex; justify-content: space-between; margin-top: 30px; font-size: 10pt; text-align: center; line-height: 1.2; }
-    .ttd-box { width: 42%; position: relative; }
-    .ttd-space { height: 65px; display: flex; align-items: center; justify-content: center; position: relative; }
-    .ttd-img { max-height: 60px; max-width: 140px; object-fit: contain; z-index: 2; position: relative; }
-    .ttd-stempel { position: absolute; max-height: 80px; opacity: 0.85; z-index: 1; left: 10px; top: -5px; }
-    .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 2px; }
+    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 1px 3px; font-size: 8px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
 
-    /* =========================================================
-       MEDIA PRINT (Mencetak Langsung ke PDF tanpa Terpotong)
-       ========================================================= */
-    @media print {
-      body * { visibility: hidden; }
-      .no-print { display: none !important; }
-      #pdfArea, #pdfArea * { visibility: visible; }
-      #pdfArea {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 210mm;
-        height: 297mm;
-        padding: 15mm 20mm;
-        margin: 0;
-        box-shadow: none;
-      }
-      @page {
-        size: A4 portrait;
-        margin: 0;
-      }
+    /* Area Tanda Tangan */
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 15px; font-size: 9pt; text-align: center; color: #000; line-height: 1.15; }
+    .ttd-box { width: 44%; }
+    .ttd-space { height: 45px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
+    .ttd-img { max-height: 42px; max-width: 120px; object-fit: contain; }
+    .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 1px; }
+    .ttd-box p { margin: 1px 0; }
+
+    /* Responsive Mobile UI */
+    @media screen and (max-width: 768px) {
+      body { margin: 10px; }
+      .container { flex-direction: column; gap: 15px; }
+      .form-row { flex-direction: column; gap: 0; }
+      .btn-header { flex-direction: column; align-items: flex-start; }
+      .btn-clear { width: 100%; text-align: center; margin-top: 5px; }
+      .preview-section { overflow-x: auto; }
     }
   </style>
 </head>
@@ -94,27 +107,38 @@
 
 <div class="container">
   
-  <!-- PANEL FORM INPUT -->
-  <div class="form-section no-print">
-    <h2>✏️ Pengaturan Laporan</h2>
+  <!-- PANEL INPUT DATA -->
+  <div class="form-section">
+    <div class="btn-header">
+      <h2>✏️ Form Input Data</h2>
+      <button type="button" class="btn-clear" onclick="resetSemuaData()">💥 Kosongkan Form</button>
+    </div>
 
     <div class="card">
-      <span class="card-title">Informasi Pegawai & Penilai</span>
+      <span class="card-title">DATA PENANGGUNG JAWAB & PENILAI</span>
+      
       <div class="form-row">
         <div class="form-group">
           <label>Nama Pegawai</label>
-          <input type="text" id="namaPegawai" value="SRIYANI" oninput="updatePreview()">
+          <input type="text" id="namaPegawai" value="SRIYANI" oninput="updateHeaderPreview()">
         </div>
         <div class="form-group">
           <label>NIP Pegawai</label>
-          <input type="text" id="nipPegawai" value="197506102007012033" oninput="updatePreview()">
+          <input type="text" id="nipPegawai" value="197506102007012033" oninput="updateHeaderPreview()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>TTD Pegawai (PNG Transparan)</label>
+          <input type="file" id="fileTtdPegawai" accept="image/*" onchange="uploadTTD(event, 'imgTtdPegawai', 'pendaftaran_ttdPegawai')">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Bulan Laporan</label>
-          <select id="bulanLaporan" onchange="updatePreview()">
+          <select id="bulanLaporan" onchange="pindahBulanLaporan()">
             <option value="JANUARI">JANUARI</option>
             <option value="FEBRUARI">FEBRUARI</option>
             <option value="MARET" selected>MARET</option>
@@ -130,36 +154,56 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Tanggal Cetak TTD</label>
-          <input type="text" id="tglCetak" value="31 Maret 2026" oninput="updatePreview()">
+          <label>Lokasi & Tgl Cetak</label>
+          <input type="text" id="lokasiCetak" value="Tenggarong, 31 Maret 2026" oninput="updateHeaderPreview()">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Nama Pejabat Penilai</label>
-          <input type="text" id="namaPenilai" value="Joi Devi , SKM" oninput="updatePreview()">
+          <input type="text" id="namaPenilai" value="Joi Devi , SKM" oninput="updateHeaderPreview()">
         </div>
         <div class="form-group">
           <label>NIP Pejabat Penilai</label>
-          <input type="text" id="nipPenilai" value="19730803 1998032009" oninput="updatePreview()">
+          <input type="text" id="nipPenilai" value="19730803 1998032009" oninput="updateHeaderPreview()">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>TTD Pegawai (PNG)</label>
-          <input type="file" accept="image/*" onchange="loadImg(event, 'imgTtdPegawai')">
-        </div>
-        <div class="form-group">
-          <label>TTD & Stempel Penilai (PNG)</label>
-          <input type="file" accept="image/*" onchange="loadImg(event, 'imgTtdPenilai')">
+          <label>TTD Penilai (PNG Transparan)</label>
+          <input type="file" id="fileTtdPenilai" accept="image/*" onchange="uploadTTD(event, 'imgTtdPenilai', 'pendaftaran_ttdPenilai')">
         </div>
       </div>
     </div>
 
+    <!-- Panel Arsip & Simpan Bulan -->
+    <div class="card" style="background: #f0fdf4; border-color: #bbf7d0;">
+      <span class="card-title" style="color: #15803d;">💾 SIMPAN & ARSIP LAPORAN</span>
+      <button type="button" class="btn-save-archive" onclick="simpanLaporanBulanIni()">
+        💾 Simpan Laporan Bulan Ini
+      </button>
+
+      <div class="archive-list">
+        <table class="archive-table">
+          <thead>
+            <tr>
+              <th>Bulan</th>
+              <th>Status</th>
+              <th style="text-align: center;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="archiveTableBody">
+            <!-- Render daftar bulan tersimpan -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Input Baris Kegiatan -->
     <div class="card">
-      <span class="card-title">Tambah Baris Kegiatan</span>
+      <span class="card-title">📅 INPUT KEGIATAN HARIAN</span>
       <div class="form-row">
         <div class="form-group"><label>Hari</label><input type="text" id="inHari" placeholder="Senin"></div>
         <div class="form-group"><label>Tanggal</label><input type="text" id="inTgl" placeholder="2"></div>
@@ -169,24 +213,28 @@
         <div class="form-group"><label>Cari Data SIMPUS</label><input type="number" id="inKeg2" placeholder="0"></div>
         <div class="form-group"><label>Susun RM</label><input type="number" id="inKeg3" placeholder="0"></div>
       </div>
-      <button type="button" class="btn-add" onclick="tambahBaris()">➕ Tambah Baris Data</button>
+      <button type="button" class="btn-add" onclick="tambahBarisManual()">➕ Tambah ke Tabel</button>
     </div>
   </div>
 
-  <!-- PANEL PREVIEW & CETAK -->
+  <!-- PANEL PREVIEW DOKUMEN -->
   <div class="preview-container">
-    <div style="margin-bottom: 12px; text-align: right;" class="no-print">
-      <button type="button" class="btn-primary" onclick="cetakPDF()">
-        🖨️ Cetak / Download PDF A4
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+      <span style="font-size: 13px; font-weight: bold; color: #ffffff;">
+        📌 Menampilkan: <span id="lblBulanAktif" style="color: #60a5fa;">MARET</span>
+      </span>
+      <button type="button" class="btn-primary" onclick="unduhPDFDirect()">
+        📥 Unduh File PDF (Langsung Save)
       </button>
     </div>
 
+    <!-- AREA PREVIEW & CETAK PDF -->
     <div class="preview-section">
       <div id="pdfArea">
         <div class="doc-header">
-          LEMBAR KERJA HARIAN<br>
-          PUSKESMAS LOA IPUH<br>
-          RUANG PENDAFTARAN TAHUN 2026
+          <div>LEMBAR KERJA HARIAN</div>
+          <div>PUSKESMAS LOA IPUH</div>
+          <div>RUANG PENDAFTARAN TAHUN 2026</div>
         </div>
 
         <div class="doc-info">
@@ -201,7 +249,7 @@
           <thead>
             <tr>
               <th rowspan="2" style="width: 12%;">HARI</th>
-              <th rowspan="2" style="width: 10%;">TANGGAL</th>
+              <th rowspan="2" style="width: 8%;">TANGGAL</th>
               <th colspan="3">KEGIATAN</th>
               <th rowspan="2" style="width: 22%;">KETERANGAN</th>
               <th rowspan="2" class="no-print" style="width: 5%;"></th>
@@ -209,31 +257,32 @@
             <tr>
               <th style="width: 18%;">MENGAMBIL RM PASIEN RAK / BOK</th>
               <th style="width: 18%;">CARI DATA PASIEN DI SIMPUS</th>
-              <th style="width: 18%;">SUSUN RM PASIEN RAK/BOK</th>
+              <th style="width: 18%;">SUSUN RM PASIEN RAK / BOK</th>
             </tr>
           </thead>
           <tbody id="tableBody">
-            <!-- Data Tabel Default (Sesuai Contoh Gambar 2) -->
+            <!-- Tabel Rendisi Disini -->
           </tbody>
         </table>
 
+        <!-- Tanda Tangan -->
         <div class="ttd-container">
           <div class="ttd-box">
             <p>Mengetahui<br>Pejabat Penilai Kinerja</p>
             <div class="ttd-space">
-              <img id="imgTtdPenilai" class="ttd-img" src="" alt="" style="display:none;">
+              <img id="imgTtdPenilai" class="ttd-img" src="" alt="" style="display: none;">
             </div>
             <p class="ttd-name" id="prevPenilai">Joi Devi , SKM</p>
             <p>NIP . <span id="prevNipPenilai">19730803 1998032009</span></p>
           </div>
 
           <div class="ttd-box">
-            <p>Tenggarong, <span id="prevTglCetak">31 Maret 2026</span><br>Penanggung Jawab</p>
+            <p><span id="prevLokasi">Tenggarong, 31 Maret 2026</span><br>Penanggung Jawab</p>
             <div class="ttd-space">
-              <img id="imgTtdPegawai" class="ttd-img" src="" alt="" style="display:none;">
+              <img id="imgTtdPegawai" class="ttd-img" src="" alt="" style="display: none;">
             </div>
-            <p class="ttd-name" id="prevPegawaiTtd">SRI YANI</p>
-            <p>NIP.<span id="prevNipTtd">197506102007012033</span></p>
+            <p class="ttd-name" id="prevPegawaiTtd">SRIYANI</p>
+            <p>NIP. <span id="prevNipTtd">197506102007012033</span></p>
           </div>
         </div>
       </div>
@@ -243,8 +292,11 @@
 </div>
 
 <script>
-  // Initial Data sesuai contoh gambar manual
-  let dataKegiatan = [
+  let listKegiatan = [];
+  const daftarBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+
+  // Data Bawaan Default untuk contoh pertama (Maret)
+  const defaultMaret = [
     { hari: 'Senin', tgl: '2', k1: 98, k2: 10, k3: 41 },
     { hari: 'Selasa', tgl: '3', k1: 79, k2: 14, k3: 34 },
     { hari: 'Rabu', tgl: '4', k1: 85, k2: 0, k3: 13 },
@@ -267,48 +319,134 @@
     { hari: 'Selasa', tgl: '31', k1: 98, k2: 6, k3: 42 }
   ];
 
-  function renderTable() {
-    const tbody = document.getElementById('tableBody');
+  function muatDataPenyimpanan() {
+    const bulan = document.getElementById('bulanLaporan').value;
+    document.getElementById('lblBulanAktif').innerText = bulan;
+
+    const dataKegiatanSaved = localStorage.getItem(`pendaftaran_list_${bulan}`);
+    if (dataKegiatanSaved) {
+      listKegiatan = JSON.parse(dataKegiatanSaved);
+    } else {
+      if(bulan === "MARET") {
+        listKegiatan = [...defaultMaret];
+      } else {
+        listKegiatan = [];
+      }
+    }
+
+    const dataHeaderSaved = localStorage.getItem('pendaftaran_headerData');
+    if (dataHeaderSaved) {
+      const h = JSON.parse(dataHeaderSaved);
+      document.getElementById('namaPegawai').value = h.nama || 'SRIYANI';
+      document.getElementById('nipPegawai').value = h.nip || '197506102007012033';
+      document.getElementById('lokasiCetak').value = h.lokasi || 'Tenggarong, 31 Maret 2026';
+      document.getElementById('namaPenilai').value = h.penilai || 'Joi Devi , SKM';
+      document.getElementById('nipPenilai').value = h.nipPenilai || '19730803 1998032009';
+    }
+
+    const ttdPegawaiSaved = localStorage.getItem('pendaftaran_ttdPegawai');
+    if (ttdPegawaiSaved) {
+      const img = document.getElementById('imgTtdPegawai');
+      img.src = ttdPegawaiSaved;
+      img.style.display = 'block';
+    }
+
+    const ttdPenilaiSaved = localStorage.getItem('pendaftaran_ttdPenilai');
+    if (ttdPenilaiSaved) {
+      const img = document.getElementById('imgTtdPenilai');
+      img.src = ttdPenilaiSaved;
+      img.style.display = 'block';
+    }
+
+    renderData();
+    renderDaftarArsip();
+  }
+
+  function pindahBulanLaporan() { muatDataPenyimpanan(); }
+
+  function simpanOtomatis() {
+    const bulan = document.getElementById('bulanLaporan').value;
+    localStorage.setItem(`pendaftaran_list_${bulan}`, JSON.stringify(listKegiatan));
+    
+    const headerData = {
+      nama: document.getElementById('namaPegawai').value,
+      nip: document.getElementById('nipPegawai').value,
+      lokasi: document.getElementById('lokasiCetak').value,
+      penilai: document.getElementById('namaPenilai').value,
+      nipPenilai: document.getElementById('nipPenilai').value
+    };
+    localStorage.setItem('pendaftaran_headerData', JSON.stringify(headerData));
+
+    renderDaftarArsip();
+  }
+
+  function simpanLaporanBulanIni() {
+    simpanOtomatis();
+    const bulan = document.getElementById('bulanLaporan').value;
+    alert(`✅ Laporan Bulan ${bulan} Berhasil Disimpan Ke Arsip!`);
+  }
+
+  function renderDaftarArsip() {
+    const tbody = document.getElementById('archiveTableBody');
     tbody.innerHTML = '';
+    let adaData = false;
 
-    let totalSum = 0;
-    dataKegiatan.forEach(item => {
-      totalSum += (item.k1 + item.k2 + item.k3);
-    });
-
-    dataKegiatan.forEach((item, index) => {
-      const tr = document.createElement('tr');
-      
-      let html = `
-        <td>${item.hari}</td>
-        <td>${item.tgl}</td>
-        <td>${item.k1 > 0 ? item.k1 : '-'}</td>
-        <td>${item.k2 > 0 ? item.k2 : '-'}</td>
-        <td>${item.k3 > 0 ? item.k3 : '-'}</td>
-      `;
-
-      if (index === 0) {
-        html += `<td rowspan="${dataKegiatan.length}" style="vertical-align: middle; font-weight: bold;">${totalSum.toLocaleString('id-ID')} RM</td>`;
+    daftarBulan.forEach(b => {
+      let savedData = localStorage.getItem(`pendaftaran_list_${b}`);
+      if (!savedData && b === "MARET") {
+        savedData = JSON.stringify(defaultMaret);
       }
 
-      html += `<td class="no-print"><button class="btn-del-row" onclick="hapusBaris(${index})">✕</button></td>`;
-      tr.innerHTML = html;
-      tbody.appendChild(tr);
+      if (savedData) {
+        const arr = JSON.parse(savedData);
+        if (arr.length > 0) {
+          adaData = true;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${b}</strong></td>
+            <td><span style="color: #16a34a; font-weight: 600;">Tersimpan (${arr.length})</span></td>
+            <td style="text-align: center;">
+              <button class="btn-arc-open" onclick="bukaLaporanBulan('${b}')">👁️ Buka</button>
+              <button class="btn-arc-dl" onclick="unduhPDFBulanLangsung('${b}')">📥 PDF</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      }
     });
+
+    if (!adaData) {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color: #94a3b8;">Belum ada laporan tersimpan</td></tr>`;
+    }
   }
 
-  function updatePreview() {
-    document.getElementById('prevNama').innerText = document.getElementById('namaPegawai').value;
-    document.getElementById('prevNip').innerText = document.getElementById('nipPegawai').value;
-    document.getElementById('prevBulan').innerText = document.getElementById('bulanLaporan').value;
-    document.getElementById('prevTglCetak').innerText = document.getElementById('tglCetak').value;
-    document.getElementById('prevPenilai').innerText = document.getElementById('namaPenilai').value;
-    document.getElementById('prevNipPenilai').innerText = document.getElementById('nipPenilai').value;
-    document.getElementById('prevPegawaiTtd').innerText = document.getElementById('namaPegawai').value;
-    document.getElementById('prevNipTtd').innerText = document.getElementById('nipPegawai').value;
+  function bukaLaporanBulan(b) {
+    document.getElementById('bulanLaporan').value = b;
+    muatDataPenyimpanan();
   }
 
-  function tambahBaris() {
+  function unduhPDFBulanLangsung(b) {
+    document.getElementById('bulanLaporan').value = b;
+    muatDataPenyimpanan();
+    setTimeout(() => { unduhPDFDirect(); }, 300);
+  }
+
+  function uploadTTD(event, imgElementId, storageKey) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Image = e.target.result;
+        const img = document.getElementById(imgElementId);
+        img.src = base64Image;
+        img.style.display = 'block';
+        localStorage.setItem(storageKey, base64Image);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function tambahBarisManual() {
     const hari = document.getElementById('inHari').value;
     const tgl = document.getElementById('inTgl').value;
     const k1 = parseInt(document.getElementById('inKeg1').value) || 0;
@@ -317,8 +455,9 @@
 
     if (!hari || !tgl) { alert('Hari dan Tanggal wajib diisi!'); return; }
 
-    dataKegiatan.push({ hari, tgl, k1, k2, k3 });
-    renderTable();
+    listKegiatan.push({ hari, tgl, k1, k2, k3 });
+    simpanOtomatis();
+    renderData();
 
     document.getElementById('inHari').value = '';
     document.getElementById('inTgl').value = '';
@@ -327,31 +466,102 @@
     document.getElementById('inKeg3').value = '';
   }
 
-  function hapusBaris(index) {
-    dataKegiatan.splice(index, 1);
-    renderTable();
+  function renderData() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    if (listKegiatan.length === 0) {
+      tbody.innerHTML = `<tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td style="font-weight: bold;">-</td><td class="no-print">-</td></tr>`;
+      updateHeaderPreview();
+      return;
+    }
+
+    let grandTotal = 0;
+    listKegiatan.forEach(item => { grandTotal += (item.k1 + item.k2 + item.k3); });
+    const totalFormatted = grandTotal > 0 ? `${grandTotal.toLocaleString('id-ID')} RM` : '-';
+
+    listKegiatan.forEach((item, index) => {
+      const tr = document.createElement('tr');
+      let rowHtml = `<td>${item.hari}</td><td>${item.tgl}</td><td>${item.k1 > 0 ? item.k1 : '-'}</td><td>${item.k2 > 0 ? item.k2 : '-'}</td><td>${item.k3 > 0 ? item.k3 : '-'}</td>`;
+      if (index === 0) { rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold;">${totalFormatted}</td>`; }
+      rowHtml += `<td class="no-print"><button class="btn-del-row" onclick="hapusBaris(${index})">✕</button></td>`;
+      tr.innerHTML = rowHtml;
+      tbody.appendChild(tr);
+    });
+
+    updateHeaderPreview();
   }
 
-  function loadImg(event, elementId) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = document.getElementById(elementId);
-        img.src = e.target.result;
-        img.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+  function hapusBaris(index) {
+    listKegiatan.splice(index, 1);
+    simpanOtomatis();
+    renderData();
+  }
+
+  function resetSemuaData() {
+    const bulan = document.getElementById('bulanLaporan').value;
+    if (confirm(`Kosongkan data untuk bulan ${bulan}?`)) {
+      listKegiatan = [];
+      localStorage.removeItem(`pendaftaran_list_${bulan}`);
+      renderData();
+      renderDaftarArsip();
     }
   }
 
-  function cetakPDF() {
-    window.print();
+  function updateHeaderPreview() {
+    const nama = document.getElementById('namaPegawai').value;
+    const nip = document.getElementById('nipPegawai').value;
+    const bulan = document.getElementById('bulanLaporan').value;
+    const lokasi = document.getElementById('lokasiCetak').value;
+    const penilai = document.getElementById('namaPenilai').value;
+    const nipPenilai = document.getElementById('nipPenilai').value;
+
+    document.getElementById('prevNama').innerText = nama;
+    document.getElementById('prevNip').innerText = nip;
+    document.getElementById('prevBulan').innerText = bulan;
+    
+    document.getElementById('prevPenilai').innerText = penilai;
+    document.getElementById('prevNipPenilai').innerText = nipPenilai;
+
+    document.getElementById('prevLokasi').innerText = lokasi;
+    document.getElementById('prevPegawaiTtd').innerText = nama;
+    document.getElementById('prevNipTtd').innerText = nip;
+    simpanOtomatis();
   }
 
-  // Initial Execution
-  renderTable();
-  updatePreview();
+  /* =========================================================
+     🔥 FUNGSI DIRECT DOWNLOAD FILE PDF (100% TANPA POPUP PRINT)
+     ========================================================= */
+  function unduhPDFDirect() {
+    const element = document.getElementById('pdfArea');
+    const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
+    const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
+
+    // Sembunyikan kolom tombol aksi hapus
+    const noPrintElems = element.querySelectorAll('.no-print');
+    noPrintElems.forEach(el => el.style.display = 'none');
+
+    const options = {
+      margin:       0,
+      filename:     `Lembar_Kerja_Harian_${namaUser}_${bulanUser}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { 
+        scale: 2, 
+        useCORS: true, 
+        logging: false,
+        windowWidth: 1024
+      },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Langsung Download File PDF
+    html2pdf().set(options).from(element).save().then(() => {
+      noPrintElems.forEach(el => el.style.display = '');
+    });
+  }
+
+  // Muat data saat halaman dibuka
+  muatDataPenyimpanan();
 </script>
 
 </body>
