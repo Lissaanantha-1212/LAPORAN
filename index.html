@@ -8,9 +8,12 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Custom CSS untuk Cetak / Print Page Rules (A4 & F4 / Folio) -->
   <style>
     @media print {
+      @page {
+        size: A4 portrait;
+        margin: 15mm;
+      }
       body {
         background: white !important;
         margin: 0 !important;
@@ -26,17 +29,10 @@
         margin: 0 !important;
         width: 100% !important;
       }
-      /* Pilihan Ukuran Kertas Dinamis via CSS Class */
-      body.paper-a4 {
-        size: A4 portrait;
-      }
-      body.paper-f4 {
-        size: 215mm 330mm portrait; /* Ukuran Folio / F4 */
-      }
     }
   </style>
 </head>
-<body class="bg-slate-100 font-sans min-h-screen paper-a4">
+<body class="bg-slate-100 font-sans min-h-screen">
 
   <!-- TOP HEADER APP BAR -->
   <header class="bg-indigo-700 text-white px-6 py-4 flex justify-between items-center shadow-md no-print">
@@ -45,8 +41,8 @@
       <h1 class="text-xl font-bold tracking-wide">E-LKH Puskesmas 2026</h1>
     </div>
     <div class="flex items-center gap-3">
-      <span className="bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow">
-        🗄️ Arsip Multi-Bulan Aktif
+      <span class="bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow">
+        🗄️ Database Live Active
       </span>
     </div>
   </header>
@@ -74,7 +70,7 @@
 
         <form id="lkhForm" onsubmit="handleSaveData(event)" class="space-y-4">
 
-          <!-- SECTION 1: PEGAWAI & PENILAI -->
+          <!-- DATA PENANGGUNG JAWAB & PENILAI -->
           <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-3">
             <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider block">
               DATA PENANGGUNG JAWAB & PENILAI
@@ -127,7 +123,7 @@
             </div>
           </div>
 
-          <!-- SECTION 2: INPUT KEGIATAN HARIAN -->
+          <!-- INPUT KEGIATAN HARIAN -->
           <div class="bg-indigo-50/60 p-4 rounded-lg border border-indigo-100 space-y-3">
             <span class="text-xs font-bold text-indigo-900 uppercase tracking-wider block">
               📅 INPUT KEGIATAN HARIAN
@@ -141,40 +137,18 @@
             <div class="space-y-2 pt-1">
               <div>
                 <label class="text-xs text-slate-700 font-medium">1. MENGAMBIL RM PASIEN RAK / BOK</label>
-                <input type="text" id="kegiatan1" placeholder="Contoh: 15 Pasien" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="number" id="kegiatan1" min="0" placeholder="Masukkan jumlah angka (misal: 67)" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
               </div>
 
               <div>
                 <label class="text-xs text-slate-700 font-medium">2. CARI DATA PASIEN DI SIMPUS</label>
-                <input type="text" id="kegiatan2" placeholder="Contoh: 15 Data" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="number" id="kegiatan2" min="0" placeholder="Masukkan jumlah angka (misal: 89)" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
               </div>
 
               <div>
                 <label class="text-xs text-slate-700 font-medium">3. SUSUN RM PASIEN RAK / BOK</label>
-                <input type="text" id="kegiatan3" placeholder="Contoh: 15 Pasien" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="number" id="kegiatan3" min="0" placeholder="Masukkan jumlah angka (misal: 78)" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
               </div>
-
-              <div>
-                <label class="text-xs text-slate-700 font-medium">KETERANGAN (OPSIONAL)</label>
-                <input type="text" id="keterangan" placeholder="Keterangan..." class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
-              </div>
-            </div>
-          </div>
-
-          <!-- SECTION 3: PENGATURAN CETAK (UKURAN KERTAS) -->
-          <div class="bg-amber-50 p-3.5 rounded-lg border border-amber-200 space-y-2">
-            <span class="text-xs font-bold text-amber-800 uppercase tracking-wider block">
-              🖨️ Pengaturan Cetak Dokumen
-            </span>
-            <div class="flex items-center gap-4">
-              <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
-                <input type="radio" name="paperSize" value="paper-a4" checked onchange="changePaperSize('paper-a4')" class="text-indigo-600">
-                <span class="ml-1.5">Kertas A4</span>
-              </label>
-              <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
-                <input type="radio" name="paperSize" value="paper-f4" onchange="changePaperSize('paper-f4')" class="text-indigo-600">
-                <span class="ml-1.5">Kertas F4 / Folio</span>
-              </label>
             </div>
           </div>
 
@@ -221,22 +195,19 @@
           <table class="w-full text-xs border-collapse text-center">
             <thead>
               <tr class="bg-slate-50 border-b border-slate-900 font-bold text-slate-900">
-                <th class="border-r border-slate-900 p-2 w-16">HARI</th>
-                <th class="border-r border-slate-900 p-2 w-24">TANGGAL</th>
-                <th class="border-r border-slate-900 p-2" colSpan="3">KEGIATAN</th>
-                <th class="p-2 w-28">KETERANGAN</th>
+                <th rowspan="2" class="border-r border-slate-900 p-2 w-16 align-middle">HARI</th>
+                <th rowspan="2" class="border-r border-slate-900 p-2 w-20 align-middle">TANGGAL</th>
+                <th colspan="3" class="border-r border-slate-900 p-2">KEGIATAN</th>
+                <th rowspan="2" class="p-2 w-28 align-middle">KETERANGAN</th>
               </tr>
               <tr class="bg-slate-50 border-b border-slate-900 font-bold text-slate-900 text-[11px]">
-                <th class="border-r border-slate-900 p-1"></th>
-                <th class="border-r border-slate-900 p-1"></th>
-                <th class="border-r border-slate-900 p-1 font-semibold w-1/4">MENGAMBIL RM PASIEN RAK / BOK</th>
-                <th class="border-r border-slate-900 p-1 font-semibold w-1/4">CARI DATA PASIEN DI SIMPUS</th>
-                <th class="border-r border-slate-900 p-1 font-semibold w-1/4">SUSUN RM PASIEN RAK / BOK</th>
-                <th class="p-1"></th>
+                <th class="border-r border-slate-900 p-1.5 font-semibold w-1/3">MENGAMBIL RM PASIEN RAK / BOK</th>
+                <th class="border-r border-slate-900 p-1.5 font-semibold w-1/3">CARI DATA PASIEN DI SIMPUS</th>
+                <th class="border-r border-slate-900 p-1.5 font-semibold w-1/3">SUSUN RM PASIEN RAK / BOK</th>
               </tr>
             </thead>
             <tbody id="tableBody">
-              <!-- Content injected dynamically by JS -->
+              <!-- Dynamically Populated -->
             </tbody>
           </table>
         </div>
@@ -253,13 +224,13 @@
           <div>
             <p id="prevTglCetak">Tenggarong, 31 Agustus 2026</p>
             <p class="mb-16">Penanggung Jawab</p>
-            <p id="prevPenanggungNama" class="font-bold underline text-sm">Sriyani</p>
+            <p id="prevPenanggungNama" class="font-bold underline text-sm">SRIYANI</p>
             <p id="prevPenanggungNip" class="text-[11px]">NIP . 197506102007012033</p>
           </div>
         </div>
       </div>
 
-      <!-- ACTION BUTTON CETAK (ONLY) -->
+      <!-- ACTION BUTTON CETAK -->
       <div class="mt-8 pt-4 border-t border-slate-200 flex justify-end no-print">
         <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-6 py-2.5 rounded-lg shadow flex items-center gap-2">
           🖨️ Cetak Dokumen / PDF
@@ -270,32 +241,25 @@
 
   </main>
 
-  <!-- JAVASCRIPT LOGIC SYSTEM -->
   <script>
-    // 1. DATABASE LOCALSTORAGE KEY
     const DB_KEY = 'E_LKH_DATABASE_2026';
 
-    // Default set tanggal hari ini di picker
     document.getElementById('inputTanggal').valueAsDate = new Date();
 
-    // Init App
     window.onload = function() {
       updatePreviewHeader();
       renderTable();
     };
 
-    // Helper: Ambil Data Database dari LocalStorage
     function getDatabase() {
       const data = localStorage.getItem(DB_KEY);
       return data ? JSON.parse(data) : [];
     }
 
-    // Helper: Simpan Data ke LocalStorage
     function saveDatabase(data) {
       localStorage.setItem(DB_KEY, JSON.stringify(data));
     }
 
-    // Update Header Bio Real-time saat Mengetik
     function updatePreviewHeader() {
       const namaPegawai = document.getElementById('namaPegawai').value || '-';
       const nipPegawai = document.getElementById('nipPegawai').value || '-';
@@ -317,7 +281,6 @@
       document.getElementById('prevTglCetak').innerText = lokasi + ', ' + getLastDayOfBulan(bulan);
     }
 
-    // Dynamic Tanggal Cetak Akhir Bulan
     function getLastDayOfBulan(bulanName) {
       const bulanIndexMap = {
         'JANUARI': '31 Januari', 'FEBRUARI': '28 Februari', 'MARET': '31 Maret',
@@ -328,13 +291,11 @@
       return (bulanIndexMap[bulanName] || '31 Agustus') + ' 2026';
     }
 
-    // Ganti Filter Bulan
     function handleBulanChange() {
       updatePreviewHeader();
       renderTable();
     }
 
-    // LOGIKA SIMPAN / UPDATE (UPSERT)
     function handleSaveData(event) {
       event.preventDefault();
 
@@ -345,61 +306,57 @@
       }
 
       const bulanSelected = document.getElementById('bulanLaporan').value;
-      const k1 = document.getElementById('kegiatan1').value || '-';
-      const k2 = document.getElementById('kegiatan2').value || '-';
-      const k3 = document.getElementById('kegiatan3').value || '-';
-      const ket = document.getElementById('keterangan').value || '-';
+      const val1 = parseInt(document.getElementById('kegiatan1').value) || 0;
+      const val2 = parseInt(document.getElementById('kegiatan2').value) || 0;
+      const val3 = parseInt(document.getElementById('kegiatan3').value) || 0;
 
-      // Parse Nama Hari
+      const totalKegiatan = val1 + val2 + val3;
+      const keteranganOtomatis = totalKegiatan > 0 ? `${totalKegiatan} Berkas` : '-';
+
       const dateObj = new Date(tanggalInput);
       const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
       const namaHari = days[dateObj.getDay()];
+      
+      // Mengambil HANYA Angka Tanggal (1-31)
+      const tglAngka = dateObj.getDate();
 
       let db = getDatabase();
-
-      // Cek apakah tanggal ini sudah ada di Database
-      const existingIdx = db.findIndex(item => item.tanggal === tanggalInput);
+      const existingIdx = db.findIndex(item => item.tanggalFull === tanggalInput);
 
       const recordData = {
         id: existingIdx !== -1 ? db[existingIdx].id : Date.now().toString(),
-        tanggal: tanggalInput,
+        tanggalFull: tanggalInput,
+        tanggalOnly: tglAngka,
         hari: namaHari,
         bulan: bulanSelected,
-        kegiatan1: k1,
-        kegiatan2: k2,
-        kegiatan3: k3,
-        keterangan: ket
+        kegiatan1: val1 || '-',
+        kegiatan2: val2 || '-',
+        kegiatan3: val3 || '-',
+        keterangan: keteranganOtomatis
       };
 
       if (existingIdx !== -1) {
-        // UPDATE (JIKA SUDAH ADA)
         db[existingIdx] = recordData;
-        showToast(`Data tanggal ${tanggalInput} berhasil diperbarui!`);
+        showToast(`Data tanggal ${tglAngka} berhasil di-update!`);
       } else {
-        // SIMPAN BARU (BARIS BARU)
         db.push(recordData);
-        // Urutkan Tanggal Ascending
-        db.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
-        showToast(`Data tanggal ${tanggalInput} berhasil disimpan!`);
+        db.sort((a, b) => new Date(a.tanggalFull) - new Date(b.tanggalFull));
+        showToast(`Data tanggal ${tglAngka} berhasil disimpan!`);
       }
 
       saveDatabase(db);
       renderTable();
 
-      // Reset Input Harian Saja
       document.getElementById('kegiatan1').value = '';
       document.getElementById('kegiatan2').value = '';
       document.getElementById('kegiatan3').value = '';
-      document.getElementById('keterangan').value = '';
     }
 
-    // RENDER TABEL HARIAN KE LIVE PREVIEW
     function renderTable() {
       const db = getDatabase();
       const currentBulan = document.getElementById('bulanLaporan').value;
       const tbody = document.getElementById('tableBody');
 
-      // Filter Data Berdasarkan Bulan yang Dipilih
       const filteredData = db.filter(item => item.bulan === currentBulan);
 
       if (filteredData.length === 0) {
@@ -415,14 +372,17 @@
 
       let htmlRows = '';
       filteredData.forEach(row => {
+        // HANYA angka tanggal
+        const displayTanggal = row.tanggalOnly || new Date(row.tanggalFull || row.tanggal).getDate();
+        
         htmlRows += `
           <tr class="border-b border-slate-900 hover:bg-slate-50">
             <td class="border-r border-slate-900 p-2 font-medium">${row.hari}</td>
-            <td class="border-r border-slate-900 p-2">${row.tanggal}</td>
+            <td class="border-r border-slate-900 p-2 font-semibold">${displayTanggal}</td>
             <td class="border-r border-slate-900 p-2">${row.kegiatan1}</td>
             <td class="border-r border-slate-900 p-2">${row.kegiatan2}</td>
             <td class="border-r border-slate-900 p-2">${row.kegiatan3}</td>
-            <td class="p-2">${row.keterangan}</td>
+            <td class="p-2 font-semibold text-slate-800">${row.keterangan}</td>
           </tr>
         `;
       });
@@ -430,17 +390,14 @@
       tbody.innerHTML = htmlRows;
     }
 
-    // CLEAR FORM ONLY
     function resetFormOnly() {
       if (confirm('Kosongkan inputan form harian?')) {
         document.getElementById('kegiatan1').value = '';
         document.getElementById('kegiatan2').value = '';
         document.getElementById('kegiatan3').value = '';
-        document.getElementById('keterangan').value = '';
       }
     }
 
-    // TOAST NOTIFIKASI
     function showToast(msg) {
       const toast = document.getElementById('toast');
       document.getElementById('toast-text').innerText = msg;
@@ -448,13 +405,6 @@
       setTimeout(() => {
         toast.classList.add('hidden');
       }, 3000);
-    }
-
-    // GANTI UKURAN KERTAS (A4 / F4)
-    function changePaperSize(sizeClass) {
-      document.body.classList.remove('paper-a4', 'paper-f4');
-      document.body.classList.add(sizeClass);
-      showToast('Ukuran Kertas Diubah ke ' + (sizeClass === 'paper-a4' ? 'A4' : 'F4 / Folio'));
     }
   </script>
 </body>
