@@ -3,409 +3,349 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-LKH Puskesmas 2026</title>
+  <title>Lembar Kerja Harian - Puskesmas Loa Ipuh</title>
   
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
+  <!-- Library html2pdf.js untuk export PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
-    @media print {
-      @page {
-        size: A4 portrait;
-        margin: 15mm;
-      }
-      body {
-        background: white !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      .no-print {
-        display: none !important;
-      }
-      .print-area {
-        box-shadow: none !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
-      }
-    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f7f6; margin: 20px; color: #333; }
+    
+    .container { display: flex; gap: 20px; align-items: flex-start; }
+    .form-section { flex: 1; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .preview-section { flex: 1.2; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    
+    h2, h3 { margin-top: 0; color: #1e293b; }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+    .card-title { font-weight: bold; font-size: 14px; color: #4338ca; margin-bottom: 10px; display: block; text-transform: uppercase; }
+    
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+    .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    
+    .btn-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .btn-clear { background: none; border: none; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 4px; }
+    .btn-clear:hover { text-decoration: underline; }
+    
+    .btn-primary { background: #0f172a; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+    .btn-primary:hover { background: #1e293b; }
+    
+    .btn-add { background: #2563eb; color: #fff; border: none; padding: 8px 14px; border-radius: 4px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 5px; }
+    .btn-add:hover { background: #1d4ed8; }
+    
+    .btn-delete { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .btn-delete:hover { background: #fca5a5; }
+
+    /* Layout Dokumen Preview */
+    .doc-header { text-align: center; font-weight: bold; margin-bottom: 25px; line-height: 1.4; }
+    .doc-header div { font-size: 16px; }
+    .doc-info { margin-bottom: 20px; font-weight: bold; font-size: 14px; }
+    .doc-info table { border-collapse: collapse; }
+    .doc-info td { padding: 3px 5px; }
+
+    /* Tabel Preview */
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 12px; }
+    table.preview-table th, table.preview-table td { border: 1px solid #000; padding: 8px; text-align: center; }
+    table.preview-table th { background: #fff; font-weight: bold; }
+
+    /* Tanda Tangan */
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 40px; font-size: 13px; text-align: center; }
+    .ttd-box { width: 45%; }
+    .ttd-space { height: 60px; }
+    .ttd-name { font-weight: bold; text-decoration: underline; }
+
+    /* CSS khusus penyembunyian saat membuat PDF */
+    .no-print { display: table-cell; }
+    .pdf-hidden { display: none !important; }
   </style>
 </head>
-<body class="bg-slate-100 font-sans min-h-screen">
+<body>
 
-  <!-- TOP HEADER APP BAR -->
-  <header class="bg-indigo-700 text-white px-6 py-4 flex justify-between items-center shadow-md no-print">
-    <div class="flex items-center gap-3">
-      <div class="bg-white/20 p-2 rounded-lg font-bold">📋</div>
-      <h1 class="text-xl font-bold tracking-wide">E-LKH Puskesmas 2026</h1>
+<div class="container">
+  
+  <!-- ================= FORM INPUT ================= -->
+  <div class="form-section">
+    <div class="btn-header">
+      <h2>✏️ Form Input Data</h2>
+      <button type="button" class="btn-clear" onclick="clearFormInput()">🔄 Clear Form</button>
     </div>
-    <div class="flex items-center gap-3">
-      <span class="bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow">
-        🗄️ Database Live Active
-      </span>
-    </div>
-  </header>
 
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="hidden fixed top-20 right-6 z-50 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-2">
-    <span>✅</span>
-    <span id="toast-text">Data berhasil disimpan!</span>
+    <!-- Data Penanggung Jawab & Penilai -->
+    <div class="card">
+      <span class="card-title">DATA PENANGGUNG JAWAB & PENILAI</span>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Pegawai</label>
+          <input type="text" id="namaPegawai" value="SRIYANI" oninput="updatePreviewHeader()">
+        </div>
+        <div class="form-group">
+          <label>NIP Pegawai</label>
+          <input type="text" id="nipPegawai" value="197506102007012033" oninput="updatePreviewHeader()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Bulan Laporan</label>
+          <select id="bulanLaporan" onchange="updatePreviewHeader()">
+            <option value="JANUARI">JANUARI</option>
+            <option value="FEBRUARI">FEBRUARI</option>
+            <option value="MARET">MARET</option>
+            <option value="APRIL">APRIL</option>
+            <option value="MEI">MEI</option>
+            <option value="JUNI">JUNI</option>
+            <option value="JULI">JULI</option>
+            <option value="AGUSTUS" selected>AGUSTUS</option>
+            <option value="SEPTEMBER">SEPTEMBER</option>
+            <option value="OKTOBER">OKTOBER</option>
+            <option value="NOVEMBER">NOVEMBER</option>
+            <option value="DESEMBER">DESEMBER</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Lokasi Cetak</label>
+          <input type="text" id="lokasiCetak" value="Tenggarong" oninput="updatePreviewHeader()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Pejabat Penilai</label>
+          <input type="text" id="namaPenilai" value="Joi Devi , SKM" oninput="updatePreviewHeader()">
+        </div>
+        <div class="form-group">
+          <label>NIP Pejabat Penilai</label>
+          <input type="text" id="nipPenilai" value="19730803 1998032009" oninput="updatePreviewHeader()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Kegiatan Harian -->
+    <div class="card">
+      <span class="card-title">📅 INPUT KEGIATAN HARIAN</span>
+      
+      <div class="form-group">
+        <label>Tanggal Hari Ini</label>
+        <input type="date" id="tglInput">
+      </div>
+
+      <div class="form-group">
+        <label>1. MENGAMBIL RM PASIEN RAK / BOK</label>
+        <input type="number" id="keg1" placeholder="Masukkan jumlah angka (misal: 67)">
+      </div>
+
+      <div class="form-group">
+        <label>2. CARI DATA PASIEN DI SIMPUS</label>
+        <input type="number" id="keg2" placeholder="Masukkan jumlah angka (misal: 89)">
+      </div>
+
+      <div class="form-group">
+        <label>3. SUSUN RM PASIEN RAK / BOK</label>
+        <input type="number" id="keg3" placeholder="Masukkan jumlah angka (misal: 78)">
+      </div>
+
+      <div class="form-group">
+        <label>KETERANGAN</label>
+        <input type="text" id="keterangan" placeholder="Contoh: 202 Berkas / -">
+      </div>
+
+      <button type="button" class="btn-add" onclick="tambahKegiatan()">➕ Tambah ke Preview</button>
+    </div>
   </div>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-[1500px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <!-- ================= PREVIEW & UNDUH ================= -->
+  <div style="flex: 1.2;">
+    <!-- Tombol Unduh PDF Langsung -->
+    <div style="text-align: right; margin-bottom: 15px;">
+      <button type="button" class="btn-primary" onclick="unduhPDF()">
+        📥 Unduh PDF
+      </button>
+    </div>
 
-    <!-- ================= SISI KIRI: FORM INPUT ================= -->
-    <section class="lg:col-span-5 bg-white rounded-xl shadow-md border border-slate-200 p-6 flex flex-col justify-between no-print">
-      <div>
-        <div class="flex justify-between items-center pb-4 border-b mb-4">
-          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-            ✏️ Form Input Data
-          </h2>
-          <button type="button" onclick="resetFormOnly()" class="text-xs text-rose-500 hover:text-rose-700 font-semibold">
-            🔄 Clear Form
-          </button>
-        </div>
-
-        <form id="lkhForm" onsubmit="handleSaveData(event)" class="space-y-4">
-
-          <!-- DATA PENANGGUNG JAWAB & PENILAI -->
-          <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-3">
-            <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider block">
-              DATA PENANGGUNG JAWAB & PENILAI
-            </span>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-xs text-slate-600 font-medium">Nama Pegawai</label>
-                <input type="text" id="namaPegawai" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="SRIYANI" oninput="updatePreviewHeader()">
-              </div>
-              <div>
-                <label class="text-xs text-slate-600 font-medium">NIP Pegawai</label>
-                <input type="text" id="nipPegawai" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="197506102007012033" oninput="updatePreviewHeader()">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-xs text-slate-600 font-medium">Bulan Laporan</label>
-                <select id="bulanLaporan" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none bg-white" onchange="handleBulanChange()">
-                  <option value="JANUARI">JANUARI</option>
-                  <option value="FEBRUARI">FEBRUARI</option>
-                  <option value="MARET">MARET</option>
-                  <option value="APRIL">APRIL</option>
-                  <option value="MEI">MEI</option>
-                  <option value="JUNI">JUNI</option>
-                  <option value="JULI">JULI</option>
-                  <option value="AGUSTUS" selected>AGUSTUS</option>
-                  <option value="SEPTEMBER">SEPTEMBER</option>
-                  <option value="OKTOBER">OKTOBER</option>
-                  <option value="NOVEMBER">NOVEMBER</option>
-                  <option value="DESEMBER">DESEMBER</option>
-                </select>
-              </div>
-              <div>
-                <label class="text-xs text-slate-600 font-medium">Lokasi Cetak</label>
-                <input type="text" id="lokasiCetak" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="Tenggarong" oninput="updatePreviewHeader()">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 pt-1">
-              <div>
-                <label class="text-xs text-slate-600 font-medium">Nama Pejabat Penilai</label>
-                <input type="text" id="namaPejabat" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="Joi Devi , SKM" oninput="updatePreviewHeader()">
-              </div>
-              <div>
-                <label class="text-xs text-slate-600 font-medium">NIP Pejabat Penilai</label>
-                <input type="text" id="nipPejabat" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="19730803 1998032009" oninput="updatePreviewHeader()">
-              </div>
-            </div>
-          </div>
-
-          <!-- INPUT KEGIATAN HARIAN -->
-          <div class="bg-indigo-50/60 p-4 rounded-lg border border-indigo-100 space-y-3">
-            <span class="text-xs font-bold text-indigo-900 uppercase tracking-wider block">
-              📅 INPUT KEGIATAN HARIAN
-            </span>
-
-            <div>
-              <label class="text-xs text-slate-700 font-semibold">Tanggal Hari Ini</label>
-              <input type="date" id="inputTanggal" required class="w-full text-sm font-semibold border border-indigo-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none mt-1">
-            </div>
-
-            <div class="space-y-2 pt-1">
-              <div>
-                <label class="text-xs text-slate-700 font-medium">1. MENGAMBIL RM PASIEN RAK / BOK</label>
-                <input type="number" id="kegiatan1" min="0" placeholder="Masukkan jumlah angka (misal: 67)" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
-              </div>
-
-              <div>
-                <label class="text-xs text-slate-700 font-medium">2. CARI DATA PASIEN DI SIMPUS</label>
-                <input type="number" id="kegiatan2" min="0" placeholder="Masukkan jumlah angka (misal: 89)" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
-              </div>
-
-              <div>
-                <label class="text-xs text-slate-700 font-medium">3. SUSUN RM PASIEN RAK / BOK</label>
-                <input type="number" id="kegiatan3" min="0" placeholder="Masukkan jumlah angka (misal: 78)" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
-              </div>
-            </div>
-          </div>
-
-          <!-- TOMBOL SIMPAN / UPDATE HARIAN -->
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
-            💾 Simpan / Update Data Hari Ini
-          </button>
-
-        </form>
-      </div>
-    </section>
-
-    <!-- ================= SISI KANAN: LIVE PREVIEW DOKUMEN ================= -->
-    <section class="lg:col-span-7 bg-white rounded-xl shadow-md border border-slate-200 p-8 flex flex-col justify-between print-area">
-      
-      <div id="print-content">
-        <!-- HEADER DOKUMEN -->
-        <div class="text-center mb-6 space-y-1">
-          <h3 class="text-base font-bold text-slate-900 tracking-wider">LEMBAR KERJA HARIAN</h3>
-          <h3 class="text-base font-bold text-slate-900 tracking-wider">PUSKESMAS LOA IPUH</h3>
-          <h4 class="text-sm font-bold text-slate-800 tracking-wide uppercase">
-            RUANG PENDAFTARAN TAHUN 2026
-          </h4>
-        </div>
-
-        <!-- BIO PREVIEW -->
-        <div class="text-sm font-semibold text-slate-800 space-y-1 mb-6 max-w-md">
-          <div class="grid grid-cols-12">
-            <span class="col-span-3">NAMA</span>
-            <span class="col-span-9" id="prevNama">: SRIYANI</span>
-          </div>
-          <div class="grid grid-cols-12">
-            <span class="col-span-3">NIP</span>
-            <span class="col-span-9" id="prevNip">: 197506102007012033</span>
-          </div>
-          <div class="grid grid-cols-12">
-            <span class="col-span-3">BULAN</span>
-            <span class="col-span-9" id="prevBulan">: AGUSTUS</span>
-          </div>
-        </div>
-
-        <!-- TABEL DOKUMEN -->
-        <div class="border border-slate-900 rounded-sm overflow-hidden mb-8">
-          <table class="w-full text-xs border-collapse text-center">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-900 font-bold text-slate-900">
-                <th rowspan="2" class="border-r border-slate-900 p-2 w-16 align-middle">HARI</th>
-                <th rowspan="2" class="border-r border-slate-900 p-2 w-20 align-middle">TANGGAL</th>
-                <th colspan="3" class="border-r border-slate-900 p-2">KEGIATAN</th>
-                <th rowspan="2" class="p-2 w-28 align-middle">KETERANGAN</th>
-              </tr>
-              <tr class="bg-slate-50 border-b border-slate-900 font-bold text-slate-900 text-[11px]">
-                <th class="border-r border-slate-900 p-1.5 font-semibold w-1/3">MENGAMBIL RM PASIEN RAK / BOK</th>
-                <th class="border-r border-slate-900 p-1.5 font-semibold w-1/3">CARI DATA PASIEN DI SIMPUS</th>
-                <th class="border-r border-slate-900 p-1.5 font-semibold w-1/3">SUSUN RM PASIEN RAK / BOK</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-              <!-- Dynamically Populated -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- TANDA TANGAN -->
-        <div class="grid grid-cols-2 text-center text-xs font-semibold text-slate-900 pt-6">
-          <div>
-            <p>Mengetahui</p>
-            <p class="mb-16">Pejabat Penilai Kinerja</p>
-            <p id="prevPejabatNama" class="font-bold underline text-sm">Joi Devi , SKM</p>
-            <p id="prevPejabatNip" class="text-[11px]">NIP . 19730803 1998032009</p>
-          </div>
-
-          <div>
-            <p id="prevTglCetak">Tenggarong, 31 Agustus 2026</p>
-            <p class="mb-16">Penanggung Jawab</p>
-            <p id="prevPenanggungNama" class="font-bold underline text-sm">SRIYANI</p>
-            <p id="prevPenanggungNip" class="text-[11px]">NIP . 197506102007012033</p>
-          </div>
-        </div>
+    <!-- AREA DOKUMEN YANG AKAN DI-PDF-KAN -->
+    <div class="preview-section" id="pdfArea">
+      <div class="doc-header">
+        <div>LEMBAR KERJA HARIAN</div>
+        <div>PUSKESMAS LOA IPUH</div>
+        <div>RUANG PENDAFTARAN TAHUN 2026</div>
       </div>
 
-      <!-- ACTION BUTTON CETAK -->
-      <div class="mt-8 pt-4 border-t border-slate-200 flex justify-end no-print">
-        <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-6 py-2.5 rounded-lg shadow flex items-center gap-2">
-          🖨️ Cetak Dokumen / PDF
-        </button>
+      <div class="doc-info">
+        <table>
+          <tr><td>NAMA</td><td>:</td><td id="prevNama">SRIYANI</td></tr>
+          <tr><td>NIP</td><td>:</td><td id="prevNip">197506102007012033</td></tr>
+          <tr><td>BULAN</td><td>:</td><td id="prevBulan">AGUSTUS</td></tr>
+        </table>
       </div>
 
-    </section>
+      <table class="preview-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width: 10%;">HARI</th>
+            <th rowspan="2" style="width: 10%;">TANGGAL</th>
+            <th colspan="3">KEGIATAN</th>
+            <th rowspan="2" style="width: 20%;">KETERANGAN</th>
+            <th rowspan="2" class="no-print" style="width: 10%;">AKSI</th>
+          </tr>
+          <tr>
+            <th>MENGAMBIL RM PASIEN RAK / BOK</th>
+            <th>CARI DATA PASIEN DI SIMPUS</th>
+            <th>SUSUN RM PASIEN RAK / BOK</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Data awal simulasi -->
+        </tbody>
+      </table>
 
-  </main>
+      <!-- Area Tanda Tangan -->
+      <div class="ttd-container">
+        <div class="ttd-box">
+          <p>Mengetahui<br>Pejabat Penilai Kinerja</p>
+          <div class="ttd-space"></div>
+          <p class="ttd-name" id="prevPenilai">Joi Devi , SKM</p>
+          <p>NIP . <span id="prevNipPenilai">19730803 1998032009</span></p>
+        </div>
 
-  <script>
-    const DB_KEY = 'E_LKH_DATABASE_2026';
+        <div class="ttd-box">
+          <p><span id="prevLokasi">Tenggarong</span>, 31 <span id="prevBulanTtd">AGUSTUS</span> 2026<br>Penanggung Jawab</p>
+          <div class="ttd-space"></div>
+          <p class="ttd-name" id="prevPegawaiTtd">SRIYANI</p>
+          <p>NIP . <span id="prevNipTtd">197506102007012033</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    document.getElementById('inputTanggal').valueAsDate = new Date();
+</div>
 
-    window.onload = function() {
-      updatePreviewHeader();
-      renderTable();
+<script>
+  // Array Data Kegiatan
+  let dataKegiatan = [
+    { hari: 'Sabtu', tanggal: '15', keg1: '67', keg2: '89', keg3: '78', ket: '-' },
+    { hari: 'Sabtu', tanggal: '1', keg1: '78', keg2: '99', keg3: '25', ket: '202 Berkas' }
+  ];
+
+  // Inisialisasi awal render tabel
+  renderTable();
+
+  // 1. Fungsi render data tabel preview
+  function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    dataKegiatan.forEach((item, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${item.hari}</td>
+        <td>${item.tanggal}</td>
+        <td>${item.keg1 || '-'}</td>
+        <td>${item.keg2 || '-'}</td>
+        <td>${item.keg3 || '-'}</td>
+        <td>${item.ket || '-'}</td>
+        <td class="no-print">
+          <button class="btn-delete" onclick="hapusBaris(${index})">❌ Hapus</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // 2. Fungsi Hapus Baris Kegiatan tertentu
+  function hapusBaris(index) {
+    dataKegiatan.splice(index, 1);
+    renderTable();
+  }
+
+  // 3. Fungsi Tambah Kegiatan Harian
+  function tambahKegiatan() {
+    const tglValue = document.getElementById('tglInput').value;
+    if (!tglValue) {
+      alert("Silakan pilih tanggal terlebih dahulu!");
+      return;
+    }
+
+    const dateObj = new Date(tglValue);
+    const namaHari = dateObj.toLocaleDateString('id-ID', { weekday: 'Long' });
+    const tglAngka = dateObj.getDate();
+
+    const newItem = {
+      hari: namaHari,
+      tanggal: tglAngka,
+      keg1: document.getElementById('keg1').value,
+      keg2: document.getElementById('keg2').value,
+      keg3: document.getElementById('keg3').value,
+      ket: document.getElementById('keterangan').value || '-'
     };
 
-    function getDatabase() {
-      const data = localStorage.getItem(DB_KEY);
-      return data ? JSON.parse(data) : [];
-    }
+    dataKegiatan.push(newItem);
+    renderTable();
 
-    function saveDatabase(data) {
-      localStorage.setItem(DB_KEY, JSON.stringify(data));
-    }
+    // Reset hanya input kegiatan harian
+    document.getElementById('keg1').value = '';
+    document.getElementById('keg2').value = '';
+    document.getElementById('keg3').value = '';
+    document.getElementById('keterangan').value = '';
+  }
 
-    function updatePreviewHeader() {
-      const namaPegawai = document.getElementById('namaPegawai').value || '-';
-      const nipPegawai = document.getElementById('nipPegawai').value || '-';
-      const bulan = document.getElementById('bulanLaporan').value || '-';
-      const lokasi = document.getElementById('lokasiCetak').value || 'Tenggarong';
-      const namaPejabat = document.getElementById('namaPejabat').value || '-';
-      const nipPejabat = document.getElementById('nipPejabat').value || '-';
+  // 4. Fungsi Clear Form Input (hanya mengosongkan form input kegiatan)
+  function clearFormInput() {
+    document.getElementById('tglInput').value = '';
+    document.getElementById('keg1').value = '';
+    document.getElementById('keg2').value = '';
+    document.getElementById('keg3').value = '';
+    document.getElementById('keterangan').value = '';
+  }
 
-      document.getElementById('prevNama').innerText = ': ' + namaPegawai;
-      document.getElementById('prevNip').innerText = ': ' + nipPegawai;
-      document.getElementById('prevBulan').innerText = ': ' + bulan;
+  // 5. Update Realtime Metadata Preview
+  function updatePreviewHeader() {
+    const nama = document.getElementById('namaPegawai').value;
+    const nip = document.getElementById('nipPegawai').value;
+    const bulan = document.getElementById('bulanLaporan').value;
+    const lokasi = document.getElementById('lokasiCetak').value;
+    const penilai = document.getElementById('namaPenilai').value;
+    const nipPenilai = document.getElementById('nipPenilai').value;
 
-      document.getElementById('prevPejabatNama').innerText = namaPejabat;
-      document.getElementById('prevPejabatNip').innerText = 'NIP . ' + nipPejabat;
+    document.getElementById('prevNama').innerText = nama;
+    document.getElementById('prevNip').innerText = nip;
+    document.getElementById('prevBulan').innerText = bulan;
+    
+    document.getElementById('prevPenilai').innerText = penilai;
+    document.getElementById('prevNipPenilai').innerText = nipPenilai;
 
-      document.getElementById('prevPenanggungNama').innerText = namaPegawai;
-      document.getElementById('prevPenanggungNip').innerText = 'NIP . ' + nipPegawai;
+    document.getElementById('prevLokasi').innerText = lokasi;
+    document.getElementById('prevBulanTtd').innerText = bulan;
+    document.getElementById('prevPegawaiTtd').innerText = nama;
+    document.getElementById('prevNipTtd').innerText = nip;
+  }
 
-      document.getElementById('prevTglCetak').innerText = lokasi + ', ' + getLastDayOfBulan(bulan);
-    }
+  // 6. Fungsi Direct Unduh PDF (Menyembunyikan Kolom Aksi saat dikonversi)
+  function unduhPDF() {
+    const element = document.getElementById('pdfArea');
+    const noPrintElements = document.querySelectorAll('.no-print');
 
-    function getLastDayOfBulan(bulanName) {
-      const bulanIndexMap = {
-        'JANUARI': '31 Januari', 'FEBRUARI': '28 Februari', 'MARET': '31 Maret',
-        'APRIL': '30 April', 'MEI': '31 Mei', 'JUNI': '30 Juni',
-        'JULI': '31 Juli', 'AGUSTUS': '31 Agustus', 'SEPTEMBER': '30 September',
-        'OKTOBER': '31 Oktober', 'NOVEMBER': '30 November', 'DESEMBER': '31 Desember'
-      };
-      return (bulanIndexMap[bulanName] || '31 Agustus') + ' 2026';
-    }
+    // Sembunyikan elemen kolom aksi/tombol hapus
+    noPrintElements.forEach(el => el.style.display = 'none');
 
-    function handleBulanChange() {
-      updatePreviewHeader();
-      renderTable();
-    }
+    const options = {
+      margin:       [10, 10, 10, 10],
+      filename:     `Lembar_Kerja_Harian_${document.getElementById('prevNama').innerText}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-    function handleSaveData(event) {
-      event.preventDefault();
+    // Proses convert dan unduh PDF
+    html2pdf().set(options).from(element).save().then(() => {
+      // Tampilkan kembali tombol hapus di UI setelah PDF terunduh
+      noPrintElements.forEach(el => el.style.display = 'table-cell');
+    });
+  }
+</script>
 
-      const tanggalInput = document.getElementById('inputTanggal').value;
-      if (!tanggalInput) {
-        alert('Silakan pilih tanggal!');
-        return;
-      }
-
-      const bulanSelected = document.getElementById('bulanLaporan').value;
-      const val1 = parseInt(document.getElementById('kegiatan1').value) || 0;
-      const val2 = parseInt(document.getElementById('kegiatan2').value) || 0;
-      const val3 = parseInt(document.getElementById('kegiatan3').value) || 0;
-
-      const totalKegiatan = val1 + val2 + val3;
-      const keteranganOtomatis = totalKegiatan > 0 ? `${totalKegiatan} Berkas` : '-';
-
-      const dateObj = new Date(tanggalInput);
-      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-      const namaHari = days[dateObj.getDay()];
-      
-      // Mengambil HANYA Angka Tanggal (1-31)
-      const tglAngka = dateObj.getDate();
-
-      let db = getDatabase();
-      const existingIdx = db.findIndex(item => item.tanggalFull === tanggalInput);
-
-      const recordData = {
-        id: existingIdx !== -1 ? db[existingIdx].id : Date.now().toString(),
-        tanggalFull: tanggalInput,
-        tanggalOnly: tglAngka,
-        hari: namaHari,
-        bulan: bulanSelected,
-        kegiatan1: val1 || '-',
-        kegiatan2: val2 || '-',
-        kegiatan3: val3 || '-',
-        keterangan: keteranganOtomatis
-      };
-
-      if (existingIdx !== -1) {
-        db[existingIdx] = recordData;
-        showToast(`Data tanggal ${tglAngka} berhasil di-update!`);
-      } else {
-        db.push(recordData);
-        db.sort((a, b) => new Date(a.tanggalFull) - new Date(b.tanggalFull));
-        showToast(`Data tanggal ${tglAngka} berhasil disimpan!`);
-      }
-
-      saveDatabase(db);
-      renderTable();
-
-      document.getElementById('kegiatan1').value = '';
-      document.getElementById('kegiatan2').value = '';
-      document.getElementById('kegiatan3').value = '';
-    }
-
-    function renderTable() {
-      const db = getDatabase();
-      const currentBulan = document.getElementById('bulanLaporan').value;
-      const tbody = document.getElementById('tableBody');
-
-      const filteredData = db.filter(item => item.bulan === currentBulan);
-
-      if (filteredData.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="6" class="p-6 text-slate-400 italic text-center">
-              BELUM ADA DATA KEGIATAN UNTUK BULAN INI.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      let htmlRows = '';
-      filteredData.forEach(row => {
-        // HANYA angka tanggal
-        const displayTanggal = row.tanggalOnly || new Date(row.tanggalFull || row.tanggal).getDate();
-        
-        htmlRows += `
-          <tr class="border-b border-slate-900 hover:bg-slate-50">
-            <td class="border-r border-slate-900 p-2 font-medium">${row.hari}</td>
-            <td class="border-r border-slate-900 p-2 font-semibold">${displayTanggal}</td>
-            <td class="border-r border-slate-900 p-2">${row.kegiatan1}</td>
-            <td class="border-r border-slate-900 p-2">${row.kegiatan2}</td>
-            <td class="border-r border-slate-900 p-2">${row.kegiatan3}</td>
-            <td class="p-2 font-semibold text-slate-800">${row.keterangan}</td>
-          </tr>
-        `;
-      });
-
-      tbody.innerHTML = htmlRows;
-    }
-
-    function resetFormOnly() {
-      if (confirm('Kosongkan inputan form harian?')) {
-        document.getElementById('kegiatan1').value = '';
-        document.getElementById('kegiatan2').value = '';
-        document.getElementById('kegiatan3').value = '';
-      }
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-text').innerText = msg;
-      toast.classList.remove('hidden');
-      setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 3000);
-    }
-  </script>
 </body>
 </html>
