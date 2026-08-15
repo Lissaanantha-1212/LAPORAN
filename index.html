@@ -1,568 +1,461 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-LKH Puskesmas Loa Ipuh 2026</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- html2pdf.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <style>
-        /* Font Times New Roman Utama - Compact */
-        .doc-font {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt;
-            line-height: 1.25;
-        }
-
-        /* Container Cetak A4 Presisi */
-        .a4-container {
-            width: 210mm;
-            box-sizing: border-box;
-            background: #ffffff;
-            margin: 0 auto;
-            padding: 8mm 12mm;
-        }
-
-        /* Border Tabel Tegas */
-        .table-border, .table-border th, .table-border td {
-            border: 1.2px solid #000000 !important;
-            border-collapse: collapse;
-        }
-
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
-
-        @media print {
-            body {
-                background: white !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .a4-container {
-                box-shadow: none !important;
-                border: none !important;
-                width: 100% !important;
-                padding: 8mm 12mm !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-LKH Puskesmas 2026</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom CSS untuk Cetak / Print Page Rules (A4 & F4 / Folio) -->
+  <style>
+    @media print {
+      body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-area {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+      /* Pilihan Ukuran Kertas Dinamis via CSS Class */
+      body.paper-a4 {
+        size: A4 portrait;
+      }
+      body.paper-f4 {
+        size: 215mm 330mm portrait; /* Ukuran Folio / F4 */
+      }
+    }
+  </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-12">
+<body class="bg-slate-100 font-sans min-h-screen paper-a4">
 
-    <!-- NAVBAR HEADER -->
-    <header class="bg-indigo-700 text-white p-4 shadow-lg no-print">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i data-lucide="file-text" class="w-6 h-6"></i>
-                <h1 class="text-xl font-bold">E-LKH Puskesmas 2026</h1>
-            </div>
-            <span class="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                <i data-lucide="database" class="w-3.5 h-3.5"></i> Arsip Multi-Bulan Aktif
+  <!-- TOP HEADER APP BAR -->
+  <header class="bg-indigo-700 text-white px-6 py-4 flex justify-between items-center shadow-md no-print">
+    <div class="flex items-center gap-3">
+      <div class="bg-white/20 p-2 rounded-lg font-bold">📋</div>
+      <h1 class="text-xl font-bold tracking-wide">E-LKH Puskesmas 2026</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <span className="bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow">
+        🗄️ Arsip Multi-Bulan Aktif
+      </span>
+    </div>
+  </header>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="hidden fixed top-20 right-6 z-50 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-2">
+    <span>✅</span>
+    <span id="toast-text">Data berhasil disimpan!</span>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-[1500px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- ================= SISI KIRI: FORM INPUT ================= -->
+    <section class="lg:col-span-5 bg-white rounded-xl shadow-md border border-slate-200 p-6 flex flex-col justify-between no-print">
+      <div>
+        <div class="flex justify-between items-center pb-4 border-b mb-4">
+          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            ✏️ Form Input Data
+          </h2>
+          <button type="button" onclick="resetFormOnly()" class="text-xs text-rose-500 hover:text-rose-700 font-semibold">
+            🔄 Clear Form
+          </button>
+        </div>
+
+        <form id="lkhForm" onsubmit="handleSaveData(event)" class="space-y-4">
+
+          <!-- SECTION 1: PEGAWAI & PENILAI -->
+          <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-3">
+            <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider block">
+              DATA PENANGGUNG JAWAB & PENILAI
             </span>
-        </div>
-    </header>
 
-    <main class="max-w-6xl mx-auto mt-6 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- FORM INPUT DATA & ARSIP (PANEL KIRI) -->
-        <div class="lg:col-span-5 space-y-4 no-print">
-            
-            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 space-y-4">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-                        <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i> Form Input Data
-                    </h2>
-                    <button onclick="resetFormBulanIni()" class="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1 font-medium">
-                        <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Clear Form
-                    </button>
-                </div>
-
-                <!-- Data Pegawai -->
-                <div class="space-y-3">
-                    <h3 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Data Penanggung Jawab (Kanan)</h3>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Pegawai</label>
-                        <input type="text" id="inputNama" value="SRIYANI" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">NIP Pegawai</label>
-                        <input type="text" id="inputNIP" value="197506102007012033" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Bulan Laporan</label>
-                            <select id="inputBulan" onchange="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm bg-white font-semibold text-indigo-600">
-                                <option value="JANUARI">JANUARI</option>
-                                <option value="FEBRUARI">FEBRUARI</option>
-                                <option value="MARET">MARET</option>
-                                <option value="APRIL">APRIL</option>
-                                <option value="MEI">MEI</option>
-                                <option value="JUNI">JUNI</option>
-                                <option value="JULI">JULI</option>
-                                <option value="AGUSTUS" selected>AGUSTUS</option>
-                                <option value="SEPTEMBER">SEPTEMBER</option>
-                                <option value="OKTOBER">OKTOBER</option>
-                                <option value="NOVEMBER">NOVEMBER</option>
-                                <option value="DESEMBER">DESEMBER</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Lokasi Cetak</label>
-                            <input type="text" id="inputLokasi" value="Tenggarong" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm">
-                        </div>
-                    </div>
-                </div>
-
-                <hr class="my-2">
-
-                <!-- Data Pejabat Penilai -->
-                <div class="space-y-3">
-                    <h3 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Data Pejabat Penilai (Kiri)</h3>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Pejabat Penilai</label>
-                        <input type="text" id="inputNamaPejabat" value="Joi Devi , SKM" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">NIP Pejabat Penilai</label>
-                        <input type="text" id="inputNIPPejabat" value="19730803 1998032009" oninput="simpanHeaderData()" class="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
-                    </div>
-                </div>
-
-                <hr class="my-2">
-
-                <!-- Input Baris Kegiatan -->
-                <h3 class="text-sm font-bold text-slate-700">Tambah Baris Kegiatan</h3>
-                <div class="space-y-3 bg-slate-50 p-3 rounded-lg border">
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-xs text-slate-500 mb-1">Pilih Tanggal</label>
-                            <input type="date" id="entryTanggal" class="w-full p-2 border rounded text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-500 mb-1">Jenis Kegiatan</label>
-                            <select id="entryKegiatan" class="w-full p-2 border rounded text-sm bg-white">
-                                <option value="1">1. MENGAMBIL RM PASIEN</option>
-                                <option value="2">2. CARI DATA DI SIMPUS</option>
-                                <option value="3">3. SUSUN RM PASIEN</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 mb-1">Jumlah Pasien/Berkas</label>
-                        <input type="number" id="entryJumlah" placeholder="Masukkan angka (misal: 98)" class="w-full p-2 border rounded text-sm">
-                    </div>
-                    <button onclick="tambahBaris()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambahkan ke Tabel
-                    </button>
-                </div>
-
-                <!-- Upload TTD & Stempel -->
-                <div class="space-y-2 text-xs pt-1">
-                    <div>
-                        <label class="block text-slate-600 mb-1 font-medium">Upload TTD/Stempel Pejabat (Kiri)</label>
-                        <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDPimpinan', 'ttdPimpinanImg')" class="w-full text-slate-500 text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-slate-600 mb-1 font-medium">Upload TTD Pegawai (Kanan)</label>
-                        <input type="file" accept="image/*" onchange="previewImg(event, 'imgTTDUser', 'ttdUserImg')" class="w-full text-slate-500 text-xs">
-                    </div>
-                </div>
-
-                <!-- Tombol Aksi -->
-                <div class="pt-2 space-y-2">
-                    <button onclick="simpanLaporanBulan()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 shadow">
-                        <i data-lucide="save" class="w-4 h-4"></i> Simpan Laporan Bulan Ini
-                    </button>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="downloadPDF()" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
-                            <i data-lucide="download" class="w-4 h-4"></i> Unduh PDF
-                        </button>
-                        <button onclick="downloadWord()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
-                            <i data-lucide="file-type-2" class="w-4 h-4"></i> Export Word
-                        </button>
-                    </div>
-                </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-slate-600 font-medium">Nama Pegawai</label>
+                <input type="text" id="namaPegawai" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="SRIYANI" oninput="updatePreviewHeader()">
+              </div>
+              <div>
+                <label class="text-xs text-slate-600 font-medium">NIP Pegawai</label>
+                <input type="text" id="nipPegawai" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="197506102007012033" oninput="updatePreviewHeader()">
+              </div>
             </div>
 
-            <!-- PANEL RIWAYAT LAPORAN BULANAN (ARSIP) -->
-            <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200">
-                <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2 border-b pb-2">
-                    <i data-lucide="folder-archive" class="w-4 h-4 text-amber-500"></i> Riwayat Laporan Tersimpan
-                </h3>
-                <div id="daftarArsip" class="space-y-2 text-xs">
-                    <!-- Daftar Arsip Bulan Muncul Di Sini -->
-                </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-slate-600 font-medium">Bulan Laporan</label>
+                <select id="bulanLaporan" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none bg-white" onchange="handleBulanChange()">
+                  <option value="JANUARI">JANUARI</option>
+                  <option value="FEBRUARI">FEBRUARI</option>
+                  <option value="MARET">MARET</option>
+                  <option value="APRIL">APRIL</option>
+                  <option value="MEI">MEI</option>
+                  <option value="JUNI">JUNI</option>
+                  <option value="JULI">JULI</option>
+                  <option value="AGUSTUS" selected>AGUSTUS</option>
+                  <option value="SEPTEMBER">SEPTEMBER</option>
+                  <option value="OKTOBER">OKTOBER</option>
+                  <option value="NOVEMBER">NOVEMBER</option>
+                  <option value="DESEMBER">DESEMBER</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-slate-600 font-medium">Lokasi Cetak</label>
+                <input type="text" id="lokasiCetak" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="Tenggarong" oninput="updatePreviewHeader()">
+              </div>
             </div>
 
-        </div>
-
-        <!-- PRATINJAU DOKUMEN (PANEL KANAN) -->
-        <div class="lg:col-span-7 flex justify-center items-start">
-            <div id="dokumenCetak" class="a4-container doc-font shadow-xl border border-slate-300 text-black uppercase">
-                
-                <!-- 1. JUDUL HEADER -->
-                <div class="text-center font-bold space-y-0.5 mb-4 text-[13pt]">
-                    <p class="font-extrabold tracking-wide">LEMBAR KERJA HARIAN</p>
-                    <p class="font-extrabold tracking-wide">PUSKESMAS LOA IPUH</p>
-                    <p class="font-extrabold tracking-wide">RUANG PENDAFTARAN TAHUN 2026</p>
-                </div>
-
-                <!-- 2. DATA DIRI (Font Dikecilkan 10.5pt & Tidak Dibuat Kebesaran) -->
-                <div class="mb-3 space-y-0.5 text-[10.5pt] font-normal tracking-wide">
-                    <div class="flex"><span class="w-24 font-bold">NAMA</span><span>: <span id="lblNama">SRIYANI</span></span></div>
-                    <div class="flex"><span class="w-24 font-bold">NIP</span><span>: <span id="lblNIP">197506102007012033</span></span></div>
-                    <div class="flex"><span class="w-24 font-bold">BULAN</span><span>: <span id="lblBulan">AGUSTUS</span></span></div>
-                </div>
-
-                <!-- 3. TABEL UTAMA -->
-                <div class="w-full mb-5">
-                    <table class="w-full table-border text-center text-[10pt]">
-                        <thead>
-                            <tr class="font-bold">
-                                <th class="p-1 w-14 align-middle" rowspan="2">HARI</th>
-                                <th class="p-1 w-14 align-middle" rowspan="2">TANGGAL</th>
-                                <th class="p-1 tracking-wider" colspan="3">KEGIATAN</th>
-                                <th class="p-1 w-24 align-middle" rowspan="2">KETERANGAN</th>
-                            </tr>
-                            <tr class="font-bold text-[9.5pt]">
-                                <th class="p-1 w-1/3 align-middle">MENGAMBIL RM PASIEN RAK / BOK</th>
-                                <th class="p-1 w-1/3 align-middle">CARI DATA PASIEN DI SIMPUS</th>
-                                <th class="p-1 w-1/3 align-middle">SUSUN RM PASIEN RAK / BOK</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyTabel">
-                            <!-- Data baris dinamis -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- 4. BLOK TANDA TANGAN (Garis Bawah Nama Sepanjang NIP) -->
-                <div class="w-full pt-1 normal-case text-[11pt]">
-                    <div class="grid grid-cols-2 text-center">
-                        
-                        <!-- KIRI: Pejabat Penilai Kinerja -->
-                        <div class="flex flex-col items-center justify-between h-36">
-                            <div>
-                                <p class="leading-tight">Mengetahui</p>
-                                <p class="leading-tight">Pejabat Penilai Kinerja</p>
-                            </div>
-                            
-                            <div class="h-10 w-full flex items-center justify-center my-auto">
-                                <img id="imgTTDPimpinan" class="max-h-10 object-contain hidden" alt="TTD Pejabat">
-                            </div>
-
-                            <div class="flex flex-col items-center">
-                                <!-- Garis Bawah Selebar Blok NIP di bawahnya -->
-                                <div class="inline-block border-b-2 border-black pb-0.5 px-2">
-                                    <p class="font-bold text-[11pt] tracking-wide" id="lblNamaPejabat">Joi Devi , SKM</p>
-                                </div>
-                                <p class="text-[10pt] text-slate-900 mt-0.5">NIP . <span id="lblNipPejabat">19730803 1998032009</span></p>
-                            </div>
-                        </div>
-
-                        <!-- KANAN: Penanggung Jawab / Pegawai -->
-                        <div class="flex flex-col items-center justify-between h-36">
-                            <div>
-                                <p class="leading-tight"><span id="lblLokasi">Tenggarong</span>, <span id="lblTglCetak">31 Agustus 2026</span></p>
-                                <p class="leading-tight">Penanggung Jawab</p>
-                            </div>
-                            
-                            <div class="h-10 w-full flex items-center justify-center my-auto">
-                                <img id="imgTTDUser" class="max-h-10 object-contain hidden" alt="TTD Pegawai">
-                            </div>
-                            
-                            <div class="flex flex-col items-center">
-                                <!-- Garis Bawah Selebar Blok NIP di bawahnya -->
-                                <div class="inline-block border-b-2 border-black pb-0.5 px-4">
-                                    <p class="font-bold text-[11pt] tracking-wide" id="lblNamaTtd">Sriyani</p>
-                                </div>
-                                <p class="text-[10pt] text-slate-900 mt-0.5">NIP . <span id="lblNipTtd">197506102007012033</span></p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
+            <div class="grid grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="text-xs text-slate-600 font-medium">Nama Pejabat Penilai</label>
+                <input type="text" id="namaPejabat" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="Joi Devi , SKM" oninput="updatePreviewHeader()">
+              </div>
+              <div>
+                <label class="text-xs text-slate-600 font-medium">NIP Pejabat Penilai</label>
+                <input type="text" id="nipPejabat" class="w-full text-sm border rounded-md p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" value="19730803 1998032009" oninput="updatePreviewHeader()">
+              </div>
             </div>
+          </div>
+
+          <!-- SECTION 2: INPUT KEGIATAN HARIAN -->
+          <div class="bg-indigo-50/60 p-4 rounded-lg border border-indigo-100 space-y-3">
+            <span class="text-xs font-bold text-indigo-900 uppercase tracking-wider block">
+              📅 INPUT KEGIATAN HARIAN
+            </span>
+
+            <div>
+              <label class="text-xs text-slate-700 font-semibold">Tanggal Hari Ini</label>
+              <input type="date" id="inputTanggal" required class="w-full text-sm font-semibold border border-indigo-200 rounded-md p-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none mt-1">
+            </div>
+
+            <div class="space-y-2 pt-1">
+              <div>
+                <label class="text-xs text-slate-700 font-medium">1. MENGAMBIL RM PASIEN RAK / BOK</label>
+                <input type="text" id="kegiatan1" placeholder="Contoh: 15 Pasien" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+
+              <div>
+                <label class="text-xs text-slate-700 font-medium">2. CARI DATA PASIEN DI SIMPUS</label>
+                <input type="text" id="kegiatan2" placeholder="Contoh: 15 Data" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+
+              <div>
+                <label class="text-xs text-slate-700 font-medium">3. SUSUN RM PASIEN RAK / BOK</label>
+                <input type="text" id="kegiatan3" placeholder="Contoh: 15 Pasien" class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+
+              <div>
+                <label class="text-xs text-slate-700 font-medium">KETERANGAN (OPSIONAL)</label>
+                <input type="text" id="keterangan" placeholder="Keterangan..." class="w-full text-sm border rounded-md p-2 mt-1 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: PENGATURAN CETAK (UKURAN KERTAS) -->
+          <div class="bg-amber-50 p-3.5 rounded-lg border border-amber-200 space-y-2">
+            <span class="text-xs font-bold text-amber-800 uppercase tracking-wider block">
+              🖨️ Pengaturan Cetak Dokumen
+            </span>
+            <div class="flex items-center gap-4">
+              <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                <input type="radio" name="paperSize" value="paper-a4" checked onchange="changePaperSize('paper-a4')" class="text-indigo-600">
+                <span class="ml-1.5">Kertas A4</span>
+              </label>
+              <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                <input type="radio" name="paperSize" value="paper-f4" onchange="changePaperSize('paper-f4')" class="text-indigo-600">
+                <span class="ml-1.5">Kertas F4 / Folio</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- TOMBOL SIMPAN / UPDATE HARIAN -->
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
+            💾 Simpan / Update Data Hari Ini
+          </button>
+
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= SISI KANAN: LIVE PREVIEW DOKUMEN ================= -->
+    <section class="lg:col-span-7 bg-white rounded-xl shadow-md border border-slate-200 p-8 flex flex-col justify-between print-area">
+      
+      <div id="print-content">
+        <!-- HEADER DOKUMEN -->
+        <div class="text-center mb-6 space-y-1">
+          <h3 class="text-base font-bold text-slate-900 tracking-wider">LEMBAR KERJA HARIAN</h3>
+          <h3 class="text-base font-bold text-slate-900 tracking-wider">PUSKESMAS LOA IPUH</h3>
+          <h4 class="text-sm font-bold text-slate-800 tracking-wide uppercase">
+            RUANG PENDAFTARAN TAHUN 2026
+          </h4>
         </div>
 
-    </main>
+        <!-- BIO PREVIEW -->
+        <div class="text-sm font-semibold text-slate-800 space-y-1 mb-6 max-w-md">
+          <div class="grid grid-cols-12">
+            <span class="col-span-3">NAMA</span>
+            <span class="col-span-9" id="prevNama">: SRIYANI</span>
+          </div>
+          <div class="grid grid-cols-12">
+            <span class="col-span-3">NIP</span>
+            <span class="col-span-9" id="prevNip">: 197506102007012033</span>
+          </div>
+          <div class="grid grid-cols-12">
+            <span class="col-span-3">BULAN</span>
+            <span class="col-span-9" id="prevBulan">: AGUSTUS</span>
+          </div>
+        </div>
 
-    <script>
-        lucide.createIcons();
+        <!-- TABEL DOKUMEN -->
+        <div class="border border-slate-900 rounded-sm overflow-hidden mb-8">
+          <table class="w-full text-xs border-collapse text-center">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-900 font-bold text-slate-900">
+                <th class="border-r border-slate-900 p-2 w-16">HARI</th>
+                <th class="border-r border-slate-900 p-2 w-24">TANGGAL</th>
+                <th class="border-r border-slate-900 p-2" colSpan="3">KEGIATAN</th>
+                <th class="p-2 w-28">KETERANGAN</th>
+              </tr>
+              <tr class="bg-slate-50 border-b border-slate-900 font-bold text-slate-900 text-[11px]">
+                <th class="border-r border-slate-900 p-1"></th>
+                <th class="border-r border-slate-900 p-1"></th>
+                <th class="border-r border-slate-900 p-1 font-semibold w-1/4">MENGAMBIL RM PASIEN RAK / BOK</th>
+                <th class="border-r border-slate-900 p-1 font-semibold w-1/4">CARI DATA PASIEN DI SIMPUS</th>
+                <th class="border-r border-slate-900 p-1 font-semibold w-1/4">SUSUN RM PASIEN RAK / BOK</th>
+                <th class="p-1"></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Content injected dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
 
-        let listData = [];
-        let totalRM = 0;
-        let arsipLaporan = JSON.parse(localStorage.getItem('lkh_arsip_semua')) || {};
+        <!-- TANDA TANGAN -->
+        <div class="grid grid-cols-2 text-center text-xs font-semibold text-slate-900 pt-6">
+          <div>
+            <p>Mengetahui</p>
+            <p class="mb-16">Pejabat Penilai Kinerja</p>
+            <p id="prevPejabatNama" class="font-bold underline text-sm">Joi Devi , SKM</p>
+            <p id="prevPejabatNip" class="text-[11px]">NIP . 19730803 1998032009</p>
+          </div>
 
-        function capitalizeWords(str) {
-            return str.toLowerCase().replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
-        }
+          <div>
+            <p id="prevTglCetak">Tenggarong, 31 Agustus 2026</p>
+            <p class="mb-16">Penanggung Jawab</p>
+            <p id="prevPenanggungNama" class="font-bold underline text-sm">Sriyani</p>
+            <p id="prevPenanggungNip" class="text-[11px]">NIP . 197506102007012033</p>
+          </div>
+        </div>
+      </div>
 
-        function simpanHeaderData() {
-            const rawNama = document.getElementById('inputNama').value;
-            const namaUpper = rawNama.toUpperCase();
-            const namaCapital = capitalizeWords(rawNama);
-            const nip = document.getElementById('inputNIP').value;
-            const bulanUpper = document.getElementById('inputBulan').value;
-            const bulanCapital = capitalizeWords(bulanUpper);
-            const lokasiRaw = document.getElementById('inputLokasi').value;
-            const lokasiCapital = capitalizeWords(lokasiRaw);
+      <!-- ACTION BUTTON CETAK (ONLY) -->
+      <div class="mt-8 pt-4 border-t border-slate-200 flex justify-end no-print">
+        <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-6 py-2.5 rounded-lg shadow flex items-center gap-2">
+          🖨️ Cetak Dokumen / PDF
+        </button>
+      </div>
 
-            document.getElementById('lblNama').innerText = namaUpper;
-            document.getElementById('lblNIP').innerText = nip;
-            document.getElementById('lblBulan').innerText = bulanUpper;
+    </section>
 
-            document.getElementById('lblLokasi').innerText = lokasiCapital;
-            document.getElementById('lblNamaTtd').innerText = namaCapital;
-            document.getElementById('lblNipTtd').innerText = nip;
+  </main>
 
-            const namaPejabat = document.getElementById('inputNamaPejabat').value;
-            const nipPejabat = document.getElementById('inputNIPPejabat').value;
+  <!-- JAVASCRIPT LOGIC SYSTEM -->
+  <script>
+    // 1. DATABASE LOCALSTORAGE KEY
+    const DB_KEY = 'E_LKH_DATABASE_2026';
 
-            document.getElementById('lblNamaPejabat').innerText = namaPejabat;
-            document.getElementById('lblNipPejabat').innerText = nipPejabat;
+    // Default set tanggal hari ini di picker
+    document.getElementById('inputTanggal').valueAsDate = new Date();
 
-            let tglAkhir = "31";
-            if(["APRIL", "JUNI", "SEPTEMBER", "NOVEMBER"].includes(bulanUpper)) tglAkhir = "30";
-            if(bulanUpper === "FEBRUARI") tglAkhir = "28";
+    // Init App
+    window.onload = function() {
+      updatePreviewHeader();
+      renderTable();
+    };
 
-            document.getElementById('lblTglCetak').innerText = `${tglAkhir} ${bulanCapital} 2026`;
-            
-            // Auto Load data bulan terpilih jika ada di arsip
-            loadDataBulan(bulanUpper, false);
-        }
+    // Helper: Ambil Data Database dari LocalStorage
+    function getDatabase() {
+      const data = localStorage.getItem(DB_KEY);
+      return data ? JSON.parse(data) : [];
+    }
 
-        function renderTabel() {
-            const tbody = document.getElementById('bodyTabel');
-            tbody.innerHTML = '';
+    // Helper: Simpan Data ke LocalStorage
+    function saveDatabase(data) {
+      localStorage.setItem(DB_KEY, JSON.stringify(data));
+    }
 
-            // Hitung Ulang Total
-            totalRM = 0;
-            listData.forEach(item => {
-                if(typeof item.k1 === 'number') totalRM += item.k1;
-                if(typeof item.k2 === 'number') totalRM += item.k2;
-                if(typeof item.k3 === 'number') totalRM += item.k3;
-            });
+    // Update Header Bio Real-time saat Mengetik
+    function updatePreviewHeader() {
+      const namaPegawai = document.getElementById('namaPegawai').value || '-';
+      const nipPegawai = document.getElementById('nipPegawai').value || '-';
+      const bulan = document.getElementById('bulanLaporan').value || '-';
+      const lokasi = document.getElementById('lokasiCetak').value || 'Tenggarong';
+      const namaPejabat = document.getElementById('namaPejabat').value || '-';
+      const nipPejabat = document.getElementById('nipPejabat').value || '-';
 
-            if (listData.length === 0) {
-                const tr = document.createElement('tr');
-                tr.className = "h-8 text-slate-400 italic";
-                tr.innerHTML = `
-                    <td colspan="5" class="p-2 text-center">Belum ada data kegiatan untuk bulan ini.</td>
-                    <td class="font-bold">-</td>
-                `;
-                tbody.appendChild(tr);
-                return;
-            }
+      document.getElementById('prevNama').innerText = ': ' + namaPegawai;
+      document.getElementById('prevNip').innerText = ': ' + nipPegawai;
+      document.getElementById('prevBulan').innerText = ': ' + bulan;
 
-            listData.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.className = "h-6";
+      document.getElementById('prevPejabatNama').innerText = namaPejabat;
+      document.getElementById('prevPejabatNip').innerText = 'NIP . ' + nipPejabat;
 
-                let colKeterangan = '';
-                if (index === 0) {
-                    colKeterangan = `<td id="cellKeterangan" rowspan="${listData.length}" class="font-bold text-[11pt] align-middle bg-white">${totalRM > 0 ? totalRM.toLocaleString('id-ID') + ' RM' : '-'}</td>`;
-                }
+      document.getElementById('prevPenanggungNama').innerText = namaPegawai;
+      document.getElementById('prevPenanggungNip').innerText = 'NIP . ' + nipPegawai;
 
-                tr.innerHTML = `
-                    <td class="capitalize p-1 align-middle">${item.hari}</td>
-                    <td class="p-1 align-middle">${item.tgl}</td>
-                    <td class="p-1 align-middle">${item.k1 || '-'}</td>
-                    <td class="p-1 align-middle">${item.k2 || '-'}</td>
-                    <td class="p-1 align-middle">${item.k3 || '-'}</td>
-                    ${colKeterangan}
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+      document.getElementById('prevTglCetak').innerText = lokasi + ', ' + getLastDayOfBulan(bulan);
+    }
 
-        function tambahBaris() {
-            const dateVal = document.getElementById('entryTanggal').value;
-            const jenis = document.getElementById('entryKegiatan').value;
-            const jumlahInput = document.getElementById('entryJumlah').value;
-            const jumlah = jumlahInput !== '' ? parseInt(jumlahInput) : '-';
+    // Dynamic Tanggal Cetak Akhir Bulan
+    function getLastDayOfBulan(bulanName) {
+      const bulanIndexMap = {
+        'JANUARI': '31 Januari', 'FEBRUARI': '28 Februari', 'MARET': '31 Maret',
+        'APRIL': '30 April', 'MEI': '31 Mei', 'JUNI': '30 Juni',
+        'JULI': '31 Juli', 'AGUSTUS': '31 Agustus', 'SEPTEMBER': '30 September',
+        'OKTOBER': '31 Oktober', 'NOVEMBER': '30 November', 'DESEMBER': '31 Desember'
+      };
+      return (bulanIndexMap[bulanName] || '31 Agustus') + ' 2026';
+    }
 
-            if(!dateVal) return alert('Silakan pilih tanggal terlebih dahulu!');
+    // Ganti Filter Bulan
+    function handleBulanChange() {
+      updatePreviewHeader();
+      renderTable();
+    }
 
-            const d = new Date(dateVal);
-            const namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][d.getDay()];
-            const tgl = d.getDate().toString();
+    // LOGIKA SIMPAN / UPDATE (UPSERT)
+    function handleSaveData(event) {
+      event.preventDefault();
 
-            let ada = listData.find(x => x.tgl === tgl);
-            if(ada) {
-                if(jenis === '1') ada.k1 = jumlah;
-                if(jenis === '2') ada.k2 = jumlah;
-                if(jenis === '3') ada.k3 = jumlah;
-            } else {
-                listData.push({
-                    hari: namaHari,
-                    tgl: tgl,
-                    k1: jenis === '1' ? jumlah : '-',
-                    k2: jenis === '2' ? jumlah : '-',
-                    k3: jenis === '3' ? jumlah : '-'
-                });
-            }
+      const tanggalInput = document.getElementById('inputTanggal').value;
+      if (!tanggalInput) {
+        alert('Silakan pilih tanggal!');
+        return;
+      }
 
-            listData.sort((a, b) => parseInt(a.tgl) - parseInt(b.tgl));
-            renderTabel();
-            document.getElementById('entryJumlah').value = '';
-        }
+      const bulanSelected = document.getElementById('bulanLaporan').value;
+      const k1 = document.getElementById('kegiatan1').value || '-';
+      const k2 = document.getElementById('kegiatan2').value || '-';
+      const k3 = document.getElementById('kegiatan3').value || '-';
+      const ket = document.getElementById('keterangan').value || '-';
 
-        function simpanLaporanBulan() {
-            const bulan = document.getElementById('inputBulan').value;
-            
-            arsipLaporan[bulan] = {
-                nama: document.getElementById('inputNama').value,
-                nip: document.getElementById('inputNIP').value,
-                lokasi: document.getElementById('inputLokasi').value,
-                namaPejabat: document.getElementById('inputNamaPejabat').value,
-                nipPejabat: document.getElementById('inputNIPPejabat').value,
-                listData: listData,
-                totalRM: totalRM,
-                ttdPimpinan: localStorage.getItem('lkh_ttdPimpinanImg') || '',
-                ttdUser: localStorage.getItem('lkh_ttdUserImg') || ''
-            };
+      // Parse Nama Hari
+      const dateObj = new Date(tanggalInput);
+      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const namaHari = days[dateObj.getDay()];
 
-            localStorage.setItem('lkh_arsip_semua', JSON.stringify(arsipLaporan));
-            renderDaftarArsip();
-            alert(`Laporan bulan ${bulan} BERHASIL DISIMPAN ke arsip!`);
-        }
+      let db = getDatabase();
 
-        function loadDataBulan(bulanKey, alertInfo = true) {
-            if(arsipLaporan[bulanKey]) {
-                const data = arsipLaporan[bulanKey];
-                listData = data.listData || [];
-                totalRM = data.totalRM || 0;
-                
-                if(data.ttdPimpinan) {
-                    const img = document.getElementById('imgTTDPimpinan');
-                    img.src = data.ttdPimpinan;
-                    img.classList.remove('hidden');
-                }
-                if(data.ttdUser) {
-                    const img = document.getElementById('imgTTDUser');
-                    img.src = data.ttdUser;
-                    img.classList.remove('hidden');
-                }
+      // Cek apakah tanggal ini sudah ada di Database
+      const existingIdx = db.findIndex(item => item.tanggal === tanggalInput);
 
-                renderTabel();
-                if(alertInfo) alert(`Laporan bulan ${bulanKey} berhasil dimuat!`);
-            } else {
-                listData = [];
-                totalRM = 0;
-                renderTabel();
-            }
-        }
+      const recordData = {
+        id: existingIdx !== -1 ? db[existingIdx].id : Date.now().toString(),
+        tanggal: tanggalInput,
+        hari: namaHari,
+        bulan: bulanSelected,
+        kegiatan1: k1,
+        kegiatan2: k2,
+        kegiatan3: k3,
+        keterangan: ket
+      };
 
-        function renderDaftarArsip() {
-            const container = document.getElementById('daftarArsip');
-            container.innerHTML = '';
+      if (existingIdx !== -1) {
+        // UPDATE (JIKA SUDAH ADA)
+        db[existingIdx] = recordData;
+        showToast(`Data tanggal ${tanggalInput} berhasil diperbarui!`);
+      } else {
+        // SIMPAN BARU (BARIS BARU)
+        db.push(recordData);
+        // Urutkan Tanggal Ascending
+        db.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+        showToast(`Data tanggal ${tanggalInput} berhasil disimpan!`);
+      }
 
-            const keys = Object.keys(arsipLaporan);
-            if(keys.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 italic">Belum ada bulan tersimpan.</p>`;
-                return;
-            }
+      saveDatabase(db);
+      renderTable();
 
-            keys.forEach(bkn => {
-                const item = arsipLaporan[bkn];
-                const div = document.createElement('div');
-                div.className = "flex items-center justify-between p-2 bg-slate-50 border rounded-lg hover:bg-indigo-50 transition";
-                div.innerHTML = `
-                    <div>
-                        <p class="font-bold text-indigo-900">${bkn}</p>
-                        <p class="text-[10px] text-slate-500">${item.listData.length} Kegiatan | Total: ${item.totalRM} RM</p>
-                    </div>
-                    <div class="flex gap-1">
-                        <button onclick="pilihDanBukaBulan('${bkn}')" class="px-2 py-1 bg-indigo-600 text-white rounded text-[10px] font-semibold flex items-center gap-1">
-                            <i data-lucide="eye" class="w-3 h-3"></i> Lihat
-                        </button>
-                        <button onclick="hapusArsipBulan('${bkn}')" class="px-1.5 py-1 text-rose-600 hover:bg-rose-100 rounded">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            lucide.createIcons();
-        }
+      // Reset Input Harian Saja
+      document.getElementById('kegiatan1').value = '';
+      document.getElementById('kegiatan2').value = '';
+      document.getElementById('kegiatan3').value = '';
+      document.getElementById('keterangan').value = '';
+    }
 
-        function pilihDanBukaBulan(bulanKey) {
-            document.getElementById('inputBulan').value = bulanKey;
-            simpanHeaderData();
-            loadDataBulan(bulanKey, true);
-        }
+    // RENDER TABEL HARIAN KE LIVE PREVIEW
+    function renderTable() {
+      const db = getDatabase();
+      const currentBulan = document.getElementById('bulanLaporan').value;
+      const tbody = document.getElementById('tableBody');
 
-        function hapusArsipBulan(bulanKey) {
-            if(confirm(`Hapus arsip bulan ${bulanKey}?`)) {
-                delete arsipLaporan[bulanKey];
-                localStorage.setItem('lkh_arsip_semua', JSON.stringify(arsipLaporan));
-                renderDaftarArsip();
-                renderTabel();
-            }
-        }
+      // Filter Data Berdasarkan Bulan yang Dipilih
+      const filteredData = db.filter(item => item.bulan === currentBulan);
 
-        function previewImg(event, elementId, storageKey) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const output = document.getElementById(elementId);
-                output.src = reader.result;
-                output.classList.remove('hidden');
-                localStorage.setItem(`lkh_${storageKey}`, reader.result);
-            };
-            if(event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
-        }
+      if (filteredData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-6 text-slate-400 italic text-center">
+              BELUM ADA DATA KEGIATAN UNTUK BULAN INI.
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
-        function resetFormBulanIni() {
-            if(confirm("Bersihkan isian form bulan ini?")) {
-                listData = [];
-                totalRM = 0;
-                renderTabel();
-            }
-        }
+      let htmlRows = '';
+      filteredData.forEach(row => {
+        htmlRows += `
+          <tr class="border-b border-slate-900 hover:bg-slate-50">
+            <td class="border-r border-slate-900 p-2 font-medium">${row.hari}</td>
+            <td class="border-r border-slate-900 p-2">${row.tanggal}</td>
+            <td class="border-r border-slate-900 p-2">${row.kegiatan1}</td>
+            <td class="border-r border-slate-900 p-2">${row.kegiatan2}</td>
+            <td class="border-r border-slate-900 p-2">${row.kegiatan3}</td>
+            <td class="p-2">${row.keterangan}</td>
+          </tr>
+        `;
+      });
 
-        function downloadPDF() {
-            const element = document.getElementById('dokumenCetak');
-            const opt = {
-                margin:       0,
-                filename:     `LKH_${document.getElementById('lblNama').innerText}_${document.getElementById('lblBulan').innerText}_2026.pdf`,
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: 'avoid-all' }
-            };
+      tbody.innerHTML = htmlRows;
+    }
 
-            html2pdf().set(opt).from(element).save();
-        }
+    // CLEAR FORM ONLY
+    function resetFormOnly() {
+      if (confirm('Kosongkan inputan form harian?')) {
+        document.getElementById('kegiatan1').value = '';
+        document.getElementById('kegiatan2').value = '';
+        document.getElementById('kegiatan3').value = '';
+        document.getElementById('keterangan').value = '';
+      }
+    }
 
-        function downloadWord() {
-            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export Word</title></head><body>";
-            const footer = "</body></html>";
-            const html = header + document.getElementById('dokumenCetak').innerHTML + footer;
+    // TOAST NOTIFIKASI
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
 
-            const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `LKH_${document.getElementById('lblNama').innerText}_${document.getElementById('lblBulan').innerText}_2026.doc`;
-            a.click();
-        }
-
-        simpanHeaderData();
-        renderDaftarArsip();
-    </script>
+    // GANTI UKURAN KERTAS (A4 / F4)
+    function changePaperSize(sizeClass) {
+      document.body.classList.remove('paper-a4', 'paper-f4');
+      document.body.classList.add(sizeClass);
+      showToast('Ukuran Kertas Diubah ke ' + (sizeClass === 'paper-a4' ? 'A4' : 'F4 / Folio'));
+    }
+  </script>
 </body>
 </html>
