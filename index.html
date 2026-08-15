@@ -10,37 +10,46 @@
 
   <style>
     * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f1f5f9; margin: 20px; color: #1e293b; }
+    body { background-color: #f1f5f9; margin: 15px; color: #1e293b; }
     
-    .container { display: flex; gap: 20px; align-items: flex-start; }
-    .form-section { flex: 1; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .preview-container { flex: 1.2; }
-    .preview-section { background: #ffffff; padding: 35px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    /* Layout Utama Flexible (Support Laptop & HP) */
+    .container { display: flex; gap: 20px; align-items: flex-start; flex-direction: row; }
+    .form-section { flex: 1; width: 100%; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .preview-container { flex: 1.2; width: 100%; }
+    .preview-section { background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto; }
     
-    h2, h3 { margin-top: 0; color: #0f172a; }
+    h2, h3 { margin-top: 0; color: #0f172a; font-size: 18px; }
     .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
     .card-title { font-weight: 700; font-size: 13px; color: #4338ca; margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
     
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
-    .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; outline: none; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; outline: none; }
     .form-group input:focus, .form-group select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(191, 219, 254, 0.8); }
     
     .form-row { display: flex; gap: 10px; }
     .form-row .form-group { flex: 1; }
     
-    .btn-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .btn-clear { background: #fef2f2; border: 1px solid #fca5a5; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 12px; padding: 6px 10px; border-radius: 5px; }
+    .btn-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
+    .btn-clear { background: #fef2f2; border: 1px solid #fca5a5; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 12px; padding: 8px 12px; border-radius: 5px; }
     .btn-clear:hover { background: #fee2e2; }
     
     .btn-primary { background: #1d4ed8; color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 2px 4px rgba(37,99,235,0.2); }
     .btn-primary:hover { background: #1e40af; }
 
-    .btn-save-archive { background: #059669; color: #ffffff; border: none; padding: 10px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; }
+    .btn-save-archive { background: #059669; color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; }
     .btn-save-archive:hover { background: #047857; }
     
-    .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 10px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
+    .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
     .btn-add:hover { background: #1d4ed8; }
+
+    /* Gaya Tabel Arsip Laporan (Responsive Scroll) */
+    .archive-list { margin-top: 15px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; overflow-x: auto; }
+    .archive-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 280px; }
+    .archive-table th { background: #e2e8f0; text-align: left; padding: 8px; font-weight: 600; color: #334155; }
+    .archive-table td { padding: 8px; border-top: 1px solid #e2e8f0; }
+    .btn-arc-open { background: #3b82f6; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+    .btn-arc-dl { background: #10b981; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
     /* Dokumen Cetak / Preview */
     .doc-header { text-align: center; font-weight: bold; margin-bottom: 25px; line-height: 1.4; color: #000; }
@@ -49,49 +58,33 @@
     .doc-info table { border-collapse: collapse; }
     .doc-info td { padding: 2px 5px; }
 
-    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 11px; color: #000; }
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 11px; color: #000; min-width: 500px; }
     table.preview-table th, table.preview-table td { border: 1px solid #000; padding: 6px 4px; text-align: center; position: relative; }
     table.preview-table th { font-weight: bold; text-transform: uppercase; }
 
-    /* Tombol Hapus Baris */
-    .btn-del-row {
-      background: #fef2f2;
-      border: 1px solid #f87171;
-      color: #dc2626;
-      border-radius: 4px;
-      padding: 3px 6px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-del-row:hover {
-      background: #dc2626;
-      color: #ffffff;
-    }
+    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 4px; padding: 4px 8px; font-size: 11px; font-weight: 600; cursor: pointer; }
 
-    /* Penanganan Elemen Non-Cetak saat Mode Print Biasa */
-    @media print {
-      .no-print { 
-        display: none !important; 
-      }
-    }
-
-    /* Ukuran dan Tata Letak Tanda Tangan */
+    /* Tanda Tangan */
     .ttd-container { display: flex; justify-content: space-between; margin-top: 30px; font-size: 12px; text-align: center; color: #000; }
     .ttd-box { width: 45%; }
-    .ttd-space { 
-      height: 55px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      margin: 5px 0;
-    }
-    .ttd-img { 
-      max-height: 50px; 
-      max-width: 140px; 
-      object-fit: contain; 
-    }
+    .ttd-space { height: 55px; display: flex; align-items: center; justify-content: center; margin: 5px 0; }
+    .ttd-img { max-height: 50px; max-width: 140px; object-fit: contain; }
     .ttd-name { font-weight: bold; text-decoration: underline; }
+
+    /* 📱 MEDIA QUERY UNTUK HP / LAYAR KECIL (Dibawah 768px) */
+    @media screen and (max-width: 768px) {
+      body { margin: 10px; }
+      .container { flex-direction: column; gap: 15px; }
+      .form-row { flex-direction: column; gap: 0; }
+      .btn-header { flex-direction: column; align-items: flex-start; }
+      .btn-clear { width: 100%; text-align: center; margin-top: 5px; }
+      .preview-section { padding: 15px; }
+      .ttd-container { font-size: 10px; }
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -176,6 +169,22 @@
       <button type="button" class="btn-save-archive" onclick="simpanLaporanBulanIni()">
         💾 Simpan Permanen Laporan Bulan Ini
       </button>
+
+      <!-- DAFTAR LAPORAN TERSIMPAN -->
+      <div class="archive-list">
+        <table class="archive-table">
+          <thead>
+            <tr>
+              <th>Bulan</th>
+              <th>Status</th>
+              <th style="text-align: center;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="archiveTableBody">
+            <!-- Render daftar bulan tersimpan -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Input Kegiatan Harian -->
@@ -208,9 +217,9 @@
 
   <!-- ================= PANEL PREVIEW DOKUMEN ================= -->
   <div class="preview-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
       <span style="font-size: 13px; font-weight: bold; color: #475569;">
-        📌 Menampilkan Laporan: <span id="lblBulanAktif" style="color: #2563eb;">MARET</span>
+        📌 Menampilkan: <span id="lblBulanAktif" style="color: #2563eb;">MARET</span>
       </span>
       <button type="button" class="btn-primary" onclick="unduhPDF()">
         📥 Unduh PDF
@@ -280,6 +289,7 @@
 
 <script>
   let listKegiatan = [];
+  const daftarBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
 
   // --- MENGAMBIL DATA TERSIMPAN BERDASARKAN BULAN ---
   function muatDataPenyimpanan() {
@@ -319,14 +329,13 @@
     }
 
     renderData();
+    renderDaftarArsip();
   }
 
-  // --- MENGAMBIL DATA KETIKA PILIH BULAN DARI DROPDOWN ---
   function pindahBulanLaporan() {
     muatDataPenyimpanan();
   }
 
-  // --- MENYIMPAN DATA OTOMATIS KE BROWSER ---
   function simpanOtomatis() {
     const bulan = document.getElementById('bulanLaporan').value;
     localStorage.setItem(`pendaftaran_list_${bulan}`, JSON.stringify(listKegiatan));
@@ -339,15 +348,60 @@
       nipPenilai: document.getElementById('nipPenilai').value
     };
     localStorage.setItem('pendaftaran_headerData', JSON.stringify(headerData));
+
+    renderDaftarArsip();
   }
 
   function simpanLaporanBulanIni() {
     simpanOtomatis();
     const bulan = document.getElementById('bulanLaporan').value;
-    alert(`✅ Laporan Bulan ${bulan} Berhasil Disimpan Ke Penyimpanan Lokal Browser!`);
+    alert(`✅ Laporan Bulan ${bulan} Berhasil Disimpan Ke Daftar Arsip!`);
   }
 
-  // --- HANDLER UPLOAD & SAVE TTD ---
+  function renderDaftarArsip() {
+    const tbody = document.getElementById('archiveTableBody');
+    tbody.innerHTML = '';
+
+    let adaData = false;
+
+    daftarBulan.forEach(b => {
+      const savedData = localStorage.getItem(`pendaftaran_list_${b}`);
+      if (savedData) {
+        const arr = JSON.parse(savedData);
+        if (arr.length > 0) {
+          adaData = true;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${b}</strong></td>
+            <td><span style="color: #16a34a; font-weight: 600;">Terisi (${arr.length})</span></td>
+            <td style="text-align: center;">
+              <button class="btn-arc-open" onclick="bukaLaporanBulan('${b}')">👁️ Lihat</button>
+              <button class="btn-arc-dl" onclick="unduhPDFBulanLangsung('${b}')">📥 PDF</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      }
+    });
+
+    if (!adaData) {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color: #94a3b8;">Belum ada laporan tersimpan</td></tr>`;
+    }
+  }
+
+  function bukaLaporanBulan(b) {
+    document.getElementById('bulanLaporan').value = b;
+    muatDataPenyimpanan();
+  }
+
+  function unduhPDFBulanLangsung(b) {
+    document.getElementById('bulanLaporan').value = b;
+    muatDataPenyimpanan();
+    setTimeout(() => {
+      unduhPDF();
+    }, 300);
+  }
+
   function uploadTTD(event, imgElementId, storageKey) {
     const file = event.target.files[0];
     if (file) {
@@ -441,7 +495,6 @@
         rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 13px;">${totalFormatted}</td>`;
       }
 
-      // Kolom Tombol Hapus Baris
       rowHtml += `
         <td class="no-print">
           <button class="btn-del-row" onclick="hapusBaris(${index})" title="Hapus Baris Ini">🗑️ Hapus</button>
@@ -469,6 +522,7 @@
       listKegiatan = [];
       localStorage.removeItem(`pendaftaran_list_${bulan}`);
       renderData();
+      renderDaftarArsip();
     }
   }
 
@@ -500,7 +554,6 @@
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
     const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
 
-    // Sembunyikan elemen berkategori no-print (kolom tombol hapus) saat cetak PDF
     const noPrintElems = element.querySelectorAll('.no-print');
     noPrintElems.forEach(el => el.style.display = 'none');
 
@@ -513,7 +566,6 @@
     };
 
     html2pdf().set(options).from(element).save().then(() => {
-      // Tampilkan kembali elemen no-print setelah PDF selesai
       noPrintElems.forEach(el => el.style.display = '');
     });
   }
