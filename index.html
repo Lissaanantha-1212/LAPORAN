@@ -52,11 +52,11 @@
     .btn-arc-dl { background: #10b981; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
     .btn-arc-del { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 2px; }
 
-    /* PERBAIKAN: FORMAT CETAK A4 PRESISI TENGAH (KUNCI PAS 1 HALAMAN) */
+    /* PERBAIKAN REVISI: CETAK A4 PRESISI, FONT LARGER & TENGAH BALANCED */
     #pdfArea {
-      width: 190mm;
-      max-height: 275mm;
-      padding: 5mm 5mm;
+      width: 200mm;
+      max-height: 277mm;
+      padding: 6mm 8mm;
       background: #ffffff;
       margin: 0 auto !important;
       box-sizing: border-box;
@@ -67,31 +67,30 @@
       page-break-inside: avoid;
     }
 
-    .doc-header { text-align: center; font-weight: bold; margin-bottom: 6px; line-height: 1.15; color: #000; }
-    .doc-header div { font-size: 11pt; text-transform: uppercase; }
+    .doc-header { text-align: center; font-weight: bold; margin-bottom: 12px; line-height: 1.25; color: #000; }
+    .doc-header div { font-size: 12pt; text-transform: uppercase; }
     
-    .doc-info { margin-bottom: 5px; font-weight: bold; font-size: 9.5pt; color: #000; }
+    .doc-info { margin-bottom: 8px; font-weight: bold; font-size: 10.5pt; color: #000; }
     .doc-info table { border-collapse: collapse; width: auto; }
-    .doc-info td { padding: 1px 4px; vertical-align: top; text-align: left; }
+    .doc-info td { padding: 1.5px 5px; vertical-align: top; text-align: left; }
 
-    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 7.5pt; color: #000; }
+    table.preview-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 8.5pt; color: #000; }
     table.preview-table th, table.preview-table td { 
       border: 1px solid #000; 
-      padding: 0px 2px; 
+      padding: 2px 3px; 
       text-align: center; 
-      line-height: 1.05;
-      height: 14px;
+      line-height: 1.15;
     }
-    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 7pt; }
+    table.preview-table th { font-weight: bold; text-transform: uppercase; font-size: 8.5pt; padding: 4px 2px; }
 
-    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 0px 2px; font-size: 8px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
+    .btn-del-row { background: #fef2f2; border: 1px solid #f87171; color: #dc2626; border-radius: 3px; padding: 0px 3px; font-size: 9px; font-weight: 600; cursor: pointer; font-family: sans-serif; }
 
-    .ttd-container { display: flex; justify-content: space-between; margin-top: 8px; font-size: 8.5pt; text-align: center; color: #000; line-height: 1.1; page-break-inside: avoid; }
-    .ttd-box { width: 44%; }
-    .ttd-space { height: 30px; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
-    .ttd-img { max-height: 30px; max-width: 100px; object-fit: contain; }
-    .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 1px; }
-    .ttd-box p { margin: 1px 0; }
+    .ttd-container { display: flex; justify-content: space-between; margin-top: 12px; font-size: 9.5pt; text-align: center; color: #000; line-height: 1.2; page-break-inside: avoid; }
+    .ttd-box { width: 42%; }
+    .ttd-space { height: 35px; display: flex; align-items: center; justify-content: center; margin: 3px 0; }
+    .ttd-img { max-height: 35px; max-width: 110px; object-fit: contain; }
+    .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 2px; }
+    .ttd-box p { margin: 1.5px 0; }
 
     @media screen and (max-width: 768px) {
       body { margin: 10px; }
@@ -245,7 +244,7 @@
 
         <div class="doc-info">
           <table>
-            <tr><td style="width: 70px;">NAMA</td><td style="width: 10px;">:</td><td id="prevNama">SRIYANI</td></tr>
+            <tr><td style="width: 75px;">NAMA</td><td style="width: 10px;">:</td><td id="prevNama">SRIYANI</td></tr>
             <tr><td>NIP</td><td>:</td><td id="prevNip">197506102007012033</td></tr>
             <tr><td>BULAN</td><td>:</td><td id="prevBulan">MARET</td></tr>
           </table>
@@ -254,10 +253,10 @@
         <table class="preview-table">
           <thead>
             <tr>
-              <th rowspan="2" style="width: 12%;">HARI</th>
-              <th rowspan="2" style="width: 8%;">TANGGAL</th>
+              <th rowspan="2" style="width: 11%;">HARI</th>
+              <th rowspan="2" style="width: 9%;">TANGGAL</th>
               <th colspan="3">KEGIATAN</th>
-              <th rowspan="2" style="width: 22%;">KETERANGAN</th>
+              <th rowspan="2" style="width: 24%;">KETERANGAN</th>
               <th rowspan="2" class="no-print" style="width: 4%;"></th>
             </tr>
             <tr>
@@ -508,10 +507,19 @@
     listKegiatan.forEach(item => { grandTotal += (item.k1 + item.k2 + item.k3); });
     const totalFormatted = grandTotal > 0 ? `${grandTotal.toLocaleString('id-ID')} RM` : '-';
 
+    /* DYNAMIC PADDING HEIGHT BERDASARKAN JUMLAH BARIS (AGAR BULAN 20/28 TANGGAL TETAP PROPOSIONAL DAN ISI HALAMAN PERFEK) */
+    const totalBaris = listKegiatan.length;
+    let dynamicPadding = '3px 3px';
+    if (totalBaris <= 20) {
+      dynamicPadding = '6px 3px';
+    } else if (totalBaris <= 25) {
+      dynamicPadding = '4.5px 3px';
+    }
+
     listKegiatan.forEach((item, index) => {
       const tr = document.createElement('tr');
-      let rowHtml = `<td>${item.hari}</td><td>${item.tgl}</td><td>${item.k1 > 0 ? item.k1 : '-'}</td><td>${item.k2 > 0 ? item.k2 : '-'}</td><td>${item.k3 > 0 ? item.k3 : '-'}</td>`;
-      if (index === 0) { rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold;">${totalFormatted}</td>`; }
+      let rowHtml = `<td style="padding:${dynamicPadding};">${item.hari}</td><td style="padding:${dynamicPadding};">${item.tgl}</td><td style="padding:${dynamicPadding};">${item.k1 > 0 ? item.k1 : '-'}</td><td style="padding:${dynamicPadding};">${item.k2 > 0 ? item.k2 : '-'}</td><td style="padding:${dynamicPadding};">${item.k3 > 0 ? item.k3 : '-'}</td>`;
+      if (index === 0) { rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 10pt;">${totalFormatted}</td>`; }
       rowHtml += `<td class="no-print"><button class="btn-del-row" onclick="hapusBaris(${index})">✕</button></td>`;
       tr.innerHTML = rowHtml;
       tbody.appendChild(tr);
@@ -556,7 +564,6 @@
     simpanOtomatis();
   }
 
-  /* PERBAIKAN: DENGAN PENGATURAN MARGIN PDF & FIT TO PAGE KETAT */
   function unduhPDFDirect() {
     const element = document.getElementById('pdfArea');
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
@@ -566,7 +573,7 @@
     noPrintElems.forEach(el => el.style.display = 'none');
 
     const options = {
-      margin:       [10, 10, 10, 10], // Margin atas, kiri, bawah, kanan (mm)
+      margin:       [5, 5, 5, 5], 
       filename:     `Lembar_Kerja_Harian_${namaUser}_${bulanUser}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { 
