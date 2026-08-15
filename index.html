@@ -35,6 +35,9 @@
     
     .btn-primary { background: #1d4ed8; color: #ffffff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 2px 4px rgba(37,99,235,0.2); }
     .btn-primary:hover { background: #1e40af; }
+
+    .btn-save-archive { background: #059669; color: #ffffff; border: none; padding: 10px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 13px; margin-top: 5px; }
+    .btn-save-archive:hover { background: #047857; }
     
     .btn-add { background: #2563eb; color: #ffffff; border: none; padding: 10px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
     .btn-add:hover { background: #1d4ed8; }
@@ -50,37 +53,25 @@
     table.preview-table th, table.preview-table td { border: 1px solid #000; padding: 6px 4px; text-align: center; position: relative; }
     table.preview-table th { font-weight: bold; text-transform: uppercase; }
 
-    /* Tombol Hapus Langsung di Dalam Tabel Preview */
-    .row-del-btn {
-      display: none;
-      position: absolute;
-      left: 2px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: #ef4444;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 16px;
-      height: 16px;
-      font-size: 9px;
-      line-height: 16px;
+    /* Tombol Hapus Baris */
+    .btn-del-row {
+      background: #fef2f2;
+      border: 1px solid #f87171;
+      color: #dc2626;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: 11px;
+      font-weight: 600;
       cursor: pointer;
-      text-align: center;
-      padding: 0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
-    
-    table.preview-table tbody tr:hover .row-del-btn {
-      display: inline-block;
+    .btn-del-row:hover {
+      background: #dc2626;
+      color: #ffffff;
     }
 
-    .html2pdf__page-break .row-del-btn {
-      display: none !important;
-    }
-
+    /* Penanganan Elemen Non-Cetak saat Mode Print Biasa */
     @media print {
-      .row-del-btn { 
+      .no-print { 
         display: none !important; 
       }
     }
@@ -111,7 +102,7 @@
   <div class="form-section">
     <div class="btn-header">
       <h2>✏️ Form Input Data</h2>
-      <button type="button" class="btn-clear" onclick="resetSemuaData()">💥 Reset Laporan Baru</button>
+      <button type="button" class="btn-clear" onclick="resetSemuaData()">💥 Kosongkan Form</button>
     </div>
 
     <!-- Data Pegawai & Penilai -->
@@ -139,7 +130,7 @@
       <div class="form-row">
         <div class="form-group">
           <label>Bulan Laporan</label>
-          <select id="bulanLaporan" onchange="updateHeaderPreview()">
+          <select id="bulanLaporan" onchange="pindahBulanLaporan()">
             <option value="JANUARI">JANUARI</option>
             <option value="FEBRUARI">FEBRUARI</option>
             <option value="MARET" selected>MARET</option>
@@ -179,6 +170,14 @@
       </div>
     </div>
 
+    <!-- Arsip & Simpan Bulan -->
+    <div class="card" style="background: #f0fdf4; border-color: #bbf7d0;">
+      <span class="card-title" style="color: #15803d;">💾 SIMPAN & ARSIP LAPORAN</span>
+      <button type="button" class="btn-save-archive" onclick="simpanLaporanBulanIni()">
+        💾 Simpan Permanen Laporan Bulan Ini
+      </button>
+    </div>
+
     <!-- Input Kegiatan Harian -->
     <div class="card">
       <span class="card-title">📅 INPUT KEGIATAN HARIAN</span>
@@ -209,7 +208,10 @@
 
   <!-- ================= PANEL PREVIEW DOKUMEN ================= -->
   <div class="preview-container">
-    <div style="text-align: right; margin-bottom: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <span style="font-size: 13px; font-weight: bold; color: #475569;">
+        📌 Menampilkan Laporan: <span id="lblBulanAktif" style="color: #2563eb;">MARET</span>
+      </span>
       <button type="button" class="btn-primary" onclick="unduhPDF()">
         📥 Unduh PDF
       </button>
@@ -238,6 +240,7 @@
             <th rowspan="2" style="width: 10%;">TANGGAL</th>
             <th colspan="3">KEGIATAN</th>
             <th rowspan="2" style="width: 22%;">KETERANGAN</th>
+            <th rowspan="2" class="no-print" style="width: 12%;">AKSI</th>
           </tr>
           <tr>
             <th>MENGAMBIL RM PASIEN RAK / BOK</th>
@@ -278,11 +281,16 @@
 <script>
   let listKegiatan = [];
 
-  // --- MENGAMBIL DATA TERSIMPAN DARI BROWSER ---
+  // --- MENGAMBIL DATA TERSIMPAN BERDASARKAN BULAN ---
   function muatDataPenyimpanan() {
-    const dataKegiatanSaved = localStorage.getItem('pendaftaran_listKegiatan');
+    const bulan = document.getElementById('bulanLaporan').value;
+    document.getElementById('lblBulanAktif').innerText = bulan;
+
+    const dataKegiatanSaved = localStorage.getItem(`pendaftaran_list_${bulan}`);
     if (dataKegiatanSaved) {
       listKegiatan = JSON.parse(dataKegiatanSaved);
+    } else {
+      listKegiatan = [];
     }
 
     const dataHeaderSaved = localStorage.getItem('pendaftaran_headerData');
@@ -290,7 +298,6 @@
       const h = JSON.parse(dataHeaderSaved);
       document.getElementById('namaPegawai').value = h.nama || 'SRIYANI';
       document.getElementById('nipPegawai').value = h.nip || '197506102007012033';
-      document.getElementById('bulanLaporan').value = h.bulan || 'MARET';
       document.getElementById('lokasiCetak').value = h.lokasi || 'Tenggarong';
       document.getElementById('namaPenilai').value = h.penilai || 'Joi Devi , SKM';
       document.getElementById('nipPenilai').value = h.nipPenilai || '19730803 1998032009';
@@ -310,21 +317,34 @@
       img.src = ttdPenilaiSaved;
       img.style.display = 'block';
     }
+
+    renderData();
+  }
+
+  // --- MENGAMBIL DATA KETIKA PILIH BULAN DARI DROPDOWN ---
+  function pindahBulanLaporan() {
+    muatDataPenyimpanan();
   }
 
   // --- MENYIMPAN DATA OTOMATIS KE BROWSER ---
   function simpanOtomatis() {
-    localStorage.setItem('pendaftaran_listKegiatan', JSON.stringify(listKegiatan));
+    const bulan = document.getElementById('bulanLaporan').value;
+    localStorage.setItem(`pendaftaran_list_${bulan}`, JSON.stringify(listKegiatan));
     
     const headerData = {
       nama: document.getElementById('namaPegawai').value,
       nip: document.getElementById('nipPegawai').value,
-      bulan: document.getElementById('bulanLaporan').value,
       lokasi: document.getElementById('lokasiCetak').value,
       penilai: document.getElementById('namaPenilai').value,
       nipPenilai: document.getElementById('nipPenilai').value
     };
     localStorage.setItem('pendaftaran_headerData', JSON.stringify(headerData));
+  }
+
+  function simpanLaporanBulanIni() {
+    simpanOtomatis();
+    const bulan = document.getElementById('bulanLaporan').value;
+    alert(`✅ Laporan Bulan ${bulan} Berhasil Disimpan Ke Penyimpanan Lokal Browser!`);
   }
 
   // --- HANDLER UPLOAD & SAVE TTD ---
@@ -337,8 +357,6 @@
         const img = document.getElementById(imgElementId);
         img.src = base64Image;
         img.style.display = 'block';
-        
-        // Simpan gambar ke LocalStorage
         localStorage.setItem(storageKey, base64Image);
       };
       reader.readAsDataURL(file);
@@ -395,6 +413,7 @@
           <td>-</td>
           <td>-</td>
           <td style="font-weight: bold; font-size: 13px;">-</td>
+          <td class="no-print">-</td>
         </tr>`;
       updateHeaderPreview();
       return;
@@ -411,10 +430,7 @@
       const tr = document.createElement('tr');
       
       let rowHtml = `
-        <td>
-          <button class="row-del-btn" onclick="hapusBaris(${index})" title="Hapus Baris Ini">✖</button>
-          ${item.hari}
-        </td>
+        <td>${item.hari}</td>
         <td>${item.tanggal}</td>
         <td>${item.keg1}</td>
         <td>${item.keg2}</td>
@@ -425,6 +441,13 @@
         rowHtml += `<td rowspan="${listKegiatan.length}" style="vertical-align: middle; font-weight: bold; font-size: 13px;">${totalFormatted}</td>`;
       }
 
+      // Kolom Tombol Hapus Baris
+      rowHtml += `
+        <td class="no-print">
+          <button class="btn-del-row" onclick="hapusBaris(${index})" title="Hapus Baris Ini">🗑️ Hapus</button>
+        </td>
+      `;
+
       tr.innerHTML = rowHtml;
       tbody.appendChild(tr);
     });
@@ -433,7 +456,7 @@
   }
 
   function hapusBaris(index) {
-    if (confirm("Hapus baris ini?")) {
+    if (confirm("Apakah Anda yakin ingin menghapus baris tanggal ini?")) {
       listKegiatan.splice(index, 1);
       simpanOtomatis();
       renderData();
@@ -441,9 +464,10 @@
   }
 
   function resetSemuaData() {
-    if (confirm("Apakah Anda yakin ingin menghapus SELURUH isi tabel untuk mulai laporan bulan baru?")) {
+    const bulan = document.getElementById('bulanLaporan').value;
+    if (confirm(`Hapus semua baris data untuk bulan ${bulan}?`)) {
       listKegiatan = [];
-      localStorage.removeItem('pendaftaran_listKegiatan');
+      localStorage.removeItem(`pendaftaran_list_${bulan}`);
       renderData();
     }
   }
@@ -476,8 +500,9 @@
     const namaUser = document.getElementById('prevNama').innerText || 'Pegawai';
     const bulanUser = document.getElementById('prevBulan').innerText || 'Laporan';
 
-    const delBtns = element.querySelectorAll('.row-del-btn');
-    delBtns.forEach(btn => btn.style.display = 'none');
+    // Sembunyikan elemen berkategori no-print (kolom tombol hapus) saat cetak PDF
+    const noPrintElems = element.querySelectorAll('.no-print');
+    noPrintElems.forEach(el => el.style.display = 'none');
 
     const options = {
       margin:       [10, 10, 10, 10],
@@ -488,12 +513,12 @@
     };
 
     html2pdf().set(options).from(element).save().then(() => {
-      delBtns.forEach(btn => btn.style.display = '');
+      // Tampilkan kembali elemen no-print setelah PDF selesai
+      noPrintElems.forEach(el => el.style.display = '');
     });
   }
 
   muatDataPenyimpanan();
-  renderData();
 </script>
 
 </body>
