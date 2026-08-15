@@ -18,7 +18,7 @@
     .container { display: flex; gap: 20px; align-items: flex-start; flex-direction: row; }
     .form-section { flex: 1; width: 100%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .preview-container { flex: 1.25; width: 100%; }
-    .preview-section { background: #525659; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto; display: flex; justify-content: center; }
+    .preview-section { background: #525659; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto; display: flex; justify-content: flex-start; }
     
     h2, h3 { margin-top: 0; color: #0f172a; font-size: 18px; }
     .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
@@ -89,7 +89,7 @@
     .ttd-name { font-weight: bold; text-decoration: underline; margin-bottom: 2px; }
     .ttd-box p { margin: 2px 0; }
 
-    /* Mode Mobile / HP */
+    /* Mode Mobile / HP - PREVIEW DIBESARKAN AGAR SANGAT JELAS */
     @media screen and (max-width: 768px) {
       body { padding: 10px; }
       .mobile-tabs { display: flex; }
@@ -104,15 +104,22 @@
       .form-row { flex-direction: column; gap: 0; }
       .btn-header { flex-direction: row; }
       
-      .preview-section { padding: 10px 5px; overflow-x: auto; justify-content: flex-start; }
+      .preview-section { 
+        padding: 10px; 
+        overflow-x: auto; 
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
       
+      /* Skala diperbesar menjadi 0.78 agar jelas & mudah dibaca di HP */
       #pdfArea {
+        transform: scale(0.78);
         transform-origin: top left;
-        zoom: 0.43;
+        margin-bottom: -65mm !important; /* Mencegah area kosong berlebih di bawah */
       }
     }
 
-    /* Print Rule Browser */
+    /* Print Rule Browser (Tetap 100% Pas 1 Halaman saat di-Print) */
     @media print {
       @page {
         size: A4 portrait;
@@ -383,7 +390,6 @@
   function hitungTanggalTerakhir(namaBulan) {
     const idx = daftarBulan.indexOf(namaBulan.toUpperCase());
     if (idx === -1) return 31;
-    // Tahun 2026
     const d = new Date(2026, idx + 1, 0);
     return d.getDate();
   }
@@ -397,17 +403,14 @@
   }
 
   function muatDataPenyimpanan() {
-    // 1. Cek Bulan Terakhir yang pernah dipilih user
     let bulanSaved = localStorage.getItem('pendaftaran_bulanTerakhir');
     if (!bulanSaved) {
-      bulanSaved = "AGUSTUS"; // Default jika belum pernah diset
+      bulanSaved = "AGUSTUS";
     }
     document.getElementById('bulanLaporan').value = bulanSaved;
 
-    // 2. Load data per bulan
     pindahBulanLaporan(false);
 
-    // 3. Load Header Data Umum
     const dataHeaderSaved = localStorage.getItem('pendaftaran_headerData');
     if (dataHeaderSaved) {
       const h = JSON.parse(dataHeaderSaved);
@@ -417,7 +420,6 @@
       document.getElementById('nipPenilai').value = h.nipPenilai || '19730803 1998032009';
     }
 
-    // 4. Load TTD
     const ttdPegawaiSaved = localStorage.getItem('pendaftaran_ttdPegawai');
     if (ttdPegawaiSaved) {
       const img = document.getElementById('imgTtdPegawai');
@@ -439,16 +441,12 @@
     const bulan = document.getElementById('bulanLaporan').value;
     document.getElementById('lblBulanAktif').innerText = bulan;
 
-    // Simpan bulan aktif sebagai bulan terakhir
     localStorage.setItem('pendaftaran_bulanTerakhir', bulan);
 
-    // Set Otomatis Tanggal Cetak Akhir Bulan
     const tglAkhir = hitungTanggalTerakhir(bulan);
-    // Format Huruf Depan Kapital (misal: "Agustus")
     const bulanFormat = bulan.charAt(0) + bulan.slice(1).toLowerCase();
     document.getElementById('lokasiCetak').value = `Tenggarong, ${tglAkhir} ${bulanFormat} 2026`;
 
-    // Load list data kegiatan bulan tersebut
     const dataKegiatanSaved = localStorage.getItem(`pendaftaran_list_${bulan}`);
     if (dataKegiatanSaved) {
       listKegiatan = JSON.parse(dataKegiatanSaved);
@@ -544,7 +542,6 @@
     }
   }
 
-  /* FITUR CERDAS: TAMBAH & TIMPA DATA TANPA MERUSAK FIELD LAIN */
   function tambahBarisManual() {
     const valDate = document.getElementById('inDatepicker').value;
     const hari = document.getElementById('inHari').value;
@@ -556,30 +553,25 @@
     if (!valDate) { alert('Silakan pilih tanggal terlebih dahulu!'); return; }
     const tglAngka = new Date(valDate).getDate().toString();
 
-    // Cek apakah tanggal ini sudah ada di daftar
     const idxAda = listKegiatan.findIndex(item => item.tgl === tglAngka);
 
     if (idxAda !== -1) {
-      // PERBAIKAN TIMPA DATA: Jika diisi, timpa nilainya. Jika kosong, pertahankan nilai lama!
       if (input1 !== "") listKegiatan[idxAda].k1 = parseInt(input1) || 0;
       if (input2 !== "") listKegiatan[idxAda].k2 = parseInt(input2) || 0;
       if (input3 !== "") listKegiatan[idxAda].k3 = parseInt(input3) || 0;
-      listKegiatan[idxAda].hari = hari; // update nama hari jika perlu
+      listKegiatan[idxAda].hari = hari;
     } else {
-      // Jika tanggal baru, tambahkan baris baru
       const k1 = input1 !== "" ? (parseInt(input1) || 0) : 0;
       const k2 = input2 !== "" ? (parseInt(input2) || 0) : 0;
       const k3 = input3 !== "" ? (parseInt(input3) || 0) : 0;
       listKegiatan.push({ hari, tgl: tglAngka, k1, k2, k3 });
 
-      // Urutkan berdasarkan tanggal kecil ke besar
       listKegiatan.sort((a, b) => parseInt(a.tgl) - parseInt(b.tgl));
     }
 
     simpanOtomatis();
     renderData();
 
-    // Bersihkan form input angka setelah simpan
     document.getElementById('inKeg1').value = '';
     document.getElementById('inKeg2').value = '';
     document.getElementById('inKeg3').value = '';
@@ -660,7 +652,6 @@
     window.print();
   }
 
-  // Inisialisasi awal saat web dibuka
   muatDataPenyimpanan();
 </script>
 
